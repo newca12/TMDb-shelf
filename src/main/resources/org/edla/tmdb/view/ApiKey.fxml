@@ -4,6 +4,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-<children><TextField fx:id="apikey" layoutX="159.0" layoutY="37.0" prefHeight="25.0" prefWidth="252.0" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.TmdbPresenter">
+<children><TextField fx:id="apikey" layoutX="159.0" layoutY="37.0" prefHeight="25.0" prefWidth="252.0" promptText="Enter your API key" /><Button layoutX="458.0" layoutY="37.0" mnemonicParsing="false" onAction="#check" text="Check" />
 </children></AnchorPane>

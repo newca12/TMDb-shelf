@@ -12,16 +12,19 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
-resolvers += "edla repo" at "http://www.edla.org/releases"
+resourceDirectory in Compile := (scalaSource in Compile).value
 
 libraryDependencies ++= Seq(
-  "org.edla" %% "tmdb-async-client" % "0.1",
+  "org.edla" %% "tmdb-async-client" % "0.2",
   "org.scalafxml" %% "scalafxml-core" % "0.1",
   "org.scalafx" %% "scalafx" % "8.0.0-M3",
+  "org.controlsfx" % "controlsfx" % "8.0.4",  
   "junit" % "junit" % "4.11" % "test",
   "org.specs2" %% "specs2" % "2.3.7" % "test",
   "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
 )
+
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.0-M1" cross CrossVersion.full)
 
 seq(CoverallsPlugin.singleProject: _*)
 
