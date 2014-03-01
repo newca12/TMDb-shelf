@@ -19,31 +19,15 @@ import javafx.stage.WindowEvent
 import scalafx.Includes.jfxParent2sfx
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
-import scalafx.event.ActionEvent
 import scalafx.scene.Scene
-import scalafx.scene.control.TextField
 import scalafx.stage.Stage.sfxStage2jfx
 import scalafxml.core.FXMLView
 import scalafxml.core.NoDependencyResolver
 
-import scalafxml.core.macros.sfxml
-
-@sfxml
-class TmdbPresenter(private val apikey: TextField) {
-
-  def check(event: ActionEvent) {
-
-  }
-
-  def handleClear(event: ActionEvent) {
-    apikey.text = ""
-  }
-
-}
-
 //inspired by typesafe migration-manager
-trait WithUncaughtExceptionHandlerDialog {
-  /** Show a dialog for all uncaught exception. */
+/*trait WithUncaughtExceptionHandlerDialog {
+  */
+/** Show a dialog for all uncaught exception. */ /*
   private class UncaughtExceptionHandlerDialog extends Thread.UncaughtExceptionHandler {
     override def uncaughtException(t: Thread, e: Throwable) {
       try {
@@ -58,16 +42,23 @@ trait WithUncaughtExceptionHandlerDialog {
     }
   }
 
-  /** Default exception handler */
+  */
+/** Default exception handler */ /*
   protected val handler: Thread.UncaughtExceptionHandler = new UncaughtExceptionHandlerDialog()
 
   // setting the handler (assumes it is set only once, here - no way to enforce this though)
   Thread.setDefaultUncaughtExceptionHandler(handler)
-}
+}*/
 
-object Launcher extends JFXApp with WithUncaughtExceptionHandlerDialog {
+object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
 
-  val root = FXMLView(getClass.getResource("view/Shelf.fxml"), NoDependencyResolver)
+  import java.io.IOException
+  val resource = getClass.getResource("view/Shelf.fxml")
+  if (resource == null) {
+    throw new IOException("Cannot load resource: view/Shelf.fxml")
+  }
+
+  val root = FXMLView(resource, NoDependencyResolver)
 
   stage = new PrimaryStage() {
     title = "TMDb-shelf"

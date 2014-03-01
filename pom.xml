@@ -20,7 +20,7 @@
         <url>http://github.com/newca12/TMDb-shelf</url>
     </organization>
     <scm>
-        <url>git@github.com:newca12/TMDb-async-client.git</url>
+        <url>git@github.com:newca12/TMDb-shelf.git</url>
         <connection>scm:git:git@github.com:newca12/TMDb-shelf.git</connection>
     </scm>
     <developers>
@@ -99,7 +99,7 @@
             <version>0.2</version>
         </dependency>
         <dependency>
-            <groupId>org.scalafxml</groupId>
+            <groupId>org.scalafx</groupId>
             <artifactId>scalafxml-core_2.10</artifactId>
             <version>0.1</version>
         </dependency>
