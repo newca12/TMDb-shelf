@@ -1,4 +1,4 @@
-# TMDb-shelf [![Build Status](https://travis-ci.org/newca12/TMDb-shelf.png?branch=master)](https://travis-ci.org/newca12/TMDb-shelf) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-shelf/badge.png)](https://coveralls.io/r/newca12/TMDb-shelf) [![Ohloh](http://www.ohloh.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-shelf)
+# TMDb-shelf [![Build Status](https://travis-ci.org/newca12/TMDb-shelf.svg?branch=master)](https://travis-ci.org/newca12/TMDb-shelf) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-shelf/badge.png)](https://coveralls.io/r/newca12/TMDb-shelf) [![Ohloh](http://www.ohloh.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-shelf)
 
 ### About ###
 TMDb-shell is a ScalaFX client for [The Movie Database][1] (TMDb).  
@@ -18,6 +18,9 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 2. [Log](https://www.themoviedb.org/login) into your account
 3. Select the API section on left side of your account page.
 4. Click on the link to generate a new API key and follow the instructions.
+
+### Memo ###
+https://groups.google.com/forum/#!topic/spray-user/dIOQK_2tOzw
 
 ### License ###
 © 2014 Olivier ROLAND. Distributed under the GPLv3 License.

@@ -1,19 +1,15 @@
-package org.edla.tmdb
+package org.edla.tmdb.shelf
 
 import java.util.prefs.Preferences
-
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import org.controlsfx.dialog.Dialog
 import org.controlsfx.dialog.Dialogs
 import org.edla.tmdb.client.InvalidApiKeyException
-import org.edla.tmdb.client.TmdbClient
-
 import javafx.event.EventHandler
 import javafx.stage.WindowEvent
 import scalafx.Includes.jfxParent2sfx
@@ -23,11 +19,13 @@ import scalafx.scene.Scene
 import scalafx.stage.Stage.sfxStage2jfx
 import scalafxml.core.FXMLView
 import scalafxml.core.NoDependencyResolver
+import akka.actor.ActorSystem
+import akka.actor.Props
 
 //inspired by typesafe migration-manager
-/*trait WithUncaughtExceptionHandlerDialog {
-  */
-/** Show a dialog for all uncaught exception. */ /*
+trait WithUncaughtExceptionHandlerDialog {
+
+  /** Show a dialog for all uncaught exception. */
   private class UncaughtExceptionHandlerDialog extends Thread.UncaughtExceptionHandler {
     override def uncaughtException(t: Thread, e: Throwable) {
       try {
@@ -42,15 +40,16 @@ import scalafxml.core.NoDependencyResolver
     }
   }
 
-  */
-/** Default exception handler */ /*
+  /** Default exception handler */
   protected val handler: Thread.UncaughtExceptionHandler = new UncaughtExceptionHandlerDialog()
 
   // setting the handler (assumes it is set only once, here - no way to enforce this though)
   Thread.setDefaultUncaughtExceptionHandler(handler)
-}*/
+}
 
 object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
+
+  val system = ActorSystem("ShelfSystem")
 
   import java.io.IOException
   val resource = getClass.getResource("view/Shelf.fxml")
@@ -86,14 +85,17 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
 
   def validateApiKey(apiKey: String) {
     val prefs = Preferences.userRoot().node(this.getClass().getName())
+    //uncomment to clean store
     //prefs.remove("apiKey")
     val apiKeyStored = prefs.get("apiKey", "")
-    val tmdbClient = TmdbClient(apiKey)
     //http://tersesystems.com/2012/12/27/error-handling-in-scala/
     //http://mauricio.github.io/2014/02/17/scala-either-try-and-the-m-word.html
-    val token = Try(Await.result(tmdbClient.getToken, 2 seconds).request_token)
+    val shelfActor = system.actorOf(Props(new ShelfActor(apiKey)), name = "shelfactor")
+    val tmdbClient = Utils.getTmdbClient
+    val token = Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     token match {
       case Success(v) ⇒
+        //comment to clean store
         prefs.put("apiKey", apiKey)
         Dialogs.create()
           .owner(null)
@@ -102,15 +104,14 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
           .message("Perfect ! Your API key is valid")
           .showInformation()
       case Failure(e) ⇒
-        if (e.isInstanceOf[InvalidApiKeyException]) {
-          if (!apiKeyStored.isEmpty() && apiKeyStored == apiKey) prefs.remove("apiKey")
-          val response = Dialogs.create()
-            .title("Alert")
-            .message(e.getMessage())
-            .showError()
-          if (response == Dialog.Actions.OK) sys.exit
-          //response
-        } else throw (e)
+        //if (e.isInstanceOf[InvalidApiKeyException]) {
+        if (!apiKeyStored.isEmpty() && apiKeyStored == apiKey) prefs.remove("apiKey")
+        val response = Dialogs.create()
+          .title("Alert")
+          .message(e.getMessage())
+          .showError()
+        if (response == Dialog.Actions.OK) sys.exit
+      //} else throw (e)
     }
   }
 

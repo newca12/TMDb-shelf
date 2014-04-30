@@ -4,7 +4,7 @@ organization := "org.edla"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.11.0"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
@@ -12,17 +12,19 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
+resolvers += "edla repo" at "http://www.edla.org/snapshots"
+
 libraryDependencies ++= Seq(
-  "org.edla" %% "tmdb-async-client" % "0.2",
-  "org.scalafx" % "scalafxml-core_2.10" % "0.1",
-  "org.scalafx" %% "scalafx" % "8.0.0-M3",
-  "org.controlsfx" % "controlsfx" % "8.0.4",  
+  "org.edla" %% "tmdb-async-client" % "0.5",
+  "org.scalafx" %% "scalafxml-core" % "0.2-SNAPSHOT",
+  "org.scalafx" %% "scalafx" % "8.0.0-R4",
+  "org.controlsfx" % "controlsfx" % "8.0.5",
   "junit" % "junit" % "4.11" % "test",
-  "org.specs2" %% "specs2" % "2.3.7" % "test",
-  "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
+  "org.specs2" %% "specs2" % "2.3.11" % "test",
+  "org.scalatest" %% "scalatest" % "2.1.3" % "test"
 )
 
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.0-M1" cross CrossVersion.full)
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.0" cross CrossVersion.full)
 
 fork := true
 
@@ -44,7 +46,7 @@ publishTo := {
 
 publishArtifact in Test := false
 
-pomIncludeRepository := { _ => false }
+//pomIncludeRepository := { _ => false }
 
 pomExtra := (
     <scm>

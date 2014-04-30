@@ -2,7 +2,7 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.edla</groupId>
-    <artifactId>tmdb-shelf_2.10</artifactId>
+    <artifactId>tmdb-shelf_2.11</artifactId>
     <packaging>jar</packaging>
     <description>TMDb-shelf</description>
     <url>http://github.com/newca12/TMDb-shelf</url>
@@ -91,27 +91,27 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.10.3</version>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.edla</groupId>
-            <artifactId>tmdb-async-client_2.10</artifactId>
-            <version>0.2</version>
+            <artifactId>tmdb-async-client_2.11</artifactId>
+            <version>0.5</version>
         </dependency>
         <dependency>
             <groupId>org.scalafx</groupId>
-            <artifactId>scalafxml-core_2.10</artifactId>
-            <version>0.1</version>
+            <artifactId>scalafxml-core_2.11</artifactId>
+            <version>0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.scalafx</groupId>
-            <artifactId>scalafx_2.10</artifactId>
-            <version>8.0.0-M3</version>
+            <artifactId>scalafx_2.11</artifactId>
+            <version>8.0.0-R4</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.0.4</version>
+            <version>8.0.5</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -121,20 +121,23 @@
         </dependency>
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.10</artifactId>
-            <version>2.3.7</version>
+            <artifactId>specs2_2.11</artifactId>
+            <version>2.3.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
-            <version>2.0</version>
+            <artifactId>scalatest_2.11</artifactId>
+            <version>2.1.3</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sqality.scct</groupId>
-            <artifactId>scct_2.10</artifactId>
-            <version>0.2.2</version>
-        </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>edlarepo</id>
+            <name>edla repo</name>
+            <url>http://www.edla.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 </project>
