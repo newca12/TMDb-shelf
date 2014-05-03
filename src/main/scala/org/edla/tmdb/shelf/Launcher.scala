@@ -50,6 +50,7 @@ trait WithUncaughtExceptionHandlerDialog {
 object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
 
   val system = ActorSystem("ShelfSystem")
+  val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
 
   import java.io.IOException
   val resource = getClass.getResource("view/Shelf.fxml")

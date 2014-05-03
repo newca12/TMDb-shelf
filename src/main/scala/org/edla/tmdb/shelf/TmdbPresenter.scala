@@ -22,53 +22,26 @@ import org.edla.tmdb.client.TmdbClient
 
 @sfxml
 class TmdbPresenter(
-    private val search: TextField,
-    private val shelf: GridPane,
-    private val check_button: Button) {
-
-  val logo = new ImageView {
-    image = new Image(this, "view/images/poster.jpg")
-    //fitHeight_=(108)
-    //fitWidth_=(108)
-    //preserveRatio = true
-    smooth = true
-    onMouseClicked = new EventHandler[MouseEvent] {
-      override def handle(event: MouseEvent) {
-        event.consume
-        println("event 1")
-      }
-    }
-  }
-  val logo2 = new ImageView {
-    image = new Image("file:/Users/hack/poster.jpg")
-    fitHeight_=(108)
-    fitWidth_=(108)
-    preserveRatio = true
-    smooth = true
-    onMouseClicked = new EventHandler[MouseEvent] {
-      override def handle(event: MouseEvent) {
-        event.consume
-        println("event 2")
-      }
-    }
-  }
-
-  shelf.add(logo, 1, 1)
-  shelf.add(logo2, 2, 1)
+  private val search: TextField,
+  private val shelf: GridPane,
+  private val check_button: Button) {
 
   import scalafx.Includes._
   check_button.onAction = { (_: ActionEvent) ⇒
+    Launcher.scalaFxActor ! "reset"
     println(search.text.value)
     val tmdbClient = Utils.getTmdbClient
     val movies = Await.result(tmdbClient.searchMovie(search.text.value), 5 seconds)
+    val test = movies.results
     for (m ← movies.results) {
       tmdbClient.log.info(s"find ${m.title}")
       val movie = Await.result(tmdbClient.getMovie(m.id), 5 seconds)
       movie.poster_path match {
-        case Some(p) ⇒ Await.result(tmdbClient.downloadPoster(movie, s"/tmp/${m.id}.jpg"), 5 seconds)
-        case None    ⇒ tmdbClient.log.info("no poster")
+        case Some(p) ⇒
+          Await.result(tmdbClient.downloadPoster(movie, s"/tmp/${m.id}.jpg"), 5 seconds)
+          Launcher.scalaFxActor ! Utils.Add(shelf, m.id)
+        case None ⇒ tmdbClient.log.info("no poster")
       }
-
     }
   }
 

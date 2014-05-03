@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.edla</groupId>
             <artifactId>tmdb-async-client_2.11</artifactId>
-            <version>0.5</version>
+            <version>0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.scalafx</groupId>
@@ -133,6 +133,12 @@
         </dependency>
     </dependencies>
     <repositories>
+        <repository>
+            <id>spray</id>
+            <name>spray</name>
+            <url>http://repo.spray.io/</url>
+            <layout>default</layout>
+        </repository>
         <repository>
             <id>edlarepo</id>
             <name>edla repo</name>
