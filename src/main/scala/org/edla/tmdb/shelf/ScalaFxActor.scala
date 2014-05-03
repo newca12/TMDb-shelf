@@ -27,45 +27,32 @@ class ScalaFxActor extends Actor {
         shelf.getChildren().remove(item)
 
     case Utils.AddMovie(shelf, movie) ⇒
-      movie.poster_path match {
+      val thumbnail = movie.poster_path match {
         case Some(p) ⇒
-          import java.nio.file.{ Paths, Files }
           val filename = s"/tmp/${movie.id}.jpg"
-          items(nbItems) = new ImageView {
-            //CAUTION id is interpreted in String interpolation !
-            image = new Image(s"file://${filename}")
-            fitHeight_=(108)
-            fitWidth_=(108)
-            preserveRatio = true
-            smooth = true
-            onMouseClicked = new EventHandler[MouseEvent] {
-              override def handle(event: MouseEvent) {
-                event.consume
-                println(s"event for movie ${movie}")
-              }
-            }
-          }
-          shelf.add(items(nbItems), nbItems % 7, nbItems / 7)
-          nbItems = nbItems + 1
+          //CAUTION id is interpreted in String interpolation !
+          new Image(s"file://${filename}")
         case None ⇒
           tmdbClient.log.info("no poster")
-          items(nbItems) = new ImageView {
-            //CAUTION id is interpreted in String interpolation !
-            image = new Image(this, "view/images/200px-No_image_available.svg.png")
-            fitHeight_=(108)
-            fitWidth_=(108)
-            preserveRatio = true
-            smooth = true
-            onMouseClicked = new EventHandler[MouseEvent] {
-              override def handle(event: MouseEvent) {
-                event.consume
-                println(s"event for movie ${movie}")
-              }
-            }
-          }
-          shelf.add(items(nbItems), nbItems % 7, nbItems / 7)
-          nbItems = nbItems + 1
+          new Image(this, "view/images/200px-No_image_available.svg.png")
       }
+
+      items(nbItems) = new ImageView {
+        //CAUTION id is interpreted in String interpolation !
+        image = thumbnail
+        fitHeight_=(108)
+        fitWidth_=(108)
+        preserveRatio = true
+        smooth = true
+        onMouseClicked = new EventHandler[MouseEvent] {
+          override def handle(event: MouseEvent) {
+            event.consume
+            println(s"event for movie ${movie}")
+          }
+        }
+      }
+      shelf.add(items(nbItems), nbItems % 7, nbItems / 7)
+      nbItems = nbItems + 1
 
     case _ ⇒ println("nops")
   }
