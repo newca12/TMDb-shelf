@@ -17,6 +17,21 @@ class ShelfActor(apiKey: String) extends Actor with akka.actor.ActorLogging {
       log.info("instance asked")
       sender ! tmdbClient
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
+    case "test" ⇒
+      log.info("test asked")
+    case Utils.AddResult(shelf, result) ⇒
+      val movie = Await.result(tmdbClient.getMovie(result.id), 5 seconds)
+      movie.poster_path match {
+        case Some(p) ⇒
+          import java.nio.file.{ Paths, Files }
+          val filename = s"/tmp/${result.id}.jpg"
+          if (!Files.exists(Paths.get(filename)))
+            Await.result(tmdbClient.downloadPoster(movie, filename), 5 seconds)
+          Launcher.scalaFxActor ! Utils.AddMovie(shelf, movie)
+        case None ⇒
+          Launcher.scalaFxActor ! Utils.AddMovie(shelf, movie)
+      }
+
   }
 
 }

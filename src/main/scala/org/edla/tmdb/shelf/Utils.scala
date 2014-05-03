@@ -10,7 +10,8 @@ import scala.language.postfixOps
 
 object Utils {
 
-  case class Add(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Result)
+  case class AddResult(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Result)
+  case class AddMovie(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Movie) //, image: scalafx.scene.image.Image)
   case class Reset(shelf: scalafx.scene.layout.GridPane)
 
   def getTmdbClient = {

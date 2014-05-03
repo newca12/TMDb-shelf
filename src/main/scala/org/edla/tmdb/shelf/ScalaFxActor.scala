@@ -26,14 +26,11 @@ class ScalaFxActor extends Actor {
       for (item ← items)
         shelf.getChildren().remove(item)
 
-    case Utils.Add(shelf, movie) ⇒
-      val m = Await.result(tmdbClient.getMovie(movie.id), 5 seconds)
-      m.poster_path match {
+    case Utils.AddMovie(shelf, movie) ⇒
+      movie.poster_path match {
         case Some(p) ⇒
           import java.nio.file.{ Paths, Files }
           val filename = s"/tmp/${movie.id}.jpg"
-          if (!Files.exists(Paths.get(filename)))
-            Await.result(tmdbClient.downloadPoster(m, filename), 5 seconds)
           items(nbItems) = new ImageView {
             //CAUTION id is interpreted in String interpolation !
             image = new Image(s"file://${filename}")

@@ -31,10 +31,11 @@ class TmdbPresenter(
     Launcher.scalaFxActor ! Utils.Reset(shelf)
     println(search.text.value)
     val tmdbClient = Utils.getTmdbClient
-    val movies = Await.result(tmdbClient.searchMovie(search.text.value), 5 seconds)
-    for (movie ← movies.results) {
+    val results = Await.result(tmdbClient.searchMovie(search.text.value), 5 seconds)
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    for (movie ← results.results) {
       tmdbClient.log.info(s"find ${movie.title}")
-      Launcher.scalaFxActor ! Utils.Add(shelf, movie)
+      shelfActor ! Utils.AddResult(shelf, movie)
     }
   }
 
