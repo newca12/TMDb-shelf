@@ -9,9 +9,10 @@ import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
 object Utils {
-  
-  case class Add(shelf :scalafx.scene.layout.GridPane, id: Long)
-  
+
+  case class Add(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Result)
+  case class Reset(shelf: scalafx.scene.layout.GridPane)
+
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     implicit val timeout = Timeout(5 seconds)

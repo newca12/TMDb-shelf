@@ -7,12 +7,11 @@ package org.edla.tmdb.shelf
  * (A). define the gui dispatchers programmaticaly
  */
 
-import akka.dispatch.{DispatcherPrerequisites, ExecutorServiceFactory, ExecutorServiceConfigurator}
+import akka.dispatch.{ DispatcherPrerequisites, ExecutorServiceFactory, ExecutorServiceConfigurator }
 import com.typesafe.config.Config
-import java.util.concurrent.{ExecutorService, AbstractExecutorService, ThreadFactory, TimeUnit}
+import java.util.concurrent.{ ExecutorService, AbstractExecutorService, ThreadFactory, TimeUnit }
 import java.util.Collections
 import javafx.application.Platform
-
 
 // First we wrap invokeLater/runLater as an ExecutorService
 abstract class GUIExecutorService extends AbstractExecutorService {
