@@ -24,14 +24,13 @@ class ShelfActor(apiKey: String) extends Actor with akka.actor.ActorLogging {
       movie.poster_path match {
         case Some(p) ⇒
           import java.nio.file.{ Paths, Files }
-          val filename = s"/tmp/${result.id}.jpg"
+          val filename = s"${Launcher.localStore}/${result.id}.jpg"
           if (!Files.exists(Paths.get(filename)))
             Await.result(tmdbClient.downloadPoster(movie, filename), 5 seconds)
-          Launcher.scalaFxActor ! Utils.AddMovie(shelf, movie)
         case None ⇒
-          Launcher.scalaFxActor ! Utils.AddMovie(shelf, movie)
+          log.debug("no poster")
       }
-
+      Launcher.scalaFxActor ! Utils.AddMovie(shelf, movie)
   }
 
 }

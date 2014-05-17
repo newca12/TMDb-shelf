@@ -49,6 +49,11 @@ trait WithUncaughtExceptionHandlerDialog {
 
 object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
 
+  import java.nio.file.{ Paths, Files }
+  val home = System.getProperty("user.home")
+  val localStore = s"${home}/.tmdb-shelf"
+  Files.createDirectories(Paths.get(localStore))
+
   val system = ActorSystem("ShelfSystem")
   val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
 

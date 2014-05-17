@@ -33,7 +33,6 @@ class ScalaFxActor extends Actor {
           //CAUTION id is interpreted in String interpolation !
           new Image(s"file://${filename}")
         case None ⇒
-          tmdbClient.log.info("no poster")
           new Image(this, "view/images/200px-No_image_available.svg.png")
       }
 
