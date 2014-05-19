@@ -29,7 +29,7 @@ class ScalaFxActor extends Actor {
     case Utils.AddMovie(shelf, movie) ⇒
       val thumbnail = movie.poster_path match {
         case Some(p) ⇒
-          val filename = s"/tmp/${movie.id}.jpg"
+          val filename = s"${Launcher.localStore}/${movie.id}.jpg"
           //CAUTION id is interpreted in String interpolation !
           new Image(s"file://${filename}")
         case None ⇒
