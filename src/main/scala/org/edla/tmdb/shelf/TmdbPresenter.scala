@@ -27,15 +27,19 @@ class TmdbPresenter(
     private val check_button: Button) {
 
   import scalafx.Includes._
+  import scala.concurrent._
+  import ExecutionContext.Implicits.global
   check_button.onAction = { (_: ActionEvent) ⇒
     Launcher.scalaFxActor ! Utils.Reset(shelf)
-    println(search.text.value)
     val tmdbClient = Utils.getTmdbClient
-    val results = Await.result(tmdbClient.searchMovie(search.text.value), 5 seconds)
-    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    for (movie ← results.results) {
-      tmdbClient.log.info(s"find ${movie.title}")
-      shelfActor ! Utils.AddResult(shelf, movie)
+    val results = tmdbClient.searchMovie(search.text.value)
+    results.onSuccess {
+      case results ⇒
+        val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+        for (movie ← results.results) {
+          tmdbClient.log.info(s"find ${movie.title}")
+          shelfActor ! Utils.AddResult(shelf, movie)
+        }
     }
   }
 
