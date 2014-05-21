@@ -10,9 +10,12 @@ import scala.language.postfixOps
 
 object Utils {
 
-  case class AddResult(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Result)
-  case class AddMovie(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Movie) //, image: scalafx.scene.image.Image)
-  case class Reset(shelf: scalafx.scene.layout.GridPane)
+  case class GetResult(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Result)
+  case class AddMovie(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Movie, imageView: scalafx.scene.image.ImageView)
+  case class Reset(shelf: scalafx.scene.layout.GridPane, items: Array[scalafx.scene.image.ImageView])
+  case class Search(shelf: scalafx.scene.layout.GridPane, search: String)
+  case class Position(x: Int, y: Int)
+  case class AddPoster(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Movie, poster: scalafx.scene.image.ImageView, pos: Position)
 
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
