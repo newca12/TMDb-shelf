@@ -18,15 +18,12 @@ resolvers += "edla repo" at "http://www.edla.org/snapshots"
 
 libraryDependencies ++= Seq(
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT",
-  "org.scalafx" %% "scalafxml-core" % "0.2-SNAPSHOT",
   "org.scalafx" %% "scalafx" % "8.0.0-R4",
   "org.controlsfx" % "controlsfx" % "8.0.5",
   "junit" % "junit" % "4.11" % "test",
   "org.specs2" %% "specs2" % "2.3.11" % "test",
   "org.scalatest" %% "scalatest" % "2.1.3" % "test"
 )
-
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.0" cross CrossVersion.full)
 
 fork := true
 

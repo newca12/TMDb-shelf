@@ -4,8 +4,7 @@
 TMDb-shell is a ScalaFX client for [The Movie Database][1] (TMDb).  
 It is built heavily on :
 * [TMDb-async-client][2]  
-* [ScalaFx][3]  
-* [ScalaFxml][4]
+* [ScalaFx][3]
 
 TMDb-shelf is an EDLA project.
 
@@ -28,4 +27,3 @@ https://groups.google.com/forum/#!topic/spray-user/dIOQK_2tOzw
 [1]: http://www.themoviedb.org/
 [2]: https://github.com/newca12/TMDb-async-client
 [3]: https://code.google.com/p/scalafx/
-[4]: https://github.com/vigoo/scalafxml

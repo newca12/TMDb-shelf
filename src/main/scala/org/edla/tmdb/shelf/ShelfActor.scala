@@ -25,7 +25,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   @volatile var nbItems = 0
   var items: Array[scalafx.scene.image.ImageView] = new Array[scalafx.scene.image.ImageView](28)
 
-  def send(shelf: scalafx.scene.layout.GridPane, movie: org.edla.tmdb.api.Movie, poster: scalafx.scene.image.Image) = {
+  def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: org.edla.tmdb.api.Movie, poster: scalafx.scene.image.Image) = {
     val imageView_ = new ImageView {
       //CAUTION id is interpreted in String interpolation !
       image = poster
@@ -36,6 +36,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       onMouseClicked = new EventHandler[MouseEvent] {
         override def handle(event: MouseEvent) {
           event.consume
+          shelf.titleLabel.setText(movie.title)
           log.info(s"event for movie ${movie.id} ${movie.title}")
         }
       }

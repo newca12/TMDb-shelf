@@ -17,8 +17,6 @@ import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
 import scalafx.stage.Stage.sfxStage2jfx
-import scalafxml.core.FXMLView
-import scalafxml.core.NoDependencyResolver
 import akka.actor.ActorSystem
 import akka.actor.Props
 
@@ -63,7 +61,9 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
     throw new IOException("Cannot load resource: view/Shelf.fxml")
   }
 
-  val root = FXMLView(resource, NoDependencyResolver)
+  import javafx.{ fxml ⇒ jfxf }
+  import javafx.{ scene ⇒ jfxs }
+  val root: jfxs.Parent = jfxf.FXMLLoader.load(resource)
 
   stage = new PrimaryStage() {
     title = "TMDb-shelf"

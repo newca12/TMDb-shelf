@@ -20,10 +20,10 @@ class ScalaFxActor extends Actor {
   def receive = {
     case Utils.Reset(shelf, items) ⇒
       for (item ← items)
-        shelf.getChildren().remove(item)
+        shelf.shelfGridPane.getChildren().remove(item)
 
     case Utils.AddPoster(shelf, movie, poster, pos) ⇒
-      shelf.add(poster, pos.x, pos.y)
+      shelf.shelfGridPane.add(poster, pos.x, pos.y)
 
   }
 

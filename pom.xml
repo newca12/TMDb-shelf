@@ -100,11 +100,6 @@
         </dependency>
         <dependency>
             <groupId>org.scalafx</groupId>
-            <artifactId>scalafxml-core_2.11</artifactId>
-            <version>0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scalafx</groupId>
             <artifactId>scalafx_2.11</artifactId>
             <version>8.0.0-R4</version>
         </dependency>
