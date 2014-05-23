@@ -25,6 +25,9 @@ class ScalaFxActor extends Actor {
     case Utils.AddPoster(shelf, movie, poster, pos) ⇒
       shelf.shelfGridPane.add(poster, pos.x, pos.y)
 
+    case Utils.ShowItem(shelf, item) ⇒
+      shelf.directorLabel.setText(item)
+
   }
 
 }

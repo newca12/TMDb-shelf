@@ -14,6 +14,8 @@ import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
+import org.edla.tmdb.api._
+import org.edla.tmdb.api.Protocol._
 
 object ShelfActor {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new ShelfActor(apiKey, tmdbTimeOut)
@@ -25,7 +27,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   @volatile var nbItems = 0
   var items: Array[scalafx.scene.image.ImageView] = new Array[scalafx.scene.image.ImageView](28)
 
-  def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: org.edla.tmdb.api.Movie, poster: scalafx.scene.image.Image) = {
+  def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: scalafx.scene.image.Image) = {
     val imageView_ = new ImageView {
       //CAUTION id is interpreted in String interpolation !
       image = poster
@@ -37,6 +39,17 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         override def handle(event: MouseEvent) {
           event.consume
           shelf.titleLabel.setText(movie.title)
+          val credits = tmdbClient.getCredits(movie.id)
+          credits.onSuccess {
+            case c ⇒
+              //shelf.directorLabel.setText(c.id.toString)
+              Launcher.scalaFxActor ! Utils.ShowItem(shelf, c.crew.filter(crew ⇒ crew.job == "Director").head.name)
+          }
+          credits.onFailure {
+            case e: Exception ⇒
+              log.error("future getCredits failed" + e.getMessage())
+          }
+          shelf.posterImageView.image_=(poster)
           log.info(s"event for movie ${movie.id} ${movie.title}")
         }
       }
@@ -63,7 +76,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
       results.onFailure {
         case e: Exception ⇒
-          log.error("future searchmovie failed" + e.getMessage())
+          log.error("future searcMmovie failed" + e.getMessage())
       }
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     case "test" ⇒

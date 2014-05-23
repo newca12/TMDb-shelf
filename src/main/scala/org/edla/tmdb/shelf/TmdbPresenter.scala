@@ -41,6 +41,8 @@ class TmdbPresenter extends jfxf.Initializable {
   private var title_label: jfxsc.Label = _
   @jfxf.FXML
   private var poster_imageview: jfxsi.ImageView = _
+  @jfxf.FXML
+  private var director_label: jfxsc.Label = _
 
   var searchTextFiled: TextField = _
   var shelfGridPane: GridPane = _
@@ -48,6 +50,7 @@ class TmdbPresenter extends jfxf.Initializable {
   var detailsAnchorPane: AnchorPane = _
   var titleLabel: Label = _
   var posterImageView: ImageView = _
+  var directorLabel: Label = _
 
   import scalafx.Includes._
   import scala.concurrent._
@@ -74,6 +77,7 @@ class TmdbPresenter extends jfxf.Initializable {
     detailsAnchorPane = new AnchorPane(details_anchorpane)
     titleLabel = new Label(title_label)
     posterImageView = new ImageView(poster_imageview)
+    directorLabel = new Label(director_label)
   }
 
 }

@@ -28,8 +28,12 @@
 </GridPane><TextField fx:id="search_texfield" layoutX="625.0" layoutY="24.0" prefHeight="26.0" prefWidth="281.0" /><Button fx:id="search_button" layoutX="937.33837890625" layoutY="24.0" mnemonicParsing="false" onAction="#search" text="Search" />
     <AnchorPane fx:id="details_anchorpane" layoutX="1023.0" layoutY="9.0" minHeight="0.0" minWidth="0.0" prefHeight="647.0" prefWidth="321.0">
          <children>
-            <Label fx:id="title_label" layoutX="42.0" layoutY="173.0" prefHeight="29.0" prefWidth="259.0" text="Title" />
+            <Label fx:id="title_label" layoutX="14.0" layoutY="173.0" prefHeight="29.0" prefWidth="301.0" text="Title" />
             <ImageView fx:id="poster_imageview" fitHeight="150.0" fitWidth="200.0" layoutX="63.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="director_label" layoutX="14.0" layoutY="216.0" prefHeight="26.0" prefWidth="301.0" text="Director" />
+            <Label fx:id="date_label" layoutX="14.0" layoutY="271.0" prefHeight="26.0" prefWidth="301.0" text="Date" />
+            <DatePicker fx:id="date_picker" layoutX="14.0" layoutY="360.0" />
+            <ListView fx:id="title_listview" layoutX="14.0" layoutY="411.0" prefHeight="200.0" prefWidth="301.0" />
          </children>
       </AnchorPane>
 </children></AnchorPane>
