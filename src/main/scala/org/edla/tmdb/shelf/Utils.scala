@@ -17,7 +17,7 @@ object Utils {
   case class GetResult(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Result)
   case class AddMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, imageView: scalafx.scene.image.ImageView)
   case class Reset(shelf: org.edla.tmdb.shelf.TmdbPresenter, items: Array[scalafx.scene.image.ImageView])
-  case class Search(shelf: org.edla.tmdb.shelf.TmdbPresenter, search: String)
+  case class Search(shelf: org.edla.tmdb.shelf.TmdbPresenter, search: String, page: Long)
   case class Position(x: Int, y: Int)
   case class AddPoster(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: scalafx.scene.image.ImageView, pos: Position)
   case class ShowItem(shelf: org.edla.tmdb.shelf.TmdbPresenter, item: String)

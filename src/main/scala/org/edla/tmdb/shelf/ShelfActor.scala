@@ -42,8 +42,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           val credits = tmdbClient.getCredits(movie.id)
           credits.onSuccess {
             case c ⇒
-              //shelf.directorLabel.setText(c.id.toString)
-              Launcher.scalaFxActor ! Utils.ShowItem(shelf, c.crew.filter(crew ⇒ crew.job == "Director").head.name)
+              val director = c.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
+              Launcher.scalaFxActor ! Utils.ShowItem(shelf, director)
           }
           credits.onFailure {
             case e: Exception ⇒
@@ -61,13 +61,14 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case "instance" ⇒
       log.info("instance asked")
       sender ! tmdbClient
-    case Utils.Search(shelf, search) ⇒
+    case Utils.Search(shelf, search, page) ⇒
       nbItems = 0
       //items = new Array[scalafx.scene.image.ImageView](28)
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
-      val results = tmdbClient.searchMovie(search)
+      val results = tmdbClient.searchMovie(search, page)
       results.onSuccess {
         case results ⇒
+          if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
           //val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           for (movie ← results.results) {
             tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
@@ -113,8 +114,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error("future getMovie failed" + e.getMessage())
       }
     case Utils.AddMovie(shelf, movie, imageView) ⇒
-      Launcher.scalaFxActor ! Utils.AddPoster(shelf, movie, imageView, Utils.Position(nbItems % 7, nbItems / 7))
-      items(nbItems) = imageView
+      if (nbItems < 28) {
+        Launcher.scalaFxActor ! Utils.AddPoster(shelf, movie, imageView, Utils.Position(nbItems % 7, nbItems / 7))
+        items(nbItems) = imageView
+      }
       nbItems = nbItems + 1
   }
 

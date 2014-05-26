@@ -60,7 +60,7 @@ class TmdbPresenter extends jfxf.Initializable {
   def search(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     title_label.text = search_texfield.text.value
-    shelfActor ! Utils.Search(this, search_texfield.text.value)
+    shelfActor ! Utils.Search(this, search_texfield.text.value, 1)
   }
 
   @jfxf.FXML
