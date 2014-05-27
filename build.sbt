@@ -17,7 +17,10 @@ resolvers += "spray" at "http://repo.spray.io"
 resolvers += "edla repo" at "http://www.edla.org/snapshots"
 
 libraryDependencies ++= Seq(
-  "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.2",
+  "io.spray" %% "spray-client" % "1.3.1-20140423",
+  "io.spray" %%  "spray-json" % "1.2.6",
+  "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
   "org.scalafx" %% "scalafx" % "8.0.0-R4",
   "org.controlsfx" % "controlsfx" % "8.0.5",
   "junit" % "junit" % "4.11" % "test",

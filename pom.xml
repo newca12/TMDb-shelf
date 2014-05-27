@@ -94,6 +94,21 @@
             <version>2.11.1</version>
         </dependency>
         <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.11</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.spray</groupId>
+            <artifactId>spray-client_2.11</artifactId>
+            <version>1.3.1-20140423</version>
+        </dependency>
+        <dependency>
+            <groupId>io.spray</groupId>
+            <artifactId>spray-json_2.11</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <dependency>
             <groupId>org.edla</groupId>
             <artifactId>tmdb-async-client_2.11</artifactId>
             <version>0.5-SNAPSHOT</version>

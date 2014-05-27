@@ -62,9 +62,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       log.info("instance asked")
       sender ! tmdbClient
     case Utils.Search(shelf, search, page) ⇒
-      nbItems = 0
-      //items = new Array[scalafx.scene.image.ImageView](28)
-      Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
+      if (page == 1) {
+        //items = new Array[scalafx.scene.image.ImageView](28)
+        nbItems = 0
+        Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
+      }
       val results = tmdbClient.searchMovie(search, page)
       results.onSuccess {
         case results ⇒
@@ -77,7 +79,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
       results.onFailure {
         case e: Exception ⇒
-          log.error("future searcMmovie failed" + e.getMessage())
+          log.error("future searchMovie failed" + e.getMessage())
       }
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     case "test" ⇒
@@ -111,7 +113,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
       movie.onFailure {
         case e: Exception ⇒
-          log.error("future getMovie failed" + e.getMessage())
+          log.error(s"future getMovie ${result.id} failed" + e.getMessage())
       }
     case Utils.AddMovie(shelf, movie, imageView) ⇒
       if (nbItems < 28) {
