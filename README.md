@@ -18,9 +18,6 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 3. Select the API section on left side of your account page.
 4. Click on the link to generate a new API key and follow the instructions.
 
-### Memo ###
-https://groups.google.com/forum/#!topic/spray-user/dIOQK_2tOzw
-
 ### License ###
 © 2014 Olivier ROLAND. Distributed under the GPLv3 License.
 
