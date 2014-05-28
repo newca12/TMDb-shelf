@@ -121,7 +121,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.0.5</version>
+            <version>8.0.6_20-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -150,9 +150,15 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>edlarepo</id>
-            <name>edla repo</name>
+            <id>edla</id>
+            <name>edla</name>
             <url>http://www.edla.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>sonatypesnapshots</id>
+            <name>sonatype snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <layout>default</layout>
         </repository>
     </repositories>

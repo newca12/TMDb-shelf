@@ -14,7 +14,9 @@ org.scalastyle.sbt.ScalastylePlugin.Settings
 
 resolvers += "spray" at "http://repo.spray.io"
 
-resolvers += "edla repo" at "http://www.edla.org/snapshots"
+resolvers += "edla" at "http://www.edla.org/snapshots"
+
+resolvers += "sonatype snapshots" at  "https://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.2",
@@ -22,7 +24,7 @@ libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.2.6",
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
   "org.scalafx" %% "scalafx" % "8.0.0-R4",
-  "org.controlsfx" % "controlsfx" % "8.0.5",
+  "org.controlsfx" % "controlsfx" % "8.0.6_20-SNAPSHOT",
   "junit" % "junit" % "4.11" % "test",
   "org.specs2" %% "specs2" % "2.3.11" % "test",
   "org.scalatest" %% "scalatest" % "2.1.3" % "test"

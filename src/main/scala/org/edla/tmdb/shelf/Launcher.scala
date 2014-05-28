@@ -75,7 +75,7 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
     def handle(p1: WindowEvent) = System.exit(0)
   })
 
-  def checkOrAskApiKey(): String = {
+  def checkOrAskApiKey() = {
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     val apiKey = prefs.get("apiKey", "")
     if (apiKey.isEmpty()) {
@@ -84,8 +84,8 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
         .title("Information needed")
         .message("Enter your API key")
         .showTextInput()
-      if (response == null) sys.exit
-      response
+      if (response.isPresent()) response.get()
+      else sys.exit
     } else apiKey
   }
 
