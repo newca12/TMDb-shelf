@@ -22,6 +22,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.2",
   "io.spray" %% "spray-client" % "1.3.1-20140423",
   "io.spray" %%  "spray-json" % "1.2.6",
+  "com.pragmasoft" %% "spray-funnel" % "1.0-RC3-spray1.3" intransitive,  
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
   "org.scalafx" %% "scalafx" % "8.0.0-R4",
   "org.controlsfx" % "controlsfx" % "8.0.6_20-SNAPSHOT",

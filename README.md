@@ -10,6 +10,9 @@ TMDb-shelf is an EDLA project.
 
 The purpose of [edla.org](http://www.edla.org) is to promote the state of the art in various domains.
 
+### Requirements ###
+Java 1.8.0_20 (not yet released, but available in early access"
+
 ### API Key ###
 You will need an API key to The Movie Database to access the API.  To obtain a key, follow these steps:
 
