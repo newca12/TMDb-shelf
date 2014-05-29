@@ -18,6 +18,8 @@ resolvers += "edla" at "http://www.edla.org/snapshots"
 
 resolvers += "sonatype snapshots" at  "https://oss.sonatype.org/content/repositories/snapshots"
 
+resolvers += "ConJars" at "http://conjars.org/repo"
+
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.2",
   "io.spray" %% "spray-client" % "1.3.1-20140423",
