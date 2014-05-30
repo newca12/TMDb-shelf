@@ -109,6 +109,11 @@
             <version>1.2.6</version>
         </dependency>
         <dependency>
+            <groupId>com.pragmasoft</groupId>
+            <artifactId>spray-funnel_2.11</artifactId>
+            <version>1.0-RC3-spray1.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.edla</groupId>
             <artifactId>tmdb-async-client_2.11</artifactId>
             <version>0.5-SNAPSHOT</version>
@@ -121,7 +126,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.0.6_20-SNAPSHOT</version>
+            <version>8.0.6_20</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -156,9 +161,9 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>sonatypesnapshots</id>
-            <name>sonatype snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>ConJars</id>
+            <name>ConJars</name>
+            <url>http://conjars.org/repo/</url>
             <layout>default</layout>
         </repository>
     </repositories>
