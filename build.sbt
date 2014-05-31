@@ -24,7 +24,6 @@ libraryDependencies ++= Seq(
   "io.spray" %%  "spray-json" % "1.2.6",
   "com.pragmasoft" %% "spray-funnel" % "1.0-RC3-spray1.3" intransitive,  
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
-  "org.scalafx" %% "scalafx" % "8.0.0-R4",
   "org.controlsfx" % "controlsfx" % "8.0.6_20",
   "junit" % "junit" % "4.11" % "test",
   "org.specs2" %% "specs2" % "2.3.11" % "test",

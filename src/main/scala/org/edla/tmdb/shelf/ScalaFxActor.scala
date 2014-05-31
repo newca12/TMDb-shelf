@@ -11,9 +11,9 @@ import ExecutionContext.Implicits.global
 
 class ScalaFxActor extends Actor {
 
-  import scalafx.scene.image.Image
-  import scalafx.scene.image.ImageView
-  import scalafx.event.ActionEvent
+  import javafx.scene.image.Image
+  import javafx.scene.image.ImageView
+  import javafx.event.ActionEvent
   import javafx.event.EventHandler
   import javafx.scene.input.MouseEvent
 

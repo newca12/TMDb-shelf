@@ -10,8 +10,8 @@ import akka.event.Logging
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
-import scalafx.scene.image.Image
-import scalafx.scene.image.ImageView
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
 import org.edla.tmdb.api._
@@ -25,35 +25,34 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
   val tmdbClient = TmdbClient(apiKey, tmdbTimeOut)
   @volatile var nbItems = 0
-  var items: Array[scalafx.scene.image.ImageView] = new Array[scalafx.scene.image.ImageView](28)
+  var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](28)
 
-  def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: scalafx.scene.image.Image) = {
-    val imageView_ = new ImageView {
-      //CAUTION id is interpreted in String interpolation !
-      image = poster
-      fitHeight_=(108)
-      fitWidth_=(108)
-      preserveRatio = true
-      smooth = true
-      onMouseClicked = new EventHandler[MouseEvent] {
-        override def handle(event: MouseEvent) {
-          event.consume
-          shelf.titleLabel.setText(movie.title)
-          val credits = tmdbClient.getCredits(movie.id)
-          credits.onSuccess {
-            case c ⇒
-              val director = c.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
-              Launcher.scalaFxActor ! Utils.ShowItem(shelf, director)
-          }
-          credits.onFailure {
-            case e: Exception ⇒
-              log.error("future getCredits failed" + e.getMessage())
-          }
-          shelf.posterImageView.image_=(poster)
-          log.info(s"event for movie ${movie.id} ${movie.title}")
+  def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
+    var imageView_ = new ImageView()
+    imageView_.setImage(poster)
+    imageView_.setFitHeight(108)
+    imageView_.setFitWidth(108)
+    imageView_.setPreserveRatio(true)
+    imageView_.setSmooth(true)
+    imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
+      override def handle(event: MouseEvent) {
+        event.consume
+        shelf.titleLabel.setText(movie.title)
+        val credits = tmdbClient.getCredits(movie.id)
+        credits.onSuccess {
+          case c ⇒
+            val director = c.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
+            Launcher.scalaFxActor ! Utils.ShowItem(shelf, director)
         }
+        credits.onFailure {
+          case e: Exception ⇒
+            log.error("future getCredits failed" + e.getMessage())
+        }
+        shelf.posterImageView.setImage(poster)
+        log.info(s"event for movie ${movie.id} ${movie.title}")
       }
-    }
+    })
+
     self ! Utils.AddMovie(shelf, movie, imageView_)
   }
 
@@ -108,7 +107,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
               }
             case None ⇒
               log.info("no poster:" + movie.id)
-              send(shelf, movie, new Image(this, "view/images/200px-No_image_available.svg.png"))
+              send(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
           }
       }
       movie.onFailure {

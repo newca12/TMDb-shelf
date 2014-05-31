@@ -12,18 +12,16 @@ import org.controlsfx.dialog.Dialogs
 import org.edla.tmdb.client.InvalidApiKeyException
 import javafx.event.EventHandler
 import javafx.stage.WindowEvent
-import scalafx.Includes.jfxParent2sfx
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.stage.Stage.sfxStage2jfx
+import javafx.scene.Scene
+
 import akka.actor.ActorSystem
 import akka.actor.Props
 
-//inspired by typesafe migration-manager
+/*//inspired by typesafe migration-manager
 trait WithUncaughtExceptionHandlerDialog {
 
-  /** Show a dialog for all uncaught exception. */
+  */
+/** Show a dialog for all uncaught exception. */ /*
   private class UncaughtExceptionHandlerDialog extends Thread.UncaughtExceptionHandler {
     override def uncaughtException(t: Thread, e: Throwable) {
       try {
@@ -38,14 +36,19 @@ trait WithUncaughtExceptionHandlerDialog {
     }
   }
 
-  /** Default exception handler */
+  */
+/** Default exception handler */ /*
   protected val handler: Thread.UncaughtExceptionHandler = new UncaughtExceptionHandlerDialog()
 
   // setting the handler (assumes it is set only once, here - no way to enforce this though)
   Thread.setDefaultUncaughtExceptionHandler(handler)
-}
+}*/
 
-object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
+object Launcher {
+
+  def main(args: Array[String]) {
+    new Launcher().launch
+  }
 
   import java.nio.file.{ Paths, Files }
   val home = System.getProperty("user.home")
@@ -54,6 +57,12 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
 
   val system = ActorSystem("ShelfSystem")
   val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
+
+}
+
+class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
+
+  def launch = javafx.application.Application.launch()
 
   import java.io.IOException
   val resource = getClass.getResource("view/Shelf.fxml")
@@ -65,22 +74,26 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
   import javafx.{ scene ⇒ jfxs }
   val root: jfxs.Parent = jfxf.FXMLLoader.load(resource)
 
-  stage = new PrimaryStage() {
-    title = "TMDb-shelf"
-    scene = new Scene(root)
-    val apiKey = checkOrAskApiKey()
+  import javafx.stage.Stage
+  override def start(primaryStage: Stage) {
+    val scene = new Scene(root)
+    primaryStage.setTitle("TMDb-shelf")
+    primaryStage.setScene(scene)
+    primaryStage.show()
+    val apiKey = checkOrAskApiKey(primaryStage)
     validateApiKey(apiKey)
-  }
-  stage.setOnCloseRequest(new EventHandler[WindowEvent] {
-    def handle(p1: WindowEvent) = System.exit(0)
-  })
 
-  def checkOrAskApiKey() = {
+    primaryStage.setOnCloseRequest(new EventHandler[WindowEvent] {
+      def handle(p1: WindowEvent) = System.exit(0)
+    })
+  }
+
+  def checkOrAskApiKey(primaryStage: Stage) = {
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     val apiKey = prefs.get("apiKey", "")
     if (apiKey.isEmpty()) {
       val response = Dialogs.create()
-        .owner(stage)
+        .owner(primaryStage)
         .title("Information needed")
         .message("Enter your API key")
         .showTextInput()
@@ -96,7 +109,7 @@ object Launcher extends JFXApp /*with WithUncaughtExceptionHandlerDialog*/ {
     val apiKeyStored = prefs.get("apiKey", "")
     //http://tersesystems.com/2012/12/27/error-handling-in-scala/
     //http://mauricio.github.io/2014/02/17/scala-either-try-and-the-m-word.html
-    val shelfActor = system.actorOf(Props(ShelfActor(apiKey, 45 second)), name = "shelfactor")
+    val shelfActor = Launcher.system.actorOf(Props(ShelfActor(apiKey, 45 second)), name = "shelfactor")
     val tmdbClient = Utils.getTmdbClient
     val token = Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     token match {

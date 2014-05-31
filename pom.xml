@@ -119,11 +119,6 @@
             <version>0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.scalafx</groupId>
-            <artifactId>scalafx_2.11</artifactId>
-            <version>8.0.0-R4</version>
-        </dependency>
-        <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>8.0.6_20</version>
