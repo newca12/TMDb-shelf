@@ -1,10 +1,11 @@
 # TMDb-shelf [![Build Status](https://travis-ci.org/newca12/TMDb-shelf.svg?branch=master)](https://travis-ci.org/newca12/TMDb-shelf) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-shelf/badge.png)](https://coveralls.io/r/newca12/TMDb-shelf) [![Ohloh](http://www.ohloh.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-shelf)
 
 ### About ###
-TMDb-shell is a ScalaFX client for [The Movie Database][1] (TMDb).  
+TMDb-shelf is a totally asynchronous JavaFX client written in Scala for [The Movie Database][1] (TMDb).  
 It is built heavily on :
 * [TMDb-async-client][2]  
-* [ScalaFx][3]
+* [JavaFX][3]
+* [Akka][4]
 
 TMDb-shelf is an EDLA project.
 
@@ -26,4 +27,5 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 
 [1]: http://www.themoviedb.org/
 [2]: https://github.com/newca12/TMDb-async-client
-[3]: https://code.google.com/p/scalafx/
+[3]: http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html
+[4]: http://akka.io/
