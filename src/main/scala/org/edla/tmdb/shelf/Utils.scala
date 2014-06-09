@@ -12,15 +12,29 @@ import org.edla.tmdb.client.TmdbClient
 import akka.pattern.ask
 import akka.util.Timeout
 
+import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
+import javafx.scene.control.ListCell
+import javafx.scene.control.ListView
+import javafx.event.Event
+import javafx.event.EventHandler
+import javafx.util.Callback
+import org.controlsfx.control.GridCell
+import org.controlsfx.control.GridView
+
 object Utils {
 
   case class GetResult(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Result)
   case class AddMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, imageView: javafx.scene.image.ImageView)
   case class Reset(shelf: org.edla.tmdb.shelf.TmdbPresenter, items: Array[javafx.scene.image.ImageView])
-  case class Search(shelf: org.edla.tmdb.shelf.TmdbPresenter, search: String, page: Long)
+  case class Search(shelf: org.edla.tmdb.shelf.TmdbPresenter, search: String)
   case class Position(x: Int, y: Int)
   case class AddPoster(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.ImageView, pos: Position)
+  case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: String)
   case class ShowItem(shelf: org.edla.tmdb.shelf.TmdbPresenter, item: String)
+  case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Long)
 
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
@@ -28,4 +42,33 @@ object Utils {
     val future: Future[TmdbClient] = ask(shelfActor, "instance").mapTo[TmdbClient]
     Await.result(future, 5 second)
   }
+}
+
+//http://stackoverflow.com/questions/11377350/scala-java-interop-class-type-not-converted
+//https://gist.github.com/rladstaetter/5570916
+trait JfxUtils {
+
+  def mkChangeListener[T](onChangeAction: (ObservableValue[_ <: T], T, T) ⇒ Unit): ChangeListener[T] = {
+    new ChangeListener[T]() {
+      override def changed(observable: ObservableValue[_ <: T], oldValue: T, newValue: T) = {
+        onChangeAction(observable, oldValue, newValue)
+      }
+    }
+  }
+  def mkListChangeListener[E](onChangedAction: ListChangeListener.Change[_ <: E] ⇒ Unit) = new ListChangeListener[E] {
+    def onChanged(changeItem: ListChangeListener.Change[_ <: E]): Unit = {
+      onChangedAction(changeItem)
+    }
+  }
+
+  def mkCellFactoryCallback[T](listCellGenerator: ListView[T] ⇒ ListCell[T]) = new Callback[ListView[T], ListCell[T]]() {
+    override def call(list: ListView[T]): ListCell[T] = listCellGenerator(list)
+  }
+
+  def mkCellFactoryCallback_[T](listCellGenerator: GridView[T] ⇒ GridCell[T]) = new Callback[GridView[T], GridCell[T]]() {
+    override def call(list: GridView[T]): GridCell[T] = listCellGenerator(list)
+  }
+
+  def mkEventHandler[E <: Event](f: E ⇒ Unit) = new EventHandler[E] { def handle(e: E) = f(e) }
+
 }

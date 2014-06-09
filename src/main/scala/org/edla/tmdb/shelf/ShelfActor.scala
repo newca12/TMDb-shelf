@@ -25,7 +25,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
   val tmdbClient = TmdbClient(apiKey, tmdbTimeOut)
   @volatile var nbItems = 0
-  var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](28)
+  var page: Long = 1
+  var maxPage: Long = 1
+  val maxItems = 21
+  var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
+  var search = ""
 
   def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
     var imageView_ = new ImageView()
@@ -60,17 +64,24 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case "instance" ⇒
       log.info("instance asked")
       sender ! tmdbClient
-    case Utils.Search(shelf, search, page) ⇒
-      if (page == 1) {
-        //items = new Array[scalafx.scene.image.ImageView](28)
-        nbItems = 0
-        Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
-      }
+    case Utils.ChangePage(shelf, change) ⇒
+      page = page + change
+      Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
+      self ! Utils.Search(shelf, this.search)
+    case Utils.Search(shelf, search) ⇒
+      this.search = search
+      //if (page == 1) {
+      //items = new Array[scalafx.scene.image.ImageView](28)
+      nbItems = 0
+      Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
+      //}
       val results = tmdbClient.searchMovie(search, page)
       results.onSuccess {
         case results ⇒
-          if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
+          //if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
           //val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+          maxPage = results.total_pages
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
           for (movie ← results.results) {
             tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
             self ! Utils.GetResult(shelf, movie)
@@ -115,7 +126,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error(s"future getMovie ${result.id} failed" + e.getMessage())
       }
     case Utils.AddMovie(shelf, movie, imageView) ⇒
-      if (nbItems < 28) {
+      if (nbItems < maxItems) {
         Launcher.scalaFxActor ! Utils.AddPoster(shelf, movie, imageView, Utils.Position(nbItems % 7, nbItems / 7))
         items(nbItems) = imageView
       }

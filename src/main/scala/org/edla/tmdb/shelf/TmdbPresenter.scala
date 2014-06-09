@@ -30,6 +30,12 @@ import javafx.{ fxml ⇒ jfxf }
 
 class TmdbPresenter {
   @jfxf.FXML
+  var previousButton: jfxsc.Button = _
+  @jfxf.FXML
+  var pageLabel: jfxsc.Label = _
+  @jfxf.FXML
+  var nextButton: jfxsc.Button = _
+  @jfxf.FXML
   var searchTextField: jfxsc.TextField = _
   @jfxf.FXML
   var searchButton: jfxsc.Button = _
@@ -44,22 +50,26 @@ class TmdbPresenter {
   @jfxf.FXML
   var directorLabel: jfxsc.Label = _
 
-  /* var searchTextFiled: TextField = _
-  var shelfGridPane: GridPane = _
-  var searchButton: Button = _
-  var detailsAnchorPane: AnchorPane = _
-  var titleLabel: Label = _
-  var posterImageView: ImageView = _
-  var directorLabel: Label = _*/
-
   import scala.concurrent._
   import ExecutionContext.Implicits.global
+
+  @jfxf.FXML
+  def previousPage(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.ChangePage(this, -1)
+  }
+
+  @jfxf.FXML
+  def nextPage(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.ChangePage(this, 1)
+  }
 
   @jfxf.FXML
   def search(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     titleLabel.setText(searchTextField.getText())
-    shelfActor ! Utils.Search(this, searchTextField.getText(), 1)
+    shelfActor ! Utils.Search(this, searchTextField.getText())
   }
 
   @jfxf.FXML
