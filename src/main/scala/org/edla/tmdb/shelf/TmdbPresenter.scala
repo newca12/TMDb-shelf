@@ -36,6 +36,8 @@ class TmdbPresenter {
   @jfxf.FXML
   var nextButton: jfxsc.Button = _
   @jfxf.FXML
+  var viewCollectionButton: jfxsc.Button = _
+  @jfxf.FXML
   var searchTextField: jfxsc.TextField = _
   @jfxf.FXML
   var searchButton: jfxsc.Button = _
@@ -47,6 +49,8 @@ class TmdbPresenter {
   var titleLabel: jfxsc.Label = _
   @jfxf.FXML
   var posterImageView: jfxsi.ImageView = _
+  @jfxf.FXML
+  var addMovieButton: jfxsc.Button = _
   @jfxf.FXML
   var directorLabel: jfxsc.Label = _
 
@@ -65,10 +69,19 @@ class TmdbPresenter {
     shelfActor ! Utils.ChangePage(this, 1)
   }
 
+  def viewCollection(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.ViewCollection(this)
+  }
+
+  def addMovie(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.SaveMovie(this)
+  }
+
   @jfxf.FXML
   def search(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    titleLabel.setText(searchTextField.getText())
     shelfActor ! Utils.Search(this, searchTextField.getText())
   }
 

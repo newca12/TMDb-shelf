@@ -8,6 +8,7 @@ import akka.actor.Actor
 import scala.language.postfixOps
 import scala.concurrent._
 import ExecutionContext.Implicits.global
+import org.edla.tmdb.api.Protocol._
 
 class ScalaFxActor extends Actor {
 
@@ -28,9 +29,14 @@ class ScalaFxActor extends Actor {
     case Utils.ShowPage(shelf, page) ⇒
       shelf.pageLabel.setText(page)
 
-    case Utils.ShowItem(shelf, item) ⇒
-      shelf.directorLabel.setText(item)
-
+    case Utils.RefreshDetails(shelf, movie, credits) ⇒
+      import scala.slick.driver.H2Driver.simple._
+      val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
+      shelf.directorLabel.setText(director)
+      Persist.db.withSession { implicit session ⇒
+        val res = Persist.movies.filter(_.id === movie.id).list
+        shelf.addMovieButton.setDisable(!res.isEmpty)
+      }
   }
 
 }

@@ -6,6 +6,7 @@ import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
 import org.edla.tmdb.api.Protocol.Movie
+import org.edla.tmdb.api.Protocol.Credits
 import org.edla.tmdb.api.Protocol.Result
 import org.edla.tmdb.client.TmdbClient
 
@@ -33,8 +34,10 @@ object Utils {
   case class Position(x: Int, y: Int)
   case class AddPoster(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.ImageView, pos: Position)
   case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: String)
-  case class ShowItem(shelf: org.edla.tmdb.shelf.TmdbPresenter, item: String)
+  case class RefreshDetails(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, crew: Credits)
   case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Long)
+  case class ViewCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter)
+  case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
 
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")

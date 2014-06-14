@@ -30,6 +30,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   val maxItems = 21
   var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
   var search = ""
+  var selectedMovie: (Movie, Credits) = _
 
   def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
     var imageView_ = new ImageView()
@@ -44,9 +45,9 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         shelf.titleLabel.setText(movie.title)
         val credits = tmdbClient.getCredits(movie.id)
         credits.onSuccess {
-          case c ⇒
-            val director = c.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
-            Launcher.scalaFxActor ! Utils.ShowItem(shelf, director)
+          case credits ⇒
+            selectedMovie = (movie, credits)
+            Launcher.scalaFxActor ! Utils.RefreshDetails(shelf, movie, credits)
         }
         credits.onFailure {
           case e: Exception ⇒
@@ -92,8 +93,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error("future searchMovie failed" + e.getMessage())
       }
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
-    case "test" ⇒
-      log.info("test asked")
     case Utils.GetResult(shelf, result) ⇒
       val movie = tmdbClient.getMovie(result.id)
       movie.onSuccess {
@@ -131,6 +130,36 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         items(nbItems) = imageView
       }
       nbItems = nbItems + 1
+    case Utils.SaveMovie(shelf) ⇒
+      import scala.slick.driver.H2Driver.simple._
+      val movie = selectedMovie._1
+      val credits = selectedMovie._2
+      val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
+      Persist.db.withSession { implicit session ⇒
+        Persist.movies += (movie.id, movie.title, director)
+      }
+      log.info(s"${movie.id} ${movie.title} registered")
+      Launcher.scalaFxActor ! Utils.RefreshDetails(shelf, movie, credits)
+    case Utils.ViewCollection(shelf) ⇒
+      import scala.slick.driver.H2Driver.simple._
+      nbItems = 0
+      Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
+      Persist.db.withSession { implicit session ⇒
+
+        Persist.movies foreach {
+          case (id, title, director) ⇒
+            val movie = tmdbClient.getMovie(id)
+            movie.onSuccess {
+              case movie ⇒
+                val filename = s"${Launcher.localStore}/${movie.id}.jpg"
+                send(shelf, movie, new Image(s"file://${filename}"))
+            }
+            movie.onFailure {
+              case e: Exception ⇒
+                log.error(s"future viewCollection getMovie failed" + e.getMessage())
+            }
+        }
+      }
   }
 
 }
