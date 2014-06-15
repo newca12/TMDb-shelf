@@ -29,12 +29,25 @@ class ScalaFxActor extends Actor {
     case Utils.ShowPage(shelf, page) ⇒
       shelf.pageLabel.setText(page)
 
+    case Utils.ShowReleases(shelf, releases) ⇒
+      //TODO localize this
+      val release = releases.countries.filter(country ⇒ country.iso_3166_1 == "FR").headOption.getOrElse(unReleased).release_date
+      shelf.localizedReleaseLabel.setText(release)
+
+    case Utils.ShowSeenDate(shelf, seenDate) ⇒
+      if (seenDate.isDefined)
+        shelf.seenDatePicker.setValue(seenDate.get.toLocalDate())
+      else
+        //shelf.seenDatePicker = new javafx.scene.control.DatePicker()
+        shelf.seenDatePicker.setValue(null)
+
     case Utils.RefreshDetails(shelf, movie, credits) ⇒
       import scala.slick.driver.H2Driver.simple._
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
       shelf.directorLabel.setText(director)
-      Persist.db.withSession { implicit session ⇒
-        val res = Persist.movies.filter(_.id === movie.id).list
+
+      Store.db.withSession { implicit session ⇒
+        val res = Store.movies.filter(_.tmdbId === movie.id).list
         shelf.addMovieButton.setDisable(!res.isEmpty)
       }
   }

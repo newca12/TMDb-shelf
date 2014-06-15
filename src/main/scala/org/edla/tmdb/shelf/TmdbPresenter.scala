@@ -1,6 +1,5 @@
 package org.edla.tmdb.shelf
 
-//import scalafxml.core.macros.sfxml
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.input.MouseEvent
@@ -36,7 +35,9 @@ class TmdbPresenter {
   @jfxf.FXML
   var nextButton: jfxsc.Button = _
   @jfxf.FXML
-  var viewCollectionButton: jfxsc.Button = _
+  var showCollectionButton: jfxsc.Button = _
+  @jfxf.FXML
+  var filterCollectionChoiceBox: jfxsc.ChoiceBox[String] = _
   @jfxf.FXML
   var searchTextField: jfxsc.TextField = _
   @jfxf.FXML
@@ -46,13 +47,25 @@ class TmdbPresenter {
   @jfxf.FXML
   var detailsAnchorPane: jfxsl.AnchorPane = _
   @jfxf.FXML
-  var titleLabel: jfxsc.Label = _
-  @jfxf.FXML
   var posterImageView: jfxsi.ImageView = _
   @jfxf.FXML
   var addMovieButton: jfxsc.Button = _
   @jfxf.FXML
+  var titleLabel: jfxsc.Label = _
+  @jfxf.FXML
+  var originalTitleLabel: jfxsc.Label = _
+  @jfxf.FXML
   var directorLabel: jfxsc.Label = _
+  @jfxf.FXML
+  var releaseLabel: jfxsc.Label = _
+  @jfxf.FXML
+  var localizedReleaseLabel: jfxsc.Label = _
+  @jfxf.FXML
+  var seenDatePicker: jfxsc.DatePicker = new jfxsc.DatePicker()
+  @jfxf.FXML
+  var saveSeenDateButton: jfxsc.Button = _
+  @jfxf.FXML
+  val imdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.imdb.com")
 
   import scala.concurrent._
   import ExecutionContext.Implicits.global
@@ -69,9 +82,9 @@ class TmdbPresenter {
     shelfActor ! Utils.ChangePage(this, 1)
   }
 
-  def viewCollection(event: jfxe.ActionEvent) {
+  def showCollection(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.ViewCollection(this)
+    shelfActor ! Utils.ShowCollection(this)
   }
 
   def addMovie(event: jfxe.ActionEvent) {
@@ -89,4 +102,22 @@ class TmdbPresenter {
   def handleClear(event: jfxe.ActionEvent) {
     searchTextField.setText("")
   }
+
+  @jfxf.FXML
+  def openWebpage(event: jfxe.ActionEvent) {
+    java.awt.Desktop.getDesktop().browse(new java.net.URL(imdbHyperlink.getText()).toURI())
+  }
+
+  @jfxf.FXML
+  def updateSeenDate(event: jfxe.ActionEvent) {
+    //not auto saving seenDate here since setting a date programmatically trigger ActionEvent 
+  }
+
+  @jfxf.FXML
+  def saveSeenDate(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    val date = seenDatePicker.getValue()
+    shelfActor ! Utils.SaveSeenDate(this, java.sql.Date.valueOf(date))
+  }
+
 }

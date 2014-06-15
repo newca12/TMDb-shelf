@@ -7,6 +7,7 @@ import scala.language.postfixOps
 
 import org.edla.tmdb.api.Protocol.Movie
 import org.edla.tmdb.api.Protocol.Credits
+import org.edla.tmdb.api.Protocol.Releases
 import org.edla.tmdb.api.Protocol.Result
 import org.edla.tmdb.client.TmdbClient
 
@@ -36,8 +37,11 @@ object Utils {
   case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: String)
   case class RefreshDetails(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, crew: Credits)
   case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Long)
-  case class ViewCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter)
+  case class ShowCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
+  case class ShowReleases(shelf: org.edla.tmdb.shelf.TmdbPresenter, releases: Releases)
+  case class ShowSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: Option[java.sql.Date])
+  case class SaveSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: java.sql.Date)
 
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
