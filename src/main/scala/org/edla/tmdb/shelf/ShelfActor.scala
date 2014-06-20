@@ -43,11 +43,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
       override def handle(event: MouseEvent) {
         event.consume
-        //TODO probably dangerous (ie not thread safe), use ScalaFxActor is recommended
-        shelf.titleLabel.setText(movie.title)
-        shelf.originalTitleLabel.setText(movie.original_title)
-        shelf.releaseLabel.setText(movie.release_date)
-        shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${movie.imdb_id}");
+        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, movie)
         import scala.async.Async.async
         val futureDb = async {
           import scala.slick.driver.H2Driver.simple._
@@ -78,7 +74,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         credits.onSuccess {
           case credits ⇒
             selectedMovie = (movie, credits)
-            Launcher.scalaFxActor ! Utils.RefreshDetails(shelf, movie, credits)
+            Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, movie, credits)
         }
         credits.onFailure {
           case e: Exception ⇒
@@ -166,13 +162,21 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val movie = selectedMovie._1
       val credits = selectedMovie._2
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
-      Store.db.withSession { implicit session ⇒
-        val tmp = (movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
-          new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, false)
-        Store.movies += tmp
+      try {
+        Store.db.withSession { implicit session ⇒
+          val tmp = (movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
+            new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, false)
+          Store.movies += tmp
+        }
+        log.info(s"${movie.title} registered")
+        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Registered")
+      } catch {
+        case e: Exception ⇒
+          log.error(e.getMessage())
+          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
-      log.info(s"${movie.id} ${movie.title} registered")
-      Launcher.scalaFxActor ! Utils.RefreshDetails(shelf, movie, credits)
+
+      Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, movie, credits)
     case Utils.ShowCollection(shelf) ⇒
       import scala.slick.driver.H2Driver.simple._
       nbItems = 0
@@ -196,9 +200,16 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
     case Utils.SaveSeenDate(shelf, seenDate) ⇒
       import scala.slick.driver.H2Driver.simple._
-      Store.db.withSession { implicit session ⇒
-        val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie._1.id } yield (movie.viewingDate, movie.seen)
-        q.update((Some(seenDate), true))
+      try {
+        Store.db.withSession { implicit session ⇒
+          val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie._1.id } yield (movie.viewingDate, movie.seen)
+          val res = q.update((Some(seenDate), true))
+        }
+        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Date updated")
+      } catch {
+        case e: Exception ⇒
+          log.error(e.getMessage())
+          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
   }
 

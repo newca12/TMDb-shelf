@@ -35,13 +35,15 @@ object Utils {
   case class Position(x: Int, y: Int)
   case class AddPoster(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.ImageView, pos: Position)
   case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: String)
-  case class RefreshDetails(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, crew: Credits)
+  case class RefreshMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
+  case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, crew: Credits)
   case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Long)
   case class ShowCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class ShowReleases(shelf: org.edla.tmdb.shelf.TmdbPresenter, releases: Releases)
   case class ShowSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: Option[java.sql.Date])
   case class SaveSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: java.sql.Date)
+  case class ShowPopup(shelf: org.edla.tmdb.shelf.TmdbPresenter, popup: String)
 
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")

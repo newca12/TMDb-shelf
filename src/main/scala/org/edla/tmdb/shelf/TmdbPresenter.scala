@@ -65,7 +65,7 @@ class TmdbPresenter {
   @jfxf.FXML
   var saveSeenDateButton: jfxsc.Button = _
   @jfxf.FXML
-  val imdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.imdb.com")
+  var imdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.imdb.com")
 
   import scala.concurrent._
   import ExecutionContext.Implicits.global

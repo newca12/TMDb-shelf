@@ -41,7 +41,14 @@ class ScalaFxActor extends Actor {
         //shelf.seenDatePicker = new javafx.scene.control.DatePicker()
         shelf.seenDatePicker.setValue(null)
 
-    case Utils.RefreshDetails(shelf, movie, credits) ⇒
+    case Utils.RefreshMovie(shelf, movie) ⇒
+      shelf.titleLabel.setText(movie.title)
+      shelf.originalTitleLabel.setText(movie.original_title)
+      shelf.releaseLabel.setText(movie.release_date)
+      shelf.imdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(movie.imdb_id))
+      shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${movie.imdb_id}")
+
+    case Utils.RefreshCredits(shelf, movie, credits) ⇒
       import scala.slick.driver.H2Driver.simple._
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
       shelf.directorLabel.setText(director)
@@ -50,6 +57,15 @@ class ScalaFxActor extends Actor {
         val res = Store.movies.filter(_.tmdbId === movie.id).list
         shelf.addMovieButton.setDisable(!res.isEmpty)
       }
+
+    case Utils.ShowPopup(shelf, msg) ⇒
+      val popup = new javafx.stage.Popup()
+      val label = new javafx.scene.control.Label(msg)
+      popup.getContent().add(label)
+      popup.setAutoHide(true)
+      popup.setX(Launcher.stage.getX() + Launcher.stage.getWidth() - 110)
+      popup.setY(Launcher.stage.getY() + Launcher.stage.getHeight() - 40)
+      popup.show(Launcher.stage)
   }
 
 }

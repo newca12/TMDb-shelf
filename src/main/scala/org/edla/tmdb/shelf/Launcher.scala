@@ -16,6 +16,7 @@ import javafx.scene.Scene
 
 import akka.actor.ActorSystem
 import akka.actor.Props
+import javafx.stage.Stage
 
 /*//inspired by typesafe migration-manager
 trait WithUncaughtExceptionHandlerDialog {
@@ -58,6 +59,7 @@ object Launcher {
   val system = ActorSystem("ShelfSystem")
   val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
 
+  var stage: Stage = _
 }
 
 class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
@@ -74,8 +76,8 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
   import javafx.{ scene ⇒ jfxs }
   val root: jfxs.Parent = jfxf.FXMLLoader.load(resource)
 
-  import javafx.stage.Stage
   override def start(primaryStage: Stage) {
+    Launcher.stage = primaryStage
     val scene = new Scene(root)
     primaryStage.setTitle("TMDb-shelf")
     primaryStage.setScene(scene)
