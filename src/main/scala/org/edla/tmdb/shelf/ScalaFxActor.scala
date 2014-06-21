@@ -23,7 +23,7 @@ class ScalaFxActor extends Actor {
       for (item ← items)
         shelf.shelfGridPane.getChildren().remove(item)
 
-    case Utils.AddPoster(shelf, movie, poster, pos) ⇒
+    case Utils.AddPosterXy(shelf, poster, pos) ⇒
       shelf.shelfGridPane.add(poster, pos.x, pos.y)
 
     case Utils.ShowPage(shelf, page) ⇒
@@ -41,12 +41,12 @@ class ScalaFxActor extends Actor {
         //shelf.seenDatePicker = new javafx.scene.control.DatePicker()
         shelf.seenDatePicker.setValue(null)
 
-    case Utils.RefreshMovie(shelf, movie) ⇒
-      shelf.titleLabel.setText(movie.title)
-      shelf.originalTitleLabel.setText(movie.original_title)
-      shelf.releaseLabel.setText(movie.release_date)
-      shelf.imdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(movie.imdb_id))
-      shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${movie.imdb_id}")
+    case Utils.RefreshMovie(shelf, title, original_title, release_date, imdb_id) ⇒
+      shelf.titleLabel.setText(title)
+      shelf.originalTitleLabel.setText(original_title)
+      shelf.releaseLabel.setText(release_date)
+      shelf.imdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(imdb_id))
+      shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${imdb_id}")
 
     case Utils.RefreshCredits(shelf, movie, credits) ⇒
       import scala.slick.driver.H2Driver.simple._

@@ -84,7 +84,8 @@ class TmdbPresenter {
 
   def showCollection(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.ShowCollection(this)
+    searchTextField.setText("")
+    shelfActor ! Utils.ShowCollection(this, true)
   }
 
   def addMovie(event: jfxe.ActionEvent) {
@@ -95,7 +96,7 @@ class TmdbPresenter {
   @jfxf.FXML
   def search(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.Search(this, searchTextField.getText())
+    shelfActor ! Utils.Search(this, searchTextField.getText(), true)
   }
 
   @jfxf.FXML
