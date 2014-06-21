@@ -45,8 +45,22 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         event.consume
         selectedMovie = (tmdbId, null, null)
         shelf.posterImageView.setImage(poster)
-        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle.toString, releaseDate.toString, imdbID.toString)
-        Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, viewingDate)
+        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle.toString, releaseDate.toString, imdbID)
+        import scala.async.Async.async
+        val futureDb = async {
+          import scala.slick.driver.H2Driver.simple._
+          Store.db.withSession { implicit session ⇒
+            val q = Store.movies.filter(_.tmdbId === tmdbId)
+            if (q.list.isEmpty)
+              Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None)
+            else
+              q.firstOption.map {
+                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
+                  Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7)
+                case _ ⇒ log.error("unhandled futureDb match")
+              }
+          }
+        }
       }
     })
     self ! Utils.AddPoster(shelf, imageView_)
@@ -214,16 +228,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
             val filename = s"${Launcher.localStore}/${tmdbId}.jpg"
             sendFromDb(shelf, tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen, new Image(s"file://${filename}"))
-          /*            val movie = tmdbClient.getMovie(tmdbId)
-            movie.onSuccess {
-              case movie ⇒
-                val filename = s"${Launcher.localStore}/${movie.id}.jpg"
-                send(shelf, movie, new Image(s"file://${filename}"))
-            }
-            movie.onFailure {
-              case e: Exception ⇒
-                log.error(s"future viewCollection getMovie failed" + e.getMessage())
-            }*/
         }
       }
     case Utils.SaveSeenDate(shelf, seenDate) ⇒

@@ -118,7 +118,8 @@ class TmdbPresenter {
   def saveSeenDate(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     val date = seenDatePicker.getValue()
-    shelfActor ! Utils.SaveSeenDate(this, java.sql.Date.valueOf(date))
+    if (date != null)
+      shelfActor ! Utils.SaveSeenDate(this, java.sql.Date.valueOf(date))
   }
 
 }
