@@ -23,8 +23,7 @@ object ShelfActor {
 
 class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with akka.actor.ActorLogging {
 
-  //TODO make localization configurable
-  val tmdbClient = TmdbClient(apiKey, "fr", tmdbTimeOut)
+  val tmdbClient = TmdbClient(apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
   @volatile var nbItems = 0
   var page: Long = 1
   var maxPage: Long = 1

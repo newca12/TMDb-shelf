@@ -30,8 +30,8 @@ class ScalaFxActor extends Actor {
       shelf.pageLabel.setText(page)
 
     case Utils.ShowReleases(shelf, releases) ⇒
-      //TODO localize this
-      val release = releases.countries.filter(country ⇒ country.iso_3166_1 == "FR").headOption.getOrElse(unReleased).release_date
+      val release = releases.countries.filter(
+        country ⇒ country.iso_3166_1 == java.util.Locale.getDefault().getCountry).headOption.getOrElse(unReleased).release_date
       shelf.localizedReleaseLabel.setText(release)
 
     case Utils.ShowSeenDate(shelf, seenDate) ⇒
