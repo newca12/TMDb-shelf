@@ -31,6 +31,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
   var search = ""
   var selectedMovie: (Long, Movie, Credits) = _
+  var selectedFilter: Number = 0
 
   def sendFromDb(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, releaseDate: java.sql.Date, title: String, originalTitle: String, director: String, addDate: java.sql.Date, viewingDate: Option[java.sql.Date], availability: Boolean, imdbID: String, seen: Boolean, poster: javafx.scene.image.Image) = {
     var imageView_ = new ImageView()
@@ -218,7 +219,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       if (user) page = 1
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       Store.db.withSession { implicit session ⇒
-        val res = Store.movies
+        val res = selectedFilter.intValue() match {
+          case 0 ⇒ Store.movies
+          case 1 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
+          case 2 ⇒ Store.movies.filter(_.seen === false).sortBy(m ⇒ m.title.asc)
+        }
         //TODO not efficient
         maxPage = (res.list.size / maxItems) + 1
         Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
@@ -242,6 +247,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error(e.getMessage())
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
+    case Utils.SetFilter(shelf, filter) ⇒
+      selectedFilter = filter
   }
 
 }

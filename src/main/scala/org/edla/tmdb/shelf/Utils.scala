@@ -44,6 +44,7 @@ object Utils {
   case class ShowSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: Option[java.sql.Date])
   case class SaveSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: java.sql.Date)
   case class ShowPopup(shelf: org.edla.tmdb.shelf.TmdbPresenter, popup: String)
+  case class SetFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
 
   def getTmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")

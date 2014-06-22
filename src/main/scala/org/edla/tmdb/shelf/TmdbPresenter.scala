@@ -27,7 +27,10 @@ import javafx.scene.{ image ⇒ jfxsi }
 import javafx.{ event ⇒ jfxe }
 import javafx.{ fxml ⇒ jfxf }
 
-class TmdbPresenter {
+import javafx.collections.FXCollections
+import javafx.fxml.Initializable
+
+class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var previousButton: jfxsc.Button = _
   @jfxf.FXML
@@ -69,6 +72,23 @@ class TmdbPresenter {
 
   import scala.concurrent._
   import ExecutionContext.Implicits.global
+
+  import java.net.URL
+  import java.util.ResourceBundle
+  import javafx.beans.value.ChangeListener
+  import javafx.beans.value.ObservableValue
+  override def initialize(fxmlFileLocation: URL, resources: ResourceBundle) {
+    //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
+    filterCollectionChoiceBox.getItems().addAll("All", "Seen", "Not seen")
+    filterCollectionChoiceBox.getSelectionModel().selectFirst()
+    filterCollectionChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
+      new ChangeListener[Number]() {
+        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) {
+          val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+          shelfActor ! Utils.SetFilter(TmdbPresenter.this, newValue)
+        }
+      })
+  }
 
   @jfxf.FXML
   def previousPage(event: jfxe.ActionEvent) {
