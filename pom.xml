@@ -139,6 +139,11 @@
             <version>1.4.178</version>
         </dependency>
         <dependency>
+            <groupId>com.github.tototoshi</groupId>
+            <artifactId>scala-csv_2.11</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>

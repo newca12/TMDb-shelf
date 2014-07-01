@@ -32,7 +32,7 @@ class ScalaFxActor extends Actor {
     case Utils.ShowReleases(shelf, releases) ⇒
       val release = releases.countries.filter(
         country ⇒ country.iso_3166_1 == java.util.Locale.getDefault().getCountry).headOption.getOrElse(unReleased).release_date
-      shelf.localizedReleaseLabel.setText(release)
+      shelf.localizedReleaseLabel.setText(if (release != "") release else "Localized release")
 
     case Utils.ShowSeenDate(shelf, seenDate) ⇒
       if (seenDate.isDefined)
@@ -48,13 +48,13 @@ class ScalaFxActor extends Actor {
       shelf.imdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(imdb_id))
       shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${imdb_id}")
 
-    case Utils.RefreshCredits(shelf, movie, credits) ⇒
+    case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒
       import scala.slick.driver.H2Driver.simple._
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
       shelf.directorLabel.setText(director)
 
       Store.db.withSession { implicit session ⇒
-        val res = Store.movies.filter(_.tmdbId === movie.id).list
+        val res = Store.movies.filter(_.tmdbId === tmdbId).list
         shelf.addMovieButton.setDisable(!res.isEmpty)
       }
 

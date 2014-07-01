@@ -36,7 +36,7 @@ object Utils {
   case class AddPosterXy(shelf: org.edla.tmdb.shelf.TmdbPresenter, poster: javafx.scene.image.ImageView, pos: Position)
   case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: String)
   case class RefreshMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter, title: String, original_title: String, release_date: String, imdb_id: String)
-  case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, crew: Credits)
+  case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, crew: Credits)
   case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Long)
   case class ShowCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter, user: Boolean)
   case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)

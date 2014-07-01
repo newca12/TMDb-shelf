@@ -53,6 +53,7 @@ object Launcher {
 
   import java.nio.file.{ Paths, Files }
   val home = System.getProperty("user.home")
+  val tmpDir = System.getProperty("java.io.tmpdir")
   val localStore = s"${home}/.tmdb-shelf"
   Files.createDirectories(Paths.get(localStore))
 
