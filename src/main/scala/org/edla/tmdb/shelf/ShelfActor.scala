@@ -171,7 +171,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             f.onSuccess {
               case true ⇒
                 send(shelf, movie, new Image(s"file://${filename}"))
-              case false =>
+              case false ⇒
                 send(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
             }
             f.onFailure {
