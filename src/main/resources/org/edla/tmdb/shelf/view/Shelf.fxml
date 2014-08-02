@@ -34,6 +34,7 @@
          <children>
             <ImageView fx:id="posterImageView" fitHeight="231.0" fitWidth="231.0" layoutX="39.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
             <Button fx:id="addMovieButton" disable="true" layoutX="14.0" layoutY="255.0" mnemonicParsing="false" onAction="#addMovie" text="Add" />
+            <Button fx:id="deleteMovieButton" disable="true" layoutX="81.0" layoutY="255.0" mnemonicParsing="false" onAction="#deleteMovie" text="Delete" />
             <Label fx:id="titleLabel" layoutX="14.0" layoutY="284.0" prefHeight="29.0" prefWidth="301.0" text="Title" />
             <Label fx:id="originalTitleLabel" layoutX="16.0" layoutY="318.0" text="Original Title" />
             <Label fx:id="directorLabel" layoutX="14.0" layoutY="337.0" prefHeight="26.0" prefWidth="301.0" text="Director" />

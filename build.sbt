@@ -4,7 +4,7 @@ organization := "org.edla"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
@@ -23,15 +23,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.2",
   "io.spray" %% "spray-client" % "1.3.1",
   "io.spray" %%  "spray-json" % "1.2.6",
-  "org.scala-lang.modules" %% "scala-async" % "0.9.1",
+  "org.scala-lang.modules" %% "scala-async" % "0.9.2",
   "com.pragmasoft" %% "spray-funnel" % "1.0-RC3-spray1.3" intransitive,  
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
   "org.controlsfx" % "controlsfx" % "8.0.6",
-  "com.typesafe.slick" %% "slick" % "2.1.0-M2",
-  "com.h2database" % "h2" % "1.4.178",
+  "com.typesafe.slick" %% "slick" % "2.1.0-RC3",
+  "com.h2database" % "h2" % "1.4.180",
   "com.github.tototoshi" %% "scala-csv" % "1.0.0",
   "junit" % "junit" % "4.11" % "test",
-  "org.specs2" %% "specs2" % "2.3.11" % "test",
+  "org.specs2" %% "specs2" % "2.3.13" % "test",
   "org.scalatest" %% "scalatest" % "2.2.0" % "test"
 )
 

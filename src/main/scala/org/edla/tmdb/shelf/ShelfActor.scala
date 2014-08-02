@@ -17,6 +17,8 @@ import javafx.scene.input.MouseEvent
 import org.edla.tmdb.api._
 import org.edla.tmdb.api.Protocol._
 import scala.util.Success
+import scala.slick.driver.H2Driver.simple._
+import java.nio.file.{ Paths, Files }
 
 object ShelfActor {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new ShelfActor(apiKey, tmdbTimeOut)
@@ -71,7 +73,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle.toString, releaseDate.toString, imdbID)
         import scala.async.Async.async
         val futureDb = async {
-          import scala.slick.driver.H2Driver.simple._
           Store.db.withSession { implicit session ⇒
             val q = Store.movies.filter(_.tmdbId === tmdbId)
             if (q.list.isEmpty)
@@ -194,8 +195,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
       nbItems = nbItems + 1
     case Utils.SaveMovie(shelf) ⇒
-      import scala.slick.driver.H2Driver.simple._
-      import java.nio.file.{ Paths, Files }
       val filename = s"${Launcher.tmpDir}/${selectedMovie}.jpg"
       Files.copy(Paths.get(filename), Paths.get(s"${Launcher.localStore}/${selectedMovie}.jpg"))
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
@@ -208,6 +207,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           Store.movies += tmp
         }
         log.info(s"${movie.title} registered")
+        refreshInfo(shelf, movie.id)
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Registered")
       } catch {
         case e: Exception ⇒
@@ -215,8 +215,24 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
     //Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, movie.id, credits)
+    case Utils.RemoveMovie(shelf) ⇒
+      val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
+      Launcher.scalaFxActor ! Utils.ConfirmDeletion(shelf, movie)
+    case Utils.DeletionConfirmed(shelf, movie) ⇒
+      try {
+        Store.db.withSession { implicit session ⇒
+          Store.movies.filter(_.tmdbId === movie.id).delete
+        }
+        Files.delete(Paths.get(s"${Launcher.localStore}/${movie.id}.jpg"))
+        log.warning(s"Movie ${movie.id} ${movie.title} removed")
+        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "REMOVED")
+        refreshInfo(shelf, movie.id)
+      } catch {
+        case e: Exception ⇒
+          log.error(e.getMessage())
+          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
+      }
     case Utils.ShowCollection(shelf, user) ⇒
-      import scala.slick.driver.H2Driver.simple._
       nbItems = 0
       search = ""
       if (user) page = 1
@@ -238,7 +254,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
       }
     case Utils.SaveSeenDate(shelf, seenDate) ⇒
-      import scala.slick.driver.H2Driver.simple._
       try {
         Store.db.withSession { implicit session ⇒
           val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie } yield (movie.viewingDate, movie.seen)

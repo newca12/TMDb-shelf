@@ -54,6 +54,8 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var addMovieButton: jfxsc.Button = _
   @jfxf.FXML
+  var deleteMovieButton: jfxsc.Button = _
+  @jfxf.FXML
   var titleLabel: jfxsc.Label = _
   @jfxf.FXML
   var originalTitleLabel: jfxsc.Label = _
@@ -111,6 +113,11 @@ class TmdbPresenter extends Initializable {
   def addMovie(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.SaveMovie(this)
+  }
+
+  def deleteMovie(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.RemoveMovie(this)
   }
 
   @jfxf.FXML

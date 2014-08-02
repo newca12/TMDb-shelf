@@ -9,6 +9,8 @@ import scala.language.postfixOps
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import org.edla.tmdb.api.Protocol._
+import org.controlsfx.dialog.Dialogs
+import org.controlsfx.dialog.Dialog
 
 class ScalaFxActor extends Actor {
 
@@ -56,6 +58,7 @@ class ScalaFxActor extends Actor {
       Store.db.withSession { implicit session ⇒
         val res = Store.movies.filter(_.tmdbId === tmdbId).list
         shelf.addMovieButton.setDisable(!res.isEmpty)
+        shelf.deleteMovieButton.setDisable(res.isEmpty)
       }
 
     case Utils.ShowPopup(shelf, msg) ⇒
@@ -66,6 +69,15 @@ class ScalaFxActor extends Actor {
       popup.setX(Launcher.stage.getX() + Launcher.stage.getWidth() - 110)
       popup.setY(Launcher.stage.getY() + Launcher.stage.getHeight() - 40)
       popup.show(Launcher.stage)
+
+    case Utils.ConfirmDeletion(shelf, movie) ⇒
+      val confirmation = Dialogs.create()
+        .owner(null)
+        .title("Confirmation needed")
+        .message(s"Do you really wan't to remove ${movie.title} ?")
+        .showConfirm()
+      if (confirmation == Dialog.Actions.YES) sender ! Utils.DeletionConfirmed(shelf, movie)
+
   }
 
 }
