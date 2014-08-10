@@ -1,4 +1,4 @@
-# TMDb-shelf [![Build Status](https://travis-ci.org/newca12/TMDb-shelf.svg?branch=master)](https://travis-ci.org/newca12/TMDb-shelf) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-shelf/badge.png)](https://coveralls.io/r/newca12/TMDb-shelf) [![Ohloh](http://www.ohloh.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-shelf)
+# TMDb-shelf [![Build Status](https://travis-ci.org/newca12/TMDb-shelf.svg?branch=master)](https://travis-ci.org/newca12/TMDb-shelf) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-shelf/badge.png)](https://coveralls.io/r/newca12/TMDb-shelf) [![Ohloh](http://www.openhub.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.openhub.net/p/TMDb-shelf)
 
 ![Image](./screenshot.png?raw=true)
 

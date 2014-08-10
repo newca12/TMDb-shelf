@@ -107,6 +107,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         event.consume
         Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, movie.title, movie.original_title, movie.release_date, movie.imdb_id)
         import scala.async.Async.async
+        val score = async {
+          val score = ImdbScore.getScore(s"http://www.imdb.com/title/${movie.imdb_id}")
+          Launcher.scalaFxActor ! Utils.RefreshScore(shelf, score)
+        }
         val futureDb = async {
           import scala.slick.driver.H2Driver.simple._
           Store.db.withSession { implicit session ⇒

@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "com.pragmasoft" %% "spray-funnel" % "1.0-RC4-spray1.3" intransitive,  
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
   "org.controlsfx" % "controlsfx" % "8.0.6",
-  "com.typesafe.slick" %% "slick" % "2.1.0-RC3",
+  "com.typesafe.slick" %% "slick" % "2.1.0",
   "com.h2database" % "h2" % "1.4.180",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.8",
   "org.apache.commons" % "commons-lang3" % "3.3.2",  
