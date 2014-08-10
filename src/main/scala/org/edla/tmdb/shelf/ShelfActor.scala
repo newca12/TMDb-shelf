@@ -72,6 +72,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         shelf.posterImageView.setImage(poster)
         Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle.toString, releaseDate.toString, imdbID)
         import scala.async.Async.async
+        val score = async {
+          val score = ImdbScore.getScore(s"http://www.imdb.com/title/${imdbID}")
+          Launcher.scalaFxActor ! Utils.RefreshScore(shelf, score)
+        }
         val futureDb = async {
           Store.db.withSession { implicit session ⇒
             val q = Store.movies.filter(_.tmdbId === tmdbId)

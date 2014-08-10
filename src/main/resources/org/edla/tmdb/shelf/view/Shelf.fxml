@@ -43,6 +43,7 @@
             <DatePicker fx:id="seenDatePicker" layoutX="14.0" layoutY="419.0" onAction="#updateSeenDate" />
             <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="419.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
             <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="456.0" onAction="#openWebpage" text="http://www.imdb.com" />
+            <Label fx:id="scoreLabel" layoutX="225.0" layoutY="460.0" text="N/A" />
          </children>
       </AnchorPane>
 </children></AnchorPane>

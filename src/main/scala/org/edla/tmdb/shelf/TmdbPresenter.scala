@@ -71,6 +71,8 @@ class TmdbPresenter extends Initializable {
   var saveSeenDateButton: jfxsc.Button = _
   @jfxf.FXML
   var imdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.imdb.com")
+  @jfxf.FXML
+  var scoreLabel: jfxsc.Label = _
 
   import scala.concurrent._
   import ExecutionContext.Implicits.global

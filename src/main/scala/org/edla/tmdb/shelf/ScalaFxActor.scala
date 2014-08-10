@@ -61,6 +61,9 @@ class ScalaFxActor extends Actor {
         shelf.deleteMovieButton.setDisable(res.isEmpty)
       }
 
+    case Utils.RefreshScore(shelf, score) ⇒
+      shelf.scoreLabel.setText(score)
+
     case Utils.ShowPopup(shelf, msg) ⇒
       val popup = new javafx.stage.Popup()
       val label = new javafx.scene.control.Label(msg)
