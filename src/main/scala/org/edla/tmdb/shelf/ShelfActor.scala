@@ -58,7 +58,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     }
   }
 
-  def sendFromDb(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, releaseDate: java.sql.Date, title: String, originalTitle: String, director: String, addDate: java.sql.Date, viewingDate: Option[java.sql.Date], availability: Boolean, imdbID: String, seen: Boolean, poster: javafx.scene.image.Image) = {
+  def addToShelf_(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
+    addToShelf(shelf, movie.id, movie.release_date.toString, movie.title, movie.original_title, movie.imdb_id, poster)
+  }
+
+  def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, releaseDate: String, title: String, originalTitle: String, imdbID: String, poster: javafx.scene.image.Image) = {
     var imageView_ = new ImageView()
     imageView_.setImage(poster)
     imageView_.setFitHeight(108)
@@ -70,7 +74,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         event.consume
         selectedMovie = tmdbId
         shelf.posterImageView.setImage(poster)
-        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle.toString, releaseDate.toString, imdbID)
+        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle, releaseDate, imdbID)
         import scala.async.Async.async
         val score = async {
           val score = ImdbScore.getScore(s"http://www.imdb.com/title/${imdbID}")
@@ -90,48 +94,9 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           }
         }
         refreshInfo(shelf, tmdbId)
+        log.debug(s"event for movie ${tmdbId} ${title}")
       }
     })
-    self ! Utils.AddPoster(shelf, imageView_)
-  }
-
-  def send(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
-    var imageView_ = new ImageView()
-    imageView_.setImage(poster)
-    imageView_.setFitHeight(108)
-    imageView_.setFitWidth(108)
-    imageView_.setPreserveRatio(true)
-    imageView_.setSmooth(true)
-    imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
-      override def handle(event: MouseEvent) {
-        event.consume
-        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, movie.title, movie.original_title, movie.release_date, movie.imdb_id)
-        import scala.async.Async.async
-        val score = async {
-          val score = ImdbScore.getScore(s"http://www.imdb.com/title/${movie.imdb_id}")
-          Launcher.scalaFxActor ! Utils.RefreshScore(shelf, score)
-        }
-        val futureDb = async {
-          import scala.slick.driver.H2Driver.simple._
-          Store.db.withSession { implicit session ⇒
-            //val q = for { m <- Store.movies if m.tmdbId === movie.id  } yield m.viewingDate
-            val q = Store.movies.filter(_.tmdbId === movie.id)
-            if (q.list.isEmpty)
-              Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None)
-            else
-              q.firstOption.map {
-                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
-                  Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7)
-                case _ ⇒ log.error("unhandled futureDb match")
-              }
-          }
-        }
-        refreshInfo(shelf, movie.id)
-        shelf.posterImageView.setImage(poster)
-        log.info(s"event for movie ${movie.id} ${movie.title}")
-      }
-    })
-
     self ! Utils.AddPoster(shelf, imageView_)
   }
 
@@ -179,9 +144,9 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val f = tmdbClient.downloadPoster(movie, filename)
             f.onSuccess {
               case true ⇒
-                send(shelf, movie, new Image(s"file://${filename}"))
+                addToShelf_(shelf, movie, new Image(s"file://${filename}"))
               case false ⇒
-                send(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
+                addToShelf_(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
             }
             f.onFailure {
               case e: Exception ⇒
@@ -189,7 +154,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             }
           } else {
             log.info("poster already there:" + movie.id)
-            send(shelf, movie, new Image(s"file://${filename}"))
+            addToShelf_(shelf, movie, new Image(s"file://${filename}"))
           }
       }
       movie.onFailure {
@@ -258,7 +223,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           //TODO match seen true/false
           case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
             val filename = s"${Launcher.localStore}/${tmdbId}.jpg"
-            sendFromDb(shelf, tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen, new Image(s"file://${filename}"))
+            addToShelf(shelf, tmdbId, releaseDate.toString, title, originalTitle, imdbID, new Image(s"file://${filename}"))
         }
       }
     case Utils.SaveSeenDate(shelf, seenDate) ⇒
