@@ -25,9 +25,9 @@
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" GridPane.columnIndex="6" />
          </children>
 </GridPane>
-      <Button fx:id="previousButton" layoutX="25.0" layoutY="23.0" mnemonicParsing="false" onAction="#previousPage" text="Previous" />
-      <Label fx:id="pageLabel" layoutX="111.0" layoutY="28.0" text="Page" />
-      <Button fx:id="nextButton" layoutX="156.0" layoutY="23.0" mnemonicParsing="false" onAction="#nextPage" text="Next" />
+      <Button fx:id="previousButton" alignment="CENTER" layoutX="22.0" layoutY="23.0" mnemonicParsing="false" onAction="#previousPage" text="Previous" />
+      <Label fx:id="pageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="98.0" layoutY="28.0" prefHeight="16.0" prefWidth="59.0" text="Page" textAlignment="CENTER" />
+      <Button fx:id="nextButton" layoutX="163.0" layoutY="23.0" mnemonicParsing="false" onAction="#nextPage" text="Next" />
       <Button fx:id="showCollectionButton" layoutX="358.0" layoutY="23.0" mnemonicParsing="false" onAction="#showCollection" text="Show collection" />
       <ChoiceBox fx:id="filterCollectionChoiceBox" layoutX="493.0" layoutY="23.0" prefHeight="26.0" prefWidth="116.0" /><TextField fx:id="searchTextField" layoutX="625.0" layoutY="24.0" prefHeight="26.0" prefWidth="281.0" /><Button fx:id="searchButton" layoutX="937.33837890625" layoutY="24.0" mnemonicParsing="false" onAction="#search" text="Search" />
     <AnchorPane fx:id="detailsAnchorPane" layoutX="1037.0" layoutY="9.0" minHeight="0.0" minWidth="0.0" prefHeight="496.0" prefWidth="315.0">
@@ -42,8 +42,8 @@
             <Label fx:id="localizedReleaseLabel" layoutX="14.0" layoutY="392.0" text="Localized release" />
             <DatePicker fx:id="seenDatePicker" layoutX="14.0" layoutY="419.0" onAction="#updateSeenDate" />
             <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="419.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
-            <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="456.0" onAction="#openWebpage" text="http://www.imdb.com" />
-            <Label fx:id="scoreLabel" layoutX="225.0" layoutY="460.0" text="N/A" />
+            <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="448.0" onAction="#openWebpage" text="http://www.imdb.com" />
+            <Label fx:id="scoreLabel" layoutX="80.0" layoutY="473.0" text="N/A" />
          </children>
       </AnchorPane>
 </children></AnchorPane>

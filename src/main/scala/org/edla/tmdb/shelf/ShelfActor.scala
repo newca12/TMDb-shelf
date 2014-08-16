@@ -169,7 +169,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       nbItems = nbItems + 1
     case Utils.SaveMovie(shelf) ⇒
       val filename = s"${Launcher.tmpDir}/${selectedMovie}.jpg"
-      Files.copy(Paths.get(filename), Paths.get(s"${Launcher.localStore}/${selectedMovie}.jpg"))
+      if (Files.exists(Paths.get(filename)))
+        Files.copy(Paths.get(filename), Paths.get(s"${Launcher.localStore}/${selectedMovie}.jpg"))
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits = Await.result(tmdbClient.getCredits(selectedMovie), 5 seconds)
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
@@ -212,7 +213,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       Store.db.withSession { implicit session ⇒
         val res = selectedFilter.intValue() match {
-          case 0 ⇒ Store.movies
+          case 0 ⇒ Store.movies //.sortBy(m ⇒ m.addDate.desc)
           case 1 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
           case 2 ⇒ Store.movies.filter(_.seen === false).sortBy(m ⇒ m.title.asc)
         }
@@ -223,7 +224,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           //TODO match seen true/false
           case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
             val filename = s"${Launcher.localStore}/${tmdbId}.jpg"
-            addToShelf(shelf, tmdbId, releaseDate.toString, title, originalTitle, imdbID, new Image(s"file://${filename}"))
+            val image =
+              if (Files.exists(Paths.get(filename))) new Image(s"file://${filename}")
+              else new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
+            addToShelf(shelf, tmdbId, releaseDate.toString, title, originalTitle, imdbID, image)
         }
       }
     case Utils.SaveSeenDate(shelf, seenDate) ⇒
