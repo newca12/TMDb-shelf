@@ -24,10 +24,12 @@ object ImdbScore {
   }
 
   def getScoreFromId(imdbId: String): Option[Float] = {
-    val score = getScoreFromUrl(s"http://www.imdb.com/title/${imdbId}")
+    val score =
+      if (imdbId.isEmpty()) "N/A"
+      else getScoreFromUrl(s"http://www.imdb.com/title/${imdbId}")
     score match {
-      case "N/A" => None
-      case s => Some(s.toFloat)
+      case "N/A" ⇒ None
+      case s     ⇒ Some(s.toFloat)
     }
   }
 

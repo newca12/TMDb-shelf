@@ -111,22 +111,16 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       sender ! tmdbClient
     case Utils.ChangePage(shelf, change) ⇒
       page = page + change
-      //Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
       if (search.length() > 0) self ! Utils.Search(shelf, this.search, false)
       else self ! Utils.ShowCollection(shelf, false)
     case Utils.Search(shelf, search, user) ⇒
       if (user) page = 1
       this.search = search
-      //if (page == 1) {
-      //items = new Array[scalafx.scene.image.ImageView](28)
       nbItems = 0
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
-      //}
       val results = tmdbClient.searchMovie(search, page * 2 - 1)
       results.onSuccess {
         case results ⇒
-          //if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
-          //val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           maxPage = results.total_pages
           Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + Math.ceil(maxPage / 2.0).toLong)
           for (movie ← results.results) {
@@ -137,20 +131,20 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val results = tmdbClient.searchMovie(search, page * 2)
             results.onSuccess {
               case results ⇒
-                //if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
-                //val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-                //maxPage = results.total_pages
-                //Launcher.scalaFxActor ! Utils.ShowPage(shelf, page/2 + "/" + maxPage/2)
                 for (movie ← results.results) {
                   tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
                   self ! Utils.GetResult(shelf, movie)
                 }
             }
+            results.onFailure {
+              case e: Exception ⇒
+                log.error("future searchMovie second page failed" + e.getMessage())
+            }
           }
       }
       results.onFailure {
         case e: Exception ⇒
-          log.error("future searchMovie failed" + e.getMessage())
+          log.error("future searchMovie first page failed" + e.getMessage())
       }
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     case Utils.GetResult(shelf, result) ⇒
