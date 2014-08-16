@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringEscapeUtils
 
 object ImdbScore {
 
-  def getScore(url: String): String = {
+  def getScoreFromUrl(url: String): String = {
     val cleaner = new HtmlCleaner
     val props = cleaner.getProperties
     val rootNode = cleaner.clean(new URL(url))
@@ -21,6 +21,14 @@ object ImdbScore {
         }
       }
     return "N/A"
+  }
+
+  def getScoreFromId(imdbId: String): Option[Float] = {
+    val score = getScoreFromUrl(s"http://www.imdb.com/title/${imdbId}")
+    score match {
+      case "N/A" => None
+      case s => Some(s.toFloat)
+    }
   }
 
 }

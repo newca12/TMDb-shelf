@@ -65,7 +65,7 @@ class ScalaFxActor extends Actor {
       }
 
     case Utils.RefreshScore(shelf, score) ⇒
-      shelf.scoreLabel.setText(score)
+      shelf.scoreLabel.setText(score.getOrElse("N/A").toString)
 
     case Utils.ShowPopup(shelf, msg) ⇒
       val popup = new javafx.stage.Popup()

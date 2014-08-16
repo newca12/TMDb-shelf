@@ -82,7 +82,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle, releaseDate, imdbID)
         import scala.async.Async.async
         val score = async {
-          val score = ImdbScore.getScore(s"http://www.imdb.com/title/${imdbID}")
+          val score = ImdbScore.getScoreFromId(imdbID)
           Launcher.scalaFxActor ! Utils.RefreshScore(shelf, score)
         }
         val futureDb = async {
@@ -92,7 +92,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
               Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None)
             else
               q.firstOption.map {
-                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
+                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒
                   Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7)
                 case _ ⇒ log.error("unhandled futureDb match")
               }
@@ -196,7 +196,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       try {
         Store.db.withSession { implicit session ⇒
           val tmp = (movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
-            new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, false)
+            new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, ImdbScore.getScoreFromId(movie.imdb_id), false)
           Store.movies += tmp
         }
         log.info(s"${movie.title} registered")
@@ -241,7 +241,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
         res.drop((page - 1) * maxItems).take(maxItems) foreach {
           //TODO match seen true/false
-          case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, seen) ⇒
+          case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒
             val filename = s"${Launcher.localStore}/${tmdbId}.jpg"
             val image =
               if (Files.exists(Paths.get(filename))) new Image(s"file://${filename}")
