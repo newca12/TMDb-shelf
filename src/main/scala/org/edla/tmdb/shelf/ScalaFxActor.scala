@@ -27,6 +27,7 @@ class ScalaFxActor extends Actor {
 
     case Utils.AddPosterXy(shelf, poster, pos) ⇒
       shelf.shelfGridPane.add(poster, pos.x, pos.y)
+      javafx.scene.layout.GridPane.setHalignment(poster, javafx.geometry.HPos.CENTER)
 
     case Utils.ShowPage(shelf, page) ⇒
       shelf.pageLabel.setText(page)
@@ -54,6 +55,8 @@ class ScalaFxActor extends Actor {
       import scala.slick.driver.H2Driver.simple._
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
       shelf.directorLabel.setText(director)
+      shelf.tmdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(tmdbId.toString))
+      shelf.tmdbHyperlink.setText(s"http://www.themoviedb.org/movie/${tmdbId}")
 
       Store.db.withSession { implicit session ⇒
         val res = Store.movies.filter(_.tmdbId === tmdbId).list

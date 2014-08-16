@@ -73,6 +73,8 @@ class TmdbPresenter extends Initializable {
   var imdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.imdb.com")
   @jfxf.FXML
   var scoreLabel: jfxsc.Label = _
+  @jfxf.FXML
+  var tmdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.themoviedb.org/")
 
   import scala.concurrent._
   import ExecutionContext.Implicits.global
@@ -134,8 +136,13 @@ class TmdbPresenter extends Initializable {
   }
 
   @jfxf.FXML
-  def openWebpage(event: jfxe.ActionEvent) {
+  def openImdbWebpage(event: jfxe.ActionEvent) {
     java.awt.Desktop.getDesktop().browse(new java.net.URL(imdbHyperlink.getText()).toURI())
+  }
+
+  @jfxf.FXML
+  def openTmdbWebpage(event: jfxe.ActionEvent) {
+    java.awt.Desktop.getDesktop().browse(new java.net.URL(tmdbHyperlink.getText()).toURI())
   }
 
   @jfxf.FXML

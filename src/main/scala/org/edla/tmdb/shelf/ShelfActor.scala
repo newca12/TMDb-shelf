@@ -30,7 +30,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   @volatile var nbItems = 0
   var page: Long = 1
   var maxPage: Long = 1
-  val maxItems = 21
+  val maxItems = 40
   var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
   var search = ""
   var selectedMovie: Long = _
@@ -63,12 +63,17 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   }
 
   def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, releaseDate: String, title: String, originalTitle: String, imdbID: String, poster: javafx.scene.image.Image) = {
+    val ds = new javafx.scene.effect.DropShadow()
+    ds.setOffsetY(-5.0);
+    ds.setOffsetX(5.0);
+    ds.setColor(javafx.scene.paint.Color.BLACK)
     var imageView_ = new ImageView()
     imageView_.setImage(poster)
     imageView_.setFitHeight(108)
     imageView_.setFitWidth(108)
     imageView_.setPreserveRatio(true)
     imageView_.setSmooth(true)
+    imageView_.setEffect(ds)
     imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
       override def handle(event: MouseEvent) {
         event.consume
@@ -106,7 +111,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       sender ! tmdbClient
     case Utils.ChangePage(shelf, change) ⇒
       page = page + change
-      Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
+      //Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
       if (search.length() > 0) self ! Utils.Search(shelf, this.search, false)
       else self ! Utils.ShowCollection(shelf, false)
     case Utils.Search(shelf, search, user) ⇒
@@ -117,16 +122,30 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       nbItems = 0
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       //}
-      val results = tmdbClient.searchMovie(search, page)
+      val results = tmdbClient.searchMovie(search, page * 2 - 1)
       results.onSuccess {
         case results ⇒
           //if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
           //val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           maxPage = results.total_pages
-          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + Math.ceil(maxPage / 2.0).toLong)
           for (movie ← results.results) {
             tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
             self ! Utils.GetResult(shelf, movie)
+          }
+          if (page < maxPage) {
+            val results = tmdbClient.searchMovie(search, page * 2)
+            results.onSuccess {
+              case results ⇒
+                //if (page < results.total_pages) self ! Utils.Search(shelf, search, page + 1)
+                //val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+                //maxPage = results.total_pages
+                //Launcher.scalaFxActor ! Utils.ShowPage(shelf, page/2 + "/" + maxPage/2)
+                for (movie ← results.results) {
+                  tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
+                  self ! Utils.GetResult(shelf, movie)
+                }
+            }
           }
       }
       results.onFailure {
@@ -163,7 +182,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
     case Utils.AddPoster(shelf, imageView) ⇒
       if (nbItems < maxItems) {
-        Launcher.scalaFxActor ! Utils.AddPosterXy(shelf, imageView, Utils.Position(nbItems % 7, nbItems / 7))
+        Launcher.scalaFxActor ! Utils.AddPosterXy(shelf, imageView, Utils.Position(nbItems % 8, nbItems / 8))
         items(nbItems) = imageView
       }
       nbItems = nbItems + 1
@@ -213,7 +232,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       Store.db.withSession { implicit session ⇒
         val res = selectedFilter.intValue() match {
-          case 0 ⇒ Store.movies //.sortBy(m ⇒ m.addDate.desc)
+          case 0 ⇒ Store.movies.sortBy(m ⇒ m.title.asc)
           case 1 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
           case 2 ⇒ Store.movies.filter(_.seen === false).sortBy(m ⇒ m.title.asc)
         }
