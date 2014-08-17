@@ -85,7 +85,7 @@ class TmdbPresenter extends Initializable {
   import javafx.beans.value.ObservableValue
   override def initialize(fxmlFileLocation: URL, resources: ResourceBundle) {
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
-    filterCollectionChoiceBox.getItems().addAll("All", "Seen", "Not seen")
+    filterCollectionChoiceBox.getItems().addAll("All", "Seen", "Not seen", "Not available")
     filterCollectionChoiceBox.getSelectionModel().selectFirst()
     filterCollectionChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
       new ChangeListener[Number]() {

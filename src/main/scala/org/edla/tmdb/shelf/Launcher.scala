@@ -52,10 +52,8 @@ object Launcher {
   }
 
   import java.nio.file.{ Paths, Files }
-  val home = System.getProperty("user.home")
   val tmpDir = System.getProperty("java.io.tmpdir")
-  val localStore = s"${home}/.tmdb-shelf"
-  Files.createDirectories(Paths.get(localStore))
+  Files.createDirectories(Paths.get(Store.localStore))
 
   val system = ActorSystem("ShelfSystem")
   val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")

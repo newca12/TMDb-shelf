@@ -183,7 +183,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.SaveMovie(shelf) ⇒
       val filename = s"${Launcher.tmpDir}/${selectedMovie}.jpg"
       if (Files.exists(Paths.get(filename)))
-        Files.copy(Paths.get(filename), Paths.get(s"${Launcher.localStore}/${selectedMovie}.jpg"))
+        Files.copy(Paths.get(filename), Paths.get(s"${Store.localStore}/${selectedMovie}.jpg"))
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits = Await.result(tmdbClient.getCredits(selectedMovie), 5 seconds)
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
@@ -210,7 +210,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         Store.db.withSession { implicit session ⇒
           Store.movies.filter(_.tmdbId === movie.id).delete
         }
-        Files.delete(Paths.get(s"${Launcher.localStore}/${movie.id}.jpg"))
+        Files.delete(Paths.get(s"${Store.localStore}/${movie.id}.jpg"))
         log.warning(s"Movie ${movie.id} ${movie.title} removed")
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "REMOVED")
         refreshInfo(shelf, movie.id)
@@ -228,7 +228,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         val res = selectedFilter.intValue() match {
           case 0 ⇒ Store.movies.sortBy(m ⇒ m.title.asc)
           case 1 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
-          case 2 ⇒ Store.movies.filter(_.seen === false).sortBy(m ⇒ m.title.asc)
+          case 2 ⇒ Store.movies.filter(_.seen === false)
+            .filter(_.availability === true)
+            .sortBy(m ⇒ (m.imdbScore.desc, m.releaseDate))
+          case 3 ⇒ Store.movies.filter(_.availability === false).sortBy(m ⇒ m.title.asc)
         }
         //TODO not efficient
         maxPage = (res.list.size / maxItems) + 1
@@ -236,7 +239,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         res.drop((page - 1) * maxItems).take(maxItems) foreach {
           //TODO match seen true/false
           case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒
-            val filename = s"${Launcher.localStore}/${tmdbId}.jpg"
+            val filename = s"${Store.localStore}/${tmdbId}.jpg"
             val image =
               if (Files.exists(Paths.get(filename))) new Image(s"file://${filename}")
               else new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")

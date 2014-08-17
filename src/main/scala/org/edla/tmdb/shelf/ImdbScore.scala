@@ -23,13 +23,13 @@ object ImdbScore {
     return "N/A"
   }
 
-  def getScoreFromId(imdbId: String): Option[Float] = {
+  def getScoreFromId(imdbId: String): Option[BigDecimal] = {
     val score =
       if (imdbId.isEmpty()) "N/A"
       else getScoreFromUrl(s"http://www.imdb.com/title/${imdbId}")
     score match {
       case "N/A" ⇒ None
-      case s     ⇒ Some(s.toFloat)
+      case s     ⇒ Some(BigDecimal(s.trim))
     }
   }
 
