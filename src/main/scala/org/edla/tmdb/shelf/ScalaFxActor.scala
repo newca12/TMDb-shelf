@@ -44,12 +44,16 @@ class ScalaFxActor extends Actor {
         //shelf.seenDatePicker = new javafx.scene.control.DatePicker()
         shelf.seenDatePicker.setValue(null)
 
-    case Utils.RefreshMovie(shelf, title, original_title, release_date, imdb_id) ⇒
+    case Utils.RefreshMovieFromDb(shelf, title, original_title, release_date, imdb_id) ⇒
       shelf.titleLabel.setText(title)
       shelf.originalTitleLabel.setText(original_title)
       shelf.releaseLabel.setText(release_date)
       shelf.imdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(imdb_id))
       shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${imdb_id}")
+
+    case Utils.RefreshMovieFromTmdb(shelf, movie) ⇒
+      val runtime = movie.runtime.getOrElse("Runtime").toString
+      shelf.runtimeLabel.setText(if (runtime != "0") runtime + " min" else "Runtime")
 
     case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒
       import scala.slick.driver.H2Driver.simple._

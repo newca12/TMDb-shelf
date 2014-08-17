@@ -40,10 +40,11 @@
             <Label fx:id="directorLabel" layoutX="14.0" layoutY="337.0" prefHeight="26.0" prefWidth="301.0" text="Director" />
             <Label fx:id="releaseLabel" layoutX="14.0" layoutY="362.0" prefHeight="26.0" prefWidth="301.0" text="Release" />
             <Label fx:id="localizedReleaseLabel" layoutX="14.0" layoutY="392.0" text="Localized release" />
-            <DatePicker fx:id="seenDatePicker" layoutX="14.0" layoutY="419.0" onAction="#updateSeenDate" />
-            <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="419.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
-            <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="470.0" onAction="#openImdbWebpage" text="http://www.imdb.com" />
-            <Label fx:id="scoreLabel" layoutX="177.0" layoutY="473.0" text="N/A" />
+            <Label fx:id="runtimeLabel" layoutX="15.0" layoutY="416.0" text="Runtime" />
+            <DatePicker fx:id="seenDatePicker" layoutX="14.0" layoutY="441.0" onAction="#updateSeenDate" />
+            <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="441.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
+            <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="474.0" onAction="#openImdbWebpage" text="http://www.imdb.com" />
+            <Label fx:id="scoreLabel" layoutX="177.0" layoutY="477.0" text="N/A" />
             <Hyperlink fx:id="tmdbHyperLink" layoutX="15.0" layoutY="502.0" onAction="#openTmdbWebpage" prefHeight="24.0" prefWidth="202.0" text="http://www.themoviedb.org" />
          </children>
       </AnchorPane>

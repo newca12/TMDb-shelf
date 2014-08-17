@@ -64,6 +64,8 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var releaseLabel: jfxsc.Label = _
   @jfxf.FXML
+  var runtimeLabel: jfxsc.Label = _
+  @jfxf.FXML
   var localizedReleaseLabel: jfxsc.Label = _
   @jfxf.FXML
   var seenDatePicker: jfxsc.DatePicker = new jfxsc.DatePicker()

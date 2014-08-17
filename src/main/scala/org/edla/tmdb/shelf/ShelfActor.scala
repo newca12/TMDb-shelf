@@ -79,7 +79,16 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         event.consume
         selectedMovie = tmdbId
         shelf.posterImageView.setImage(poster)
-        Launcher.scalaFxActor ! Utils.RefreshMovie(shelf, title, originalTitle, releaseDate, imdbID)
+        Launcher.scalaFxActor ! Utils.RefreshMovieFromDb(shelf, title, originalTitle, releaseDate, imdbID)
+        val movie = tmdbClient.getMovie(tmdbId)
+        movie.onSuccess {
+          case movie ⇒
+            Launcher.scalaFxActor ! Utils.RefreshMovieFromTmdb(shelf, movie)
+        }
+        movie.onFailure {
+          case e: Exception ⇒
+            log.error("refresh movie {tmdbId} from Tmdb failed" + e.getMessage())
+        }
         import scala.async.Async.async
         val score = async {
           val score = ImdbScore.getScoreFromId(imdbID)
