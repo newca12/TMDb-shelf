@@ -76,6 +76,8 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var scoreLabel: jfxsc.Label = _
   @jfxf.FXML
+  var scoreImageView: jfxsi.ImageView = _
+  @jfxf.FXML
   var tmdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.themoviedb.org/")
 
   import scala.concurrent._

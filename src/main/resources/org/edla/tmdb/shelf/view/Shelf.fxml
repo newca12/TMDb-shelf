@@ -45,6 +45,7 @@
             <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="441.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
             <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="474.0" onAction="#openImdbWebpage" text="http://www.imdb.com" />
             <Label fx:id="scoreLabel" layoutX="177.0" layoutY="477.0" text="N/A" />
+            <ImageView fx:id="scoreImageView" fitHeight="16.0" fitWidth="16.0" layoutX="209.0" layoutY="477.0" pickOnBounds="true" preserveRatio="true" />
             <Hyperlink fx:id="tmdbHyperLink" layoutX="15.0" layoutY="502.0" onAction="#openTmdbWebpage" prefHeight="24.0" prefWidth="202.0" text="http://www.themoviedb.org" />
          </children>
       </AnchorPane>

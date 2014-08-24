@@ -68,7 +68,19 @@ class ScalaFxActor extends Actor {
         shelf.deleteMovieButton.setDisable(res.isEmpty)
       }
 
-    case Utils.RefreshScore(shelf, score) ⇒
+    case Utils.RefreshScore(shelf, imdbScore, score) ⇒
+      if (imdbScore.isDefined && score.isDefined) {
+        val diff = ((score.get - imdbScore.get) * 10).intValue()
+        diff match {
+          case 0  ⇒ shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
+          case 1  ⇒ shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/up.png"))
+          case -1 ⇒ shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/down.png"))
+          case -2 | -3 | -4 | -5 ⇒
+            shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/downdown.png"))
+          case 2 | 3 | 4 | 5 ⇒
+            shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/upup.png"))
+        }
+      }
       shelf.scoreLabel.setText(score.getOrElse("N/A").toString)
 
     case Utils.ShowPopup(shelf, msg) ⇒

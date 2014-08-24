@@ -38,7 +38,7 @@ object Utils {
   case class RefreshMovieFromDb(shelf: org.edla.tmdb.shelf.TmdbPresenter, title: String, original_title: String, release_date: String, imdb_id: String)
   case class RefreshMovieFromTmdb(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, crew: Credits)
-  case class RefreshScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, score: Option[BigDecimal])
+  case class RefreshScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, imdbScore: Option[BigDecimal], score: Option[BigDecimal])
   case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Long)
   case class ShowCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter, user: Boolean)
   case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
