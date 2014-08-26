@@ -94,9 +94,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           val score = ImdbScore.getScoreFromId(imdbID)
           Store.db.withSession { implicit session ⇒
             val q = Store.movies.filter(_.tmdbId === tmdbId)
-            if (q.list.isEmpty)
+            if (q.list.isEmpty) {
               Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None)
-            else
+              Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
+            } else
               q.firstOption.map {
                 case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒
                   Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m._10, score)
