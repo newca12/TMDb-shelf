@@ -75,9 +75,9 @@ class ScalaFxActor extends Actor {
           case 0  ⇒ shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
           case 1  ⇒ shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/up.png"))
           case -1 ⇒ shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/down.png"))
-          case -2 | -3 | -4 | -5 ⇒
+          case x if x < -1 ⇒
             shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/downdown.png"))
-          case 2 | 3 | 4 | 5 ⇒
+          case x if x > 1 ⇒
             shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/upup.png"))
         }
       } else shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
