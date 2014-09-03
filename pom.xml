@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.11</artifactId>
-            <version>2.3.2</version>
+            <version>2.3.5</version>
         </dependency>
         <dependency>
             <groupId>io.spray</groupId>
@@ -136,12 +136,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.180</version>
+            <version>1.4.181</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>
             <artifactId>htmlcleaner</artifactId>
-            <version>2.8</version>
+            <version>2.9</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -173,12 +173,6 @@
         </dependency>
     </dependencies>
     <repositories>
-        <repository>
-            <id>spray</id>
-            <name>spray</name>
-            <url>http://repo.spray.io/</url>
-            <layout>default</layout>
-        </repository>
         <repository>
             <id>edla</id>
             <name>edla</name>

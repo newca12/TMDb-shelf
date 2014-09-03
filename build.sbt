@@ -12,15 +12,12 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
-//spray-json is not yet available on Maven central
-resolvers += "spray" at "http://repo.spray.io"
-
 resolvers += "edla" at "http://www.edla.org/snapshots"
 
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.3.2",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.5",
   "io.spray" %% "spray-client" % "1.3.1",
   "io.spray" %%  "spray-json" % "1.2.6",
   "org.scala-lang.modules" %% "scala-async" % "0.9.2",
@@ -28,8 +25,8 @@ libraryDependencies ++= Seq(
   "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT" intransitive,
   "org.controlsfx" % "controlsfx" % "8.0.6_20",
   "com.typesafe.slick" %% "slick" % "2.1.0",
-  "com.h2database" % "h2" % "1.4.180",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.8",
+  "com.h2database" % "h2" % "1.4.181",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.9",
   "org.apache.commons" % "commons-lang3" % "3.3.2",  
   "com.github.tototoshi" %% "scala-csv" % "1.0.0",
   "junit" % "junit" % "4.11" % "test",
