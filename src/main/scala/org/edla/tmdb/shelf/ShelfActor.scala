@@ -44,7 +44,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     }
     releases.onFailure {
       case e: Exception ⇒
-        log.error("future getReleases failed" + e.getMessage())
+        log.error(s"refreshInfo: Future getReleases(${tmdbId}) failed : ${e.getMessage()}")
     }
     val credits = tmdbClient.getCredits(tmdbId)
     credits.onSuccess {
@@ -54,7 +54,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     }
     credits.onFailure {
       case e: Exception ⇒
-        log.error("future getCredits failed" + e.getMessage())
+        log.error(s"refreshInfo: Future getCredits(${tmdbId}) failed : ${e.getMessage()}")
     }
   }
 
@@ -87,7 +87,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
         movie.onFailure {
           case e: Exception ⇒
-            log.error("refresh movie {tmdbId} from Tmdb failed" + e.getMessage())
+            log.error(s"addToShelf: Future getMovie(${tmdbId}) failed : ${e.getMessage()}")
         }
         import scala.async.Async.async
         val futureDb = async {
@@ -146,13 +146,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             }
             results.onFailure {
               case e: Exception ⇒
-                log.error("future searchMovie second page failed" + e.getMessage())
+                log.error(s"ShelfActor:receive: Future searchMovie({$search},${page * 2} failed : ${e.getMessage()}")
             }
           }
       }
       results.onFailure {
         case e: Exception ⇒
-          log.error("future searchMovie first page failed" + e.getMessage())
+          log.error(s"ShelfActor:receive: Future searchMovie({$search},${page * 2 - 1} failed : ${e.getMessage()}")
       }
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     case Utils.GetResult(shelf, result) ⇒
@@ -171,7 +171,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             }
             f.onFailure {
               case e: Exception ⇒
-                log.error("future downloadPoster failed" + e.getMessage())
+                log.error(s"ShelfActor:receive: Future downloadPoster(${movie},${filename}) failed : ${e.getMessage()}")
             }
           } else {
             log.info("poster already there:" + movie.id)
@@ -180,7 +180,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
       movie.onFailure {
         case e: Exception ⇒
-          log.error(s"future getMovie ${result.id} failed" + e.getMessage())
+          log.error(s"ShelfActor:receive: Future getMovie(${result.id}) failed : ${e.getMessage()}")
       }
     case Utils.AddPoster(shelf, imageView) ⇒
       if (nbItems < maxItems) {
