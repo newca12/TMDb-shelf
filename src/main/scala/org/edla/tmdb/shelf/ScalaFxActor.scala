@@ -29,8 +29,10 @@ class ScalaFxActor extends Actor {
       shelf.shelfGridPane.add(poster, pos.x, pos.y)
       javafx.scene.layout.GridPane.setHalignment(poster, javafx.geometry.HPos.CENTER)
 
-    case Utils.ShowPage(shelf, page) ⇒
-      shelf.pageLabel.setText(page)
+    case Utils.ShowPage(shelf, page, maxPage) ⇒
+      shelf.pageLabel.setText(s"${page}/${maxPage}")
+      shelf.nextButton.setDisable(page >= maxPage)
+      shelf.previousButton.setDisable(page <= 1)
 
     case Utils.ShowReleases(shelf, releases) ⇒
       val release = releases.countries.filter(

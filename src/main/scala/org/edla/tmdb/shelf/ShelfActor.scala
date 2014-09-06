@@ -139,7 +139,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       results.onSuccess {
         case results ⇒
           maxPage = results.total_pages
-          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + Math.ceil(maxPage / 2.0).toLong)
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toLong)
           for (movie ← results.results) {
             tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
             self ! Utils.GetResult(shelf, movie)
@@ -258,7 +258,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
         //TODO not efficient
         maxPage = (res.list.size / maxItems) + 1
-        Launcher.scalaFxActor ! Utils.ShowPage(shelf, page + "/" + maxPage)
+        Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
         res.drop((page - 1) * maxItems).take(maxItems) foreach {
           //TODO match seen true/false
           case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒

@@ -34,7 +34,7 @@ object Utils {
   case class Position(x: Int, y: Int)
   case class AddPoster(shelf: org.edla.tmdb.shelf.TmdbPresenter, poster: javafx.scene.image.ImageView)
   case class AddPosterXy(shelf: org.edla.tmdb.shelf.TmdbPresenter, poster: javafx.scene.image.ImageView, pos: Position)
-  case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: String)
+  case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: Long, maxPage: Long)
   case class RefreshMovieFromDb(shelf: org.edla.tmdb.shelf.TmdbPresenter, title: String, original_title: String, release_date: String, imdb_id: String)
   case class RefreshMovieFromTmdb(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, crew: Credits)
