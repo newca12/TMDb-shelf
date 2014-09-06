@@ -24,6 +24,10 @@ object ShelfActor {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new ShelfActor(apiKey, tmdbTimeOut)
 }
 
+object SearchMode extends Enumeration {
+  val Search, Collection = Value
+}
+
 class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with akka.actor.ActorLogging {
 
   val tmdbClient = TmdbClient(apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
@@ -32,7 +36,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   var maxPage: Long = 1
   val maxItems = 40
   var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
-  var search = ""
+  var searchMode = SearchMode.Search
+  var search: String = ""
   var selectedMovie: Long = _
   var selectedCollectionFilter: Number = 0
   var selectedSearchFilter: Number = 0
@@ -120,10 +125,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       sender ! tmdbClient
     case Utils.ChangePage(shelf, change) ⇒
       page = page + change
-      if (search.length() > 0) self ! Utils.Search(shelf, this.search, false)
-      else self ! Utils.ShowCollection(shelf, this.search, false)
+      searchMode match {
+        case SearchMode.Search     ⇒ self ! Utils.Search(shelf, this.search, false)
+        case SearchMode.Collection ⇒ self ! Utils.ShowCollection(shelf, this.search, false)
+      }
     case Utils.Search(shelf, search, user) ⇒
       if (user) page = 1
+      searchMode = SearchMode.Search
       this.search = search
       nbItems = 0
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
@@ -230,6 +238,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       }
     case Utils.ShowCollection(shelf, search, user) ⇒
       nbItems = 0
+      searchMode = SearchMode.Collection
       this.search = search
       if (user) page = 1
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
