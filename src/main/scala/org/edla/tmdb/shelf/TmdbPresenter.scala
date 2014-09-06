@@ -56,6 +56,8 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var addMovieButton: jfxsc.Button = _
   @jfxf.FXML
+  var refreshMovieButton: jfxsc.Button = _
+  @jfxf.FXML
   var deleteMovieButton: jfxsc.Button = _
   @jfxf.FXML
   var titleLabel: jfxsc.Label = _
@@ -118,7 +120,6 @@ class TmdbPresenter extends Initializable {
     shelfActor ! Utils.ChangePage(this, -1)
   }
 
-  @jfxf.FXML
   def nextPage(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.ChangePage(this, 1)
@@ -134,38 +135,37 @@ class TmdbPresenter extends Initializable {
     shelfActor ! Utils.SaveMovie(this)
   }
 
+  def refreshMovie(event: jfxe.ActionEvent) {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.RefreshMovie(this)
+  }
+
   def deleteMovie(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.RemoveMovie(this)
   }
 
-  @jfxf.FXML
   def search(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.Search(this, searchTextField.getText(), true)
   }
 
-  @jfxf.FXML
   def handleClear(event: jfxe.ActionEvent) {
     searchTextField.setText("")
   }
 
-  @jfxf.FXML
   def openImdbWebpage(event: jfxe.ActionEvent) {
     java.awt.Desktop.getDesktop().browse(new java.net.URL(imdbHyperlink.getText()).toURI())
   }
 
-  @jfxf.FXML
   def openTmdbWebpage(event: jfxe.ActionEvent) {
     java.awt.Desktop.getDesktop().browse(new java.net.URL(tmdbHyperlink.getText()).toURI())
   }
 
-  @jfxf.FXML
   def updateSeenDate(event: jfxe.ActionEvent) {
     //not auto saving seenDate here since setting a date programmatically trigger ActionEvent 
   }
 
-  @jfxf.FXML
   def saveSeenDate(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     val date = seenDatePicker.getValue()

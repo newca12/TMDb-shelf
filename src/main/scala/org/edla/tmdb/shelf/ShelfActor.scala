@@ -272,6 +272,19 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error(e.getMessage())
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
+    case Utils.RefreshMovie(shelf) ⇒
+      val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
+      try {
+        Store.db.withSession { implicit session ⇒
+          val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie } yield (movie.imdbScore)
+          val res = q.update(ImdbScore.getScoreFromId(movie.imdb_id))
+        }
+        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
+      } catch {
+        case e: Exception ⇒
+          log.error(e.getMessage())
+          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
+      }
     case Utils.SetCollectionFilter(shelf, filter) ⇒
       selectedCollectionFilter = filter
     case Utils.SetSearchFilter(shelf, filter) ⇒

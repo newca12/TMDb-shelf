@@ -43,6 +43,7 @@ object Utils {
   case class ShowCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter, search: String, user: Boolean)
   case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class RemoveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
+  case class RefreshMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class ConfirmDeletion(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class DeletionConfirmed(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class ShowReleases(shelf: org.edla.tmdb.shelf.TmdbPresenter, releases: Releases)

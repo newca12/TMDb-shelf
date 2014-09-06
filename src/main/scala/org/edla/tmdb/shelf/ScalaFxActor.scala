@@ -66,6 +66,7 @@ class ScalaFxActor extends Actor {
         val res = Store.movies.filter(_.tmdbId === tmdbId).list
         shelf.addMovieButton.setDisable(!res.isEmpty)
         shelf.deleteMovieButton.setDisable(res.isEmpty)
+        shelf.refreshMovieButton.setDisable(res.isEmpty)
       }
 
     case Utils.RefreshScore(shelf, imdbScore, score) ⇒
