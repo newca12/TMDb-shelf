@@ -11,15 +11,14 @@ object ImdbScore {
     val props = cleaner.getProperties
     val rootNode = cleaner.clean(new URL(url))
     val elements = rootNode.getElementsByName("div", true)
-    val score =
-      for (elem ← elements) {
-        val classType = elem.getAttributeByName("class")
-        if (classType != null && classType.equalsIgnoreCase("titlePageSprite star-box-giga-star")) {
-          // stories might be "dirty" with text like "'", clean it up
-          val text = StringEscapeUtils.unescapeHtml4(elem.getText.toString)
-          return text
-        }
+    for (elem ← elements) {
+      val classType = elem.getAttributeByName("class")
+      if (classType != null && classType.equalsIgnoreCase("titlePageSprite star-box-giga-star")) {
+        // stories might be "dirty" with text like "'", clean it up
+        val text = StringEscapeUtils.unescapeHtml4(elem.getText.toString)
+        return text
       }
+    }
     return "N/A"
   }
 

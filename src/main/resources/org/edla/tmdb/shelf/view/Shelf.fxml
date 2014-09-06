@@ -28,8 +28,9 @@
       <Button fx:id="previousButton" alignment="CENTER" layoutX="22.0" layoutY="23.0" mnemonicParsing="false" onAction="#previousPage" text="Previous" />
       <Label fx:id="pageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="98.0" layoutY="28.0" prefHeight="16.0" prefWidth="59.0" text="Page" textAlignment="CENTER" />
       <Button fx:id="nextButton" layoutX="163.0" layoutY="23.0" mnemonicParsing="false" onAction="#nextPage" text="Next" />
-      <Button fx:id="showCollectionButton" layoutX="358.0" layoutY="23.0" mnemonicParsing="false" onAction="#showCollection" text="Show collection" />
-      <ChoiceBox fx:id="filterCollectionChoiceBox" layoutX="493.0" layoutY="23.0" prefHeight="26.0" prefWidth="116.0" /><TextField fx:id="searchTextField" layoutX="625.0" layoutY="24.0" prefHeight="26.0" prefWidth="281.0" /><Button fx:id="searchButton" layoutX="937.33837890625" layoutY="24.0" mnemonicParsing="false" onAction="#search" text="Search" />
+      <Button fx:id="showCollectionButton" layoutX="315.0" layoutY="23.0" mnemonicParsing="false" onAction="#showCollection" text="Show collection" />
+      <ChoiceBox fx:id="filterCollectionChoiceBox" layoutX="436.0" layoutY="23.0" prefHeight="26.0" prefWidth="116.0" /><Button fx:id="searchButton" layoutX="881.0" layoutY="24.0" mnemonicParsing="false" onAction="#search" prefHeight="26.0" prefWidth="152.0" text="Search for a movie" /><TextField fx:id="searchTextField" layoutX="682.0" layoutY="24.0" prefHeight="26.0" prefWidth="191.0" />
+      <ChoiceBox fx:id="filterSearchChoiceBox" layoutX="556.0" layoutY="23.0" prefWidth="116.0" />
     <AnchorPane fx:id="detailsAnchorPane" layoutX="1037.0" layoutY="9.0" minHeight="0.0" minWidth="0.0" prefHeight="791.0" prefWidth="298.0">
          <children>
             <ImageView fx:id="posterImageView" fitHeight="231.0" fitWidth="231.0" layoutX="39.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />

@@ -34,7 +34,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
   var search = ""
   var selectedMovie: Long = _
-  var selectedFilter: Number = 0
+  var selectedCollectionFilter: Number = 0
+  var selectedSearchFilter: Number = 0
 
   def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long) {
     val releases = tmdbClient.getReleases(tmdbId)
@@ -120,7 +121,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.ChangePage(shelf, change) ⇒
       page = page + change
       if (search.length() > 0) self ! Utils.Search(shelf, this.search, false)
-      else self ! Utils.ShowCollection(shelf, false)
+      else self ! Utils.ShowCollection(shelf, this.search, false)
     case Utils.Search(shelf, search, user) ⇒
       if (user) page = 1
       this.search = search
@@ -146,13 +147,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             }
             results.onFailure {
               case e: Exception ⇒
-                log.error(s"ShelfActor:receive: Future searchMovie({$search},${page * 2} failed : ${e.getMessage()}")
+                log.error(s"ShelfActor:receive: Future searchMovie(${search},${page * 2} failed : ${e.getMessage()}")
             }
           }
       }
       results.onFailure {
         case e: Exception ⇒
-          log.error(s"ShelfActor:receive: Future searchMovie({$search},${page * 2 - 1} failed : ${e.getMessage()}")
+          log.error(s"ShelfActor:receive: Future searchMovie(${search},${page * 2 - 1} failed : ${e.getMessage()}")
       }
     case "token" ⇒ sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     case Utils.GetResult(shelf, result) ⇒
@@ -227,19 +228,24 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error(e.getMessage())
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
-    case Utils.ShowCollection(shelf, user) ⇒
+    case Utils.ShowCollection(shelf, search, user) ⇒
       nbItems = 0
-      search = ""
+      this.search = search
       if (user) page = 1
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       Store.db.withSession { implicit session ⇒
-        val res = selectedFilter.intValue() match {
-          case 0 ⇒ Store.movies.sortBy(m ⇒ m.title.asc)
-          case 1 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
-          case 2 ⇒ Store.movies.filter(_.seen === false)
+        val res_ = selectedCollectionFilter.intValue() match {
+          case 0 ⇒ Store.movies.filter(_.seen === false)
             .filter(_.availability === true)
             .sortBy(m ⇒ (m.imdbScore.desc, m.releaseDate))
+          case 1 ⇒ Store.movies.sortBy(m ⇒ m.title.asc)
+          case 2 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
           case 3 ⇒ Store.movies.filter(_.availability === false).sortBy(m ⇒ m.title.asc)
+        }
+
+        val res = selectedSearchFilter.intValue() match {
+          case 0 ⇒ res_
+          case 1 ⇒ res_.filter(_.director === search)
         }
         //TODO not efficient
         maxPage = (res.list.size / maxItems) + 1
@@ -266,8 +272,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           log.error(e.getMessage())
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
-    case Utils.SetFilter(shelf, filter) ⇒
-      selectedFilter = filter
+    case Utils.SetCollectionFilter(shelf, filter) ⇒
+      selectedCollectionFilter = filter
+    case Utils.SetSearchFilter(shelf, filter) ⇒
+      selectedSearchFilter = filter
   }
 
 }

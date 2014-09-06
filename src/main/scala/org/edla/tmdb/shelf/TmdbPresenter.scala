@@ -42,9 +42,11 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var filterCollectionChoiceBox: jfxsc.ChoiceBox[String] = _
   @jfxf.FXML
+  var searchButton: jfxsc.Button = _
+  @jfxf.FXML
   var searchTextField: jfxsc.TextField = _
   @jfxf.FXML
-  var searchButton: jfxsc.Button = _
+  var filterSearchChoiceBox: jfxsc.ChoiceBox[String] = _
   @jfxf.FXML
   var shelfGridPane: jfxsl.GridPane = _
   @jfxf.FXML
@@ -89,13 +91,23 @@ class TmdbPresenter extends Initializable {
   import javafx.beans.value.ObservableValue
   override def initialize(fxmlFileLocation: URL, resources: ResourceBundle) {
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
-    filterCollectionChoiceBox.getItems().addAll("All", "Seen", "Not seen", "Not available")
+    filterCollectionChoiceBox.getItems().addAll("Not seen", "All", "Seen", "Not available")
     filterCollectionChoiceBox.getSelectionModel().selectFirst()
     filterCollectionChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
       new ChangeListener[Number]() {
         def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) {
           val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-          shelfActor ! Utils.SetFilter(TmdbPresenter.this, newValue)
+          shelfActor ! Utils.SetCollectionFilter(TmdbPresenter.this, newValue)
+        }
+      })
+
+    filterSearchChoiceBox.getItems().addAll("All", "Director")
+    filterSearchChoiceBox.getSelectionModel().selectFirst()
+    filterSearchChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
+      new ChangeListener[Number]() {
+        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) {
+          val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+          shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
         }
       })
   }
@@ -114,8 +126,7 @@ class TmdbPresenter extends Initializable {
 
   def showCollection(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    searchTextField.setText("")
-    shelfActor ! Utils.ShowCollection(this, true)
+    shelfActor ! Utils.ShowCollection(this, searchTextField.getText(), true)
   }
 
   def addMovie(event: jfxe.ActionEvent) {

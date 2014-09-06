@@ -17,7 +17,7 @@ resolvers += "edla" at "http://www.edla.org/snapshots"
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.3.5",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.6",
   "io.spray" %% "spray-client" % "1.3.1",
   "io.spray" %%  "spray-json" % "1.2.6",
   "org.scala-lang.modules" %% "scala-async" % "0.9.2",
@@ -89,7 +89,7 @@ pomExtra := (
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.6</version>
+				<version>3.2.0</version>
 				<executions>
 					<execution>
 						<id>compile</id>
@@ -121,7 +121,7 @@ pomExtra := (
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.6</version>
+				<version>3.2.0</version>
 			</plugin>
 		</plugins>
 	</reporting>
