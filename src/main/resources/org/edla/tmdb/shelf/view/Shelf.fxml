@@ -49,6 +49,7 @@
             <Label fx:id="scoreLabel" layoutX="177.0" layoutY="477.0" text="N/A" />
             <ImageView fx:id="scoreImageView" fitHeight="16.0" fitWidth="16.0" layoutX="209.0" layoutY="477.0" pickOnBounds="true" preserveRatio="true" />
             <Hyperlink fx:id="tmdbHyperLink" layoutX="15.0" layoutY="502.0" onAction="#openTmdbWebpage" prefHeight="24.0" prefWidth="202.0" text="http://www.themoviedb.org" />
+            <TextArea fx:id="commentTextArea" layoutX="16.0" layoutY="535.0" prefHeight="189.0" prefWidth="259.0" />
          </children>
       </AnchorPane>
 </children></AnchorPane>

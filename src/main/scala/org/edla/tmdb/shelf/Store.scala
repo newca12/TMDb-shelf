@@ -5,7 +5,7 @@ import scala.slick.lifted.{ ProvenShape, ForeignKeyQuery }
 import java.sql.Date
 
 class Movies(tag: Tag)
-    extends Table[(Long, Date, String, String, String, Date, Option[Date], Boolean, String, Option[BigDecimal], Boolean)](tag, "MOVIES") {
+    extends Table[(Long, Date, String, String, String, Date, Option[Date], Boolean, String, Option[BigDecimal], Boolean, String)](tag, "MOVIES") {
 
   // This is the primary key column:
   def tmdbId = column[Long]("TMDB_ID", O.PrimaryKey)
@@ -19,10 +19,11 @@ class Movies(tag: Tag)
   def imdbID = column[String]("IMDB_ID")
   def imdbScore = column[Option[BigDecimal]]("IMDB_SCORE", O.DBType("DECIMAL(2,1)"))
   def seen = column[Boolean]("SEEN")
+  def comment = column[String]("COMMENT")
 
   // Every table needs a * projection with the same type as the table's type parameter
-  def * : ProvenShape[(Long, Date, String, String, String, Date, Option[Date], Boolean, String, Option[BigDecimal], Boolean)] =
-    (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen)
+  def * : ProvenShape[(Long, Date, String, String, String, Date, Option[Date], Boolean, String, Option[BigDecimal], Boolean, String)] =
+    (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment)
 }
 
 object Store {

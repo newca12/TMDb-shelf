@@ -39,7 +39,8 @@ class ScalaFxActor extends Actor {
         country ⇒ country.iso_3166_1 == java.util.Locale.getDefault().getCountry).headOption.getOrElse(unReleased).release_date
       shelf.localizedReleaseLabel.setText(if (release != "") release else "Localized release")
 
-    case Utils.ShowSeenDate(shelf, seenDate) ⇒
+    case Utils.ShowSeenDate(shelf, seenDate, comment) ⇒
+      shelf.commentTextArea.setText(comment)
       if (seenDate.isDefined)
         shelf.seenDatePicker.setValue(seenDate.get.toLocalDate())
       else

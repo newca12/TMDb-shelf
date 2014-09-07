@@ -83,6 +83,8 @@ class TmdbPresenter extends Initializable {
   var scoreImageView: jfxsi.ImageView = _
   @jfxf.FXML
   var tmdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.themoviedb.org/")
+  @jfxf.FXML
+  var commentTextArea: jfxsc.TextArea = _
 
   import scala.concurrent._
   import ExecutionContext.Implicits.global

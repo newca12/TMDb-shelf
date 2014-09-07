@@ -101,13 +101,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           Store.db.withSession { implicit session ⇒
             val q = Store.movies.filter(_.tmdbId === tmdbId)
             if (q.list.isEmpty) {
-              Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None)
+              Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
               Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
             } else
               q.firstOption.map {
-                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒
+                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment) ⇒
                   Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m._10, score)
-                  Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7)
+                  Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7, m._12)
                 case _ ⇒ log.error("unhandled futureDb match")
               }
           }
@@ -207,7 +207,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       try {
         Store.db.withSession { implicit session ⇒
           val tmp = (movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
-            new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, ImdbScore.getScoreFromId(movie.imdb_id), false)
+            new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, ImdbScore.getScoreFromId(movie.imdb_id), false, "")
           Store.movies += tmp
         }
         log.info(s"${movie.title} registered")
@@ -261,7 +261,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
         res.drop((page - 1) * maxItems).take(maxItems) foreach {
           //TODO match seen true/false
-          case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen) ⇒
+          case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment) ⇒
             val filename = s"${Store.localStore}/${tmdbId}.jpg"
             val image =
               if (Files.exists(Paths.get(filename))) new Image(s"file://${filename}")
@@ -285,8 +285,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       try {
         Store.db.withSession { implicit session ⇒
-          val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie } yield (movie.imdbScore)
-          val res = q.update(ImdbScore.getScoreFromId(movie.imdb_id))
+          val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie } yield (movie.imdbScore, movie.comment)
+          val res = q.update(ImdbScore.getScoreFromId(movie.imdb_id), shelf.commentTextArea.getText())
         }
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
       } catch {

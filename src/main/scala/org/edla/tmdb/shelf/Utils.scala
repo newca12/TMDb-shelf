@@ -47,7 +47,7 @@ object Utils {
   case class ConfirmDeletion(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class DeletionConfirmed(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class ShowReleases(shelf: org.edla.tmdb.shelf.TmdbPresenter, releases: Releases)
-  case class ShowSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: Option[java.sql.Date])
+  case class ShowSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: Option[java.sql.Date], comment: String)
   case class SaveSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: java.sql.Date)
   case class ShowPopup(shelf: org.edla.tmdb.shelf.TmdbPresenter, popup: String)
   case class SetCollectionFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
