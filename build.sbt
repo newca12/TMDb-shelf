@@ -2,7 +2,13 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.1-SNAPSHOT"
+version := "0.1"
+
+jfxSettings
+
+JFX.mainClass := Some("org.edla.tmdb.shelf.Launcher")
+
+JFX.nativeBundles := "msi"
 
 scalaVersion := "2.11.2"
 
