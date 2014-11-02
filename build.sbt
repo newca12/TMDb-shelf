@@ -8,7 +8,7 @@ jfxSettings
 
 JFX.mainClass := Some("org.edla.tmdb.shelf.Launcher")
 
-JFX.nativeBundles := "msi"
+JFX.nativeBundles := "all"
 
 scalaVersion := "2.11.2"
 
