@@ -103,7 +103,8 @@ class TmdbPresenter extends Initializable {
           val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           shelfActor ! Utils.SetCollectionFilter(TmdbPresenter.this, newValue)
         }
-      })
+      }
+    )
 
     filterSearchChoiceBox.getItems().addAll("All", "Director")
     filterSearchChoiceBox.getSelectionModel().selectFirst()
@@ -113,7 +114,8 @@ class TmdbPresenter extends Initializable {
           val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
         }
-      })
+      }
+    )
   }
 
   @jfxf.FXML

@@ -16,8 +16,6 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
 scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
-org.scalastyle.sbt.ScalastylePlugin.Settings
-
 resolvers += "edla" at "http://www.edla.org/releases"
 
 resolvers += "ConJars" at "http://conjars.org/repo"
@@ -35,11 +33,11 @@ libraryDependencies ++= Seq(
 
 fork := true
 
-seq(CoverallsPlugin.singleProject: _*)
-
 licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
+
+conflictWarning := ConflictWarning.disable
 
 publishMavenStyle := true
 

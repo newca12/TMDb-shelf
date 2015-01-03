@@ -36,7 +36,8 @@ class ScalaFxActor extends Actor {
 
     case Utils.ShowReleases(shelf, releases) ⇒
       val release = releases.countries.filter(
-        country ⇒ country.iso_3166_1 == java.util.Locale.getDefault().getCountry).headOption.getOrElse(unReleased).release_date
+        country ⇒ country.iso_3166_1 == java.util.Locale.getDefault().getCountry
+      ).headOption.getOrElse(unReleased).release_date
       shelf.localizedReleaseLabel.setText(if (release != "") release else "Localized release")
 
     case Utils.ShowSeenDate(shelf, seenDate, comment) ⇒
