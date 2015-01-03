@@ -130,7 +130,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
           .title("Alert")
           .message(e.getMessage())
           .showError()
-        if (response == Dialog.Actions.OK) sys.exit
+        if (response == Dialog.ACTION_OK) sys.exit
       //} else throw (e)
     }
   }

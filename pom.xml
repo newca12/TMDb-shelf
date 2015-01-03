@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <description>TMDb-shelf</description>
     <url>http://github.com/newca12/TMDb-shelf</url>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2</version>
     <licenses>
         <license>
             <name>GNU GPL v3</name>
@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.2</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -57,24 +57,9 @@
                         <id>compile</id>
                         <goals>
                             <goal>compile</goal>
-                            <goal>testCompile</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Suite.class</include>
-                        <include>**/*Test.class</include>
-                        <include>**/*Tests.class</include>
-                        <include>**/*Spec.class</include>
-                        <include>**/*Specs.class</include>
-                    </includes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -91,22 +76,12 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.11.2</version>
+            <version>2.11.4</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.11</artifactId>
-            <version>2.3.6</version>
-        </dependency>
-        <dependency>
-            <groupId>io.spray</groupId>
-            <artifactId>spray-client_2.11</artifactId>
-            <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.spray</groupId>
-            <artifactId>spray-json_2.11</artifactId>
-            <version>1.2.6</version>
+            <version>2.3.8</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
@@ -114,19 +89,14 @@
             <version>0.9.2</version>
         </dependency>
         <dependency>
-            <groupId>com.pragmasoft</groupId>
-            <artifactId>spray-funnel_2.11</artifactId>
-            <version>1.0-RC4-spray1.3</version>
-        </dependency>
-        <dependency>
             <groupId>org.edla</groupId>
             <artifactId>tmdb-async-client_2.11</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.0.6_20</version>
+            <version>8.20.8</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.slick</groupId>
@@ -136,47 +106,24 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.181</version>
+            <version>1.4.184</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>
             <artifactId>htmlcleaner</artifactId>
-            <version>2.9</version>
+            <version>2.10</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.3.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.tototoshi</groupId>
-            <artifactId>scala-csv_2.11</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.specs2</groupId>
-            <artifactId>specs2_2.11</artifactId>
-            <version>2.3.13</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.11</artifactId>
-            <version>2.2.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <repositories>
         <repository>
             <id>edla</id>
             <name>edla</name>
-            <url>http://www.edla.org/snapshots/</url>
+            <url>http://www.edla.org/releases/</url>
             <layout>default</layout>
         </repository>
         <repository>

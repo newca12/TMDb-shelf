@@ -102,7 +102,7 @@ class ScalaFxActor extends Actor {
         .title("Confirmation needed")
         .message(s"Do you really wan't to remove ${movie.title} ?")
         .showConfirm()
-      if (confirmation == Dialog.Actions.YES) sender ! Utils.DeletionConfirmed(shelf, movie)
+      if (confirmation == Dialog.ACTION_YES) sender ! Utils.DeletionConfirmed(shelf, movie)
 
   }
 
