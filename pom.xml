@@ -91,7 +91,13 @@
         <dependency>
             <groupId>org.edla</groupId>
             <artifactId>tmdb-async-client_2.11</artifactId>
-            <version>0.6</version>
+            <version>0.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.spray</groupId>
+                    <artifactId>spray-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>

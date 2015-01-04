@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.2"
+version := "0.3"
 
 jfxSettings
 
@@ -23,7 +23,7 @@ resolvers += "ConJars" at "http://conjars.org/repo"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.8",
   "org.scala-lang.modules" %% "scala-async" % "0.9.2",
-  "org.edla" %% "tmdb-async-client" % "0.6",
+  "org.edla" %% "tmdb-async-client" % "0.7" exclude("io.spray", "spray-client"),
   "org.controlsfx" % "controlsfx" % "8.20.8",
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "com.h2database" % "h2" % "1.4.184",
@@ -37,7 +37,7 @@ licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
 
-conflictWarning := ConflictWarning.disable
+//conflictWarning := ConflictWarning.disable
 
 publishMavenStyle := true
 

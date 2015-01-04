@@ -151,7 +151,7 @@ class TmdbPresenter extends Initializable {
 
   def search(event: jfxe.ActionEvent) {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.Search(this, searchTextField.getText(), true)
+    shelfActor ! Utils.Search(this, searchTextField.getText().replace('.', ' '), true)
   }
 
   def handleClear(event: jfxe.ActionEvent) {
