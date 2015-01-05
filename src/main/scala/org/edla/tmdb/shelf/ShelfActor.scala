@@ -174,7 +174,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val f = tmdbClient.downloadPoster(movie, filename)
             f.onSuccess {
               case true ⇒
-                addToShelf_(shelf, movie, new Image(s"file://${filename}"))
+                addToShelf_(shelf, movie, new Image(s"file:///${filename}"))
               case false ⇒
                 addToShelf_(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
             }
@@ -184,7 +184,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             }
           } else {
             log.info("poster already there:" + movie.id)
-            addToShelf_(shelf, movie, new Image(s"file://${filename}"))
+            addToShelf_(shelf, movie, new Image(s"file:///${filename}"))
           }
       }
       movie.onFailure {
@@ -264,7 +264,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment) ⇒
             val filename = s"${Store.localStore}/${tmdbId}.jpg"
             val image =
-              if (Files.exists(Paths.get(filename))) new Image(s"file://${filename}")
+              if (Files.exists(Paths.get(filename))) new Image(s"file:///${filename}")
               else new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
             addToShelf(shelf, tmdbId, releaseDate.toString, title, originalTitle, imdbID, image)
         }

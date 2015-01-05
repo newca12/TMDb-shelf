@@ -10,6 +10,9 @@ JFX.mainClass := Some("org.edla.tmdb.shelf.Launcher")
 
 JFX.nativeBundles := "all"
 
+//required for Windows sbt package-javafx
+//JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_25")
+
 scalaVersion := "2.11.4"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
