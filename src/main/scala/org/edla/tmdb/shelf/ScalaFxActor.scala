@@ -21,6 +21,12 @@ class ScalaFxActor extends Actor {
   import javafx.scene.input.MouseEvent
 
   def receive = {
+    case Utils.TVPoster(shelf, poster) ⇒
+      val effect = new javafx.scene.effect.Shadow()
+      effect.setColor(javafx.scene.paint.Color.BEIGE)
+      //poster.setEffect(effect)
+      poster.setOpacity(0.2)
+
     case Utils.Reset(shelf, items) ⇒
       for (item ← items)
         shelf.shelfGridPane.getChildren().remove(item)

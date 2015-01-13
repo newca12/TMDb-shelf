@@ -97,16 +97,17 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
         import scala.async.Async.async
         val futureDb = async {
-          val score = ImdbScore.getScoreFromId(imdbID)
           Store.db.withSession { implicit session ⇒
             val q = Store.movies.filter(_.tmdbId === tmdbId)
             if (q.list.isEmpty) {
+              val imdbInfo = ImdbScore.getInfoFromId(imdbID)
               Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
-              Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
+              Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, imdbInfo._1)
+              if ((imdbInfo._2.isEmpty) || (imdbInfo._2.get)) Launcher.scalaFxActor ! Utils.TVPoster(shelf, imageView_)
             } else
               q.firstOption.map {
                 case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment) ⇒
-                  Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m._10, score)
+                  Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m._10, ImdbScore.getScoreFromId(imdbID))
                   Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7, m._12)
                 case _ ⇒ log.error("unhandled futureDb match")
               }
@@ -183,7 +184,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
                 log.error(s"ShelfActor:receive: Future downloadPoster(${movie},${filename}) failed : ${e.getMessage()}")
             }
           } else {
-            log.info("poster already there:" + movie.id)
+            log.debug("poster already there:" + movie.id)
             addToShelf_(shelf, movie, new Image(s"file:///${filename}"))
           }
       }

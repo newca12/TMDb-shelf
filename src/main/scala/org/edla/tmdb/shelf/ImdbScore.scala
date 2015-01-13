@@ -6,29 +6,35 @@ import org.apache.commons.lang3.StringEscapeUtils
 
 object ImdbScore {
 
-  def getScoreFromUrl(url: String): String = {
+  def getInfo(imdbId: String): (Option[BigDecimal], Boolean) = {
+    val url = s"http://www.imdb.com/title/${imdbId}"
     val cleaner = new HtmlCleaner
     val props = cleaner.getProperties
     val rootNode = cleaner.clean(new URL(url))
+    val elementsTitle = rootNode.getElementsByName("title", true)
+    val isTVMovie = elementsTitle(0).getText().toString.contains("(TV Movie")
     val elements = rootNode.getElementsByName("div", true)
     for (elem ← elements) {
       val classType = elem.getAttributeByName("class")
       if (classType != null && classType.equalsIgnoreCase("titlePageSprite star-box-giga-star")) {
         // stories might be "dirty" with text like "'", clean it up
-        val text = StringEscapeUtils.unescapeHtml4(elem.getText.toString)
-        return text
+        val score = StringEscapeUtils.unescapeHtml4(elem.getText.toString)
+        return (Some(BigDecimal(score.trim)), isTVMovie)
       }
     }
-    return "N/A"
+    return (None, isTVMovie)
   }
 
   def getScoreFromId(imdbId: String): Option[BigDecimal] = {
-    val score =
-      if (imdbId.isEmpty()) "N/A"
-      else getScoreFromUrl(s"http://www.imdb.com/title/${imdbId}")
-    score match {
-      case "N/A" ⇒ None
-      case s     ⇒ Some(BigDecimal(s.trim))
+    if (imdbId.isEmpty()) None
+    else getInfo(imdbId)._1
+  }
+
+  def getInfoFromId(imdbId: String): (Option[BigDecimal], Option[Boolean]) = {
+    if (imdbId.isEmpty()) (None, None)
+    else {
+      val info = getInfo(imdbId)
+      (info._1, Some(info._2))
     }
   }
 
