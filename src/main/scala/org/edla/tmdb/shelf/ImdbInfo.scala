@@ -4,7 +4,7 @@ import org.htmlcleaner.HtmlCleaner
 import java.net.URL
 import org.apache.commons.lang3.StringEscapeUtils
 
-object ImdbScore {
+object ImdbInfo {
 
   def getInfo(imdbId: String): (Option[BigDecimal], Boolean) = {
     val url = s"http://www.imdb.com/title/${imdbId}"

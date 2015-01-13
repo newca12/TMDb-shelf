@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <description>TMDb-shelf</description>
     <url>http://github.com/newca12/TMDb-shelf</url>
-    <version>0.2</version>
+    <version>0.5</version>
     <licenses>
         <license>
             <name>GNU GPL v3</name>

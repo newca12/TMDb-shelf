@@ -106,7 +106,7 @@ class TmdbPresenter extends Initializable {
       }
     )
 
-    filterSearchChoiceBox.getItems().addAll("All", "Director")
+    filterSearchChoiceBox.getItems().addAll("All", "Director", "Movie name")
     filterSearchChoiceBox.getSelectionModel().selectFirst()
     filterSearchChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
       new ChangeListener[Number]() {
