@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <description>TMDb-shelf</description>
     <url>http://github.com/newca12/TMDb-shelf</url>
-    <version>0.5</version>
+    <version>0.6</version>
     <licenses>
         <license>
             <name>GNU GPL v3</name>
@@ -76,17 +76,17 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.11.4</version>
+            <version>2.11.6</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.11</artifactId>
-            <version>2.3.8</version>
+            <version>2.3.9</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
             <artifactId>scala-async_2.11</artifactId>
-            <version>0.9.2</version>
+            <version>0.9.3</version>
         </dependency>
         <dependency>
             <groupId>org.edla</groupId>
@@ -100,11 +100,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>8.20.8</version>
-        </dependency>
-        <dependency>
             <groupId>com.typesafe.slick</groupId>
             <artifactId>slick_2.11</artifactId>
             <version>2.1.0</version>
@@ -112,7 +107,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.184</version>
+            <version>1.4.186</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>

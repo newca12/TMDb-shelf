@@ -1,16 +1,21 @@
 package org.edla.tmdb.shelf
 
-import org.edla.tmdb.client.TmdbClient
-import scala.concurrent.duration.DurationInt
-import scala.util.Try
-import scala.concurrent.Await
-import akka.actor.Actor
 import scala.language.postfixOps
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-import org.edla.tmdb.api.Protocol._
-import org.controlsfx.dialog.Dialogs
-import org.controlsfx.dialog.Dialog
+import scala.math.BigDecimal.int2bigDecimal
+import scala.slick.driver.H2Driver.simple.columnExtensionMethods
+import scala.slick.driver.H2Driver.simple.longColumnType
+import scala.slick.driver.H2Driver.simple.queryToAppliedQueryInvoker
+import scala.slick.driver.H2Driver.simple.valueToConstColumn
+
+import org.edla.tmdb.api.Protocol.noCrew
+import org.edla.tmdb.api.Protocol.unReleased
+
+import akka.actor.Actor
+import akka.actor.actorRef2Scala
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.ButtonType
+import javafx.scene.image.Image
 
 class ScalaFxActor extends Actor {
 
@@ -104,12 +109,12 @@ class ScalaFxActor extends Actor {
       popup.show(Launcher.stage)
 
     case Utils.ConfirmDeletion(shelf, movie) ⇒
-      val confirmation = Dialogs.create()
-        .owner(null)
-        .title("Confirmation needed")
-        .message(s"Do you really wan't to remove ${movie.title} ?")
-        .showConfirm()
-      if (confirmation == Dialog.ACTION_YES) sender ! Utils.DeletionConfirmed(shelf, movie)
+      val alert = new Alert(AlertType.CONFIRMATION)
+      alert.setTitle("Confirmation needed")
+      alert.setHeaderText(null)
+      alert.setContentText(s"Do you really wan't to remove ${movie.title} ?")
+      val confirmation = alert.showAndWait()
+      if (confirmation == ButtonType.OK) sender ! Utils.DeletionConfirmed(shelf, movie)
 
   }
 

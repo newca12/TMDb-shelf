@@ -5,26 +5,22 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 
-import org.edla.tmdb.api.Protocol.Movie
 import org.edla.tmdb.api.Protocol.Credits
+import org.edla.tmdb.api.Protocol.Movie
 import org.edla.tmdb.api.Protocol.Releases
 import org.edla.tmdb.api.Protocol.Result
 import org.edla.tmdb.client.TmdbClient
 
 import akka.pattern.ask
 import akka.util.Timeout
-
-import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.scene.control.ListCell
-import javafx.scene.control.ListView
+import javafx.collections.ListChangeListener
 import javafx.event.Event
 import javafx.event.EventHandler
+import javafx.scene.control.ListCell
+import javafx.scene.control.ListView
 import javafx.util.Callback
-import org.controlsfx.control.GridCell
-import org.controlsfx.control.GridView
 
 object Utils {
 
@@ -81,10 +77,6 @@ trait JfxUtils {
 
   def mkCellFactoryCallback[T](listCellGenerator: ListView[T] ⇒ ListCell[T]) = new Callback[ListView[T], ListCell[T]]() {
     override def call(list: ListView[T]): ListCell[T] = listCellGenerator(list)
-  }
-
-  def mkCellFactoryCallback_[T](listCellGenerator: GridView[T] ⇒ GridCell[T]) = new Callback[GridView[T], GridCell[T]]() {
-    override def call(list: GridView[T]): GridCell[T] = listCellGenerator(list)
   }
 
   def mkEventHandler[E <: Event](f: E ⇒ Unit) = new EventHandler[E] { def handle(e: E) = f(e) }

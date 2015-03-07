@@ -1,22 +1,28 @@
 package org.edla.tmdb.shelf
 
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.prefs.Preferences
+
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import org.controlsfx.dialog.Dialog
-import org.controlsfx.dialog.Dialogs
-import org.edla.tmdb.client.InvalidApiKeyException
-import javafx.event.EventHandler
-import javafx.stage.WindowEvent
-import javafx.scene.Scene
 
 import akka.actor.ActorSystem
 import akka.actor.Props
+import javafx.event.EventHandler
+import javafx.{ fxml ⇒ jfxf }
+import javafx.{ scene ⇒ jfxs }
+import javafx.scene.Scene
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.TextInputDialog
 import javafx.stage.Stage
+import javafx.stage.WindowEvent
 
 /*//inspired by typesafe migration-manager
 trait WithUncaughtExceptionHandlerDialog {
@@ -78,7 +84,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
   override def start(primaryStage: Stage) {
     Launcher.stage = primaryStage
     val scene = new Scene(root)
-    primaryStage.setTitle("TMDb-shelf 0.5")
+    primaryStage.setTitle("TMDb-shelf 0.6")
     primaryStage.setScene(scene)
     primaryStage.show()
     val apiKey = checkOrAskApiKey(primaryStage)
@@ -93,11 +99,11 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     val apiKey = prefs.get("apiKey", "")
     if (apiKey.isEmpty()) {
-      val response = Dialogs.create()
-        .owner(primaryStage)
-        .title("Information needed")
-        .message("Enter your API key")
-        .showTextInput()
+      val dialog = new TextInputDialog()
+      dialog.setTitle("Information needed")
+      dialog.setHeaderText(null)
+      dialog.setContentText("Enter your API key")
+      val response = dialog.showAndWait()
       if (response.isPresent()) response.get()
       else sys.exit
     } else apiKey
@@ -117,21 +123,21 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
       case Success(v) ⇒
         //comment to clean store
         prefs.put("apiKey", apiKey)
-        Dialogs.create()
-          .owner(null)
-          .title("Information")
-          .masthead(null)
-          .message("Perfect ! Your API key is valid")
-          .showInformation()
+        val dialog = new TextInputDialog()
+        val alert = new Alert(AlertType.INFORMATION)
+        alert.setTitle("Information")
+        alert.setHeaderText(null)
+        alert.setContentText("Perfect ! Your API key is valid")
+        alert.showAndWait()
       case Failure(e) ⇒
         //if (e.isInstanceOf[InvalidApiKeyException]) {
         if (!apiKeyStored.isEmpty() && apiKeyStored == apiKey) prefs.remove("apiKey")
-        val response = Dialogs.create()
-          .title("Alert")
-          .message(e.getMessage())
-          .showError()
-        if (response == Dialog.ACTION_OK) sys.exit
-      //} else throw (e)
+        val alert = new Alert(AlertType.INFORMATION)
+        alert.setTitle("Alert")
+        alert.setHeaderText(null)
+        alert.setContentText("(e.getMessage()")
+        sys.exit
+      //} else throw (e))
     }
   }
 
