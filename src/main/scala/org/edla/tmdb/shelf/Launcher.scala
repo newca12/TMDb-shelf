@@ -84,7 +84,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
   override def start(primaryStage: Stage) {
     Launcher.stage = primaryStage
     val scene = new Scene(root)
-    primaryStage.setTitle("TMDb-shelf 0.6")
+    primaryStage.setTitle("TMDb-shelf 0.7")
     primaryStage.setScene(scene)
     primaryStage.show()
     val apiKey = checkOrAskApiKey(primaryStage)

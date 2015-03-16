@@ -16,6 +16,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.ButtonType
 import javafx.scene.image.Image
+import javafx.stage.Modality
 
 class ScalaFxActor extends Actor {
 
@@ -109,13 +110,14 @@ class ScalaFxActor extends Actor {
       popup.show(Launcher.stage)
 
     case Utils.ConfirmDeletion(shelf, movie) ⇒
-      val alert = new Alert(AlertType.CONFIRMATION)
-      alert.setTitle("Confirmation needed")
-      alert.setHeaderText(null)
-      alert.setContentText(s"Do you really wan't to remove ${movie.title} ?")
-      val confirmation = alert.showAndWait()
-      if (confirmation == ButtonType.OK) sender ! Utils.DeletionConfirmed(shelf, movie)
-
+      val result = new Alert(AlertType.CONFIRMATION) {
+        initOwner(Launcher.stage)
+        initModality(Modality.APPLICATION_MODAL)
+        setTitle("Confirmation needed")
+        setHeaderText(null)
+        setContentText(s"Do you really wan't to remove ${movie.title} ?")
+      }.showAndWait()
+      if (result.isPresent() && result.get() == ButtonType.OK) sender ! Utils.DeletionConfirmed(shelf, movie)
   }
 
 }

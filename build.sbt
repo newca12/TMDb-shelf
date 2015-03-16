@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.6"
+version := "0.7"
 
 jfxSettings
 
