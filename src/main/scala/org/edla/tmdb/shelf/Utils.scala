@@ -81,4 +81,10 @@ trait JfxUtils {
 
   def mkEventHandler[E <: Event](f: E ⇒ Unit) = new EventHandler[E] { def handle(e: E) = f(e) }
 
+  import java.util.Optional
+  //import scala.language.implicitConversions
+  implicit def fromOptional[T](optional: Optional[T]): Option[T] =
+    if (optional.isPresent) Some(optional.get)
+    else None
+
 }

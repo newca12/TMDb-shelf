@@ -23,6 +23,7 @@ import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.TextInputDialog
 import javafx.stage.Stage
 import javafx.stage.WindowEvent
+import javafx.stage.Modality
 
 /*//inspired by typesafe migration-manager
 trait WithUncaughtExceptionHandlerDialog {
@@ -84,7 +85,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
   override def start(primaryStage: Stage) {
     Launcher.stage = primaryStage
     val scene = new Scene(root)
-    primaryStage.setTitle("TMDb-shelf 0.7")
+    primaryStage.setTitle("TMDb-shelf 0.8")
     primaryStage.setScene(scene)
     primaryStage.show()
     val apiKey = checkOrAskApiKey(primaryStage)
@@ -99,10 +100,13 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     val apiKey = prefs.get("apiKey", "")
     if (apiKey.isEmpty()) {
-      val dialog = new TextInputDialog()
-      dialog.setTitle("Information needed")
-      dialog.setHeaderText(null)
-      dialog.setContentText("Enter your API key")
+      val dialog = new TextInputDialog() {
+        initOwner(Launcher.stage)
+        initModality(Modality.APPLICATION_MODAL)
+        setTitle("Information needed")
+        setHeaderText(null)
+        setContentText("Enter your API key")
+      }
       val response = dialog.showAndWait()
       if (response.isPresent()) response.get()
       else sys.exit
@@ -124,18 +128,24 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
         //comment to clean store
         prefs.put("apiKey", apiKey)
         val dialog = new TextInputDialog()
-        val alert = new Alert(AlertType.INFORMATION)
-        alert.setTitle("Information")
-        alert.setHeaderText(null)
-        alert.setContentText("Perfect ! Your API key is valid")
-        alert.showAndWait()
+        val alert = new Alert(AlertType.INFORMATION) {
+          initOwner(Launcher.stage)
+          initModality(Modality.APPLICATION_MODAL)
+          setTitle("Information")
+          setHeaderText(null)
+          setContentText("Perfect ! Your API key is valid")
+          showAndWait()
+        }
       case Failure(e) ⇒
         //if (e.isInstanceOf[InvalidApiKeyException]) {
         if (!apiKeyStored.isEmpty() && apiKeyStored == apiKey) prefs.remove("apiKey")
-        val alert = new Alert(AlertType.INFORMATION)
-        alert.setTitle("Alert")
-        alert.setHeaderText(null)
-        alert.setContentText("(e.getMessage()")
+        val alert = new Alert(AlertType.INFORMATION) {
+          initOwner(Launcher.stage)
+          initModality(Modality.APPLICATION_MODAL)
+          setTitle("Alert")
+          setHeaderText(null)
+          setContentText("(e.getMessage()")
+        }
         sys.exit
       //} else throw (e))
     }

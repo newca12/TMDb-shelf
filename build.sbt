@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.7"
+version := "0.8"
 
 jfxSettings
 
@@ -11,7 +11,7 @@ JFX.mainClass := Some("org.edla.tmdb.shelf.Launcher")
 JFX.nativeBundles := "all"
 
 //required for Windows sbt package-javafx
-//JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_40")
+//JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_45")
 
 scalaVersion := "2.11.6"
 

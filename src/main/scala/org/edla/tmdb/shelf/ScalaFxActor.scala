@@ -101,13 +101,13 @@ class ScalaFxActor extends Actor {
       shelf.scoreLabel.setText(score.getOrElse("N/A").toString)
 
     case Utils.ShowPopup(shelf, msg) ⇒
-      val popup = new javafx.stage.Popup()
       val label = new javafx.scene.control.Label(msg)
-      popup.getContent().add(label)
-      popup.setAutoHide(true)
-      popup.setX(Launcher.stage.getX() + Launcher.stage.getWidth() - 110)
-      popup.setY(Launcher.stage.getY() + Launcher.stage.getHeight() - 40)
-      popup.show(Launcher.stage)
+      val popup = new javafx.stage.Popup() {
+        getContent().add(label)
+        setAutoHide(true)
+        setX(Launcher.stage.getX() + Launcher.stage.getWidth() - 110)
+        setY(Launcher.stage.getY() + Launcher.stage.getHeight() - 40)
+      }.show(Launcher.stage)
 
     case Utils.ConfirmDeletion(shelf, movie) ⇒
       val result = new Alert(AlertType.CONFIRMATION) {
