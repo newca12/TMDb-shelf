@@ -18,6 +18,9 @@ import javafx.scene.control.ButtonType
 import javafx.scene.image.Image
 import javafx.stage.Modality
 
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.Await
+
 class ScalaFxActor extends Actor {
 
   import javafx.scene.image.Image
@@ -78,12 +81,10 @@ class ScalaFxActor extends Actor {
       shelf.tmdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(tmdbId.toString))
       shelf.tmdbHyperlink.setText(s"http://www.themoviedb.org/movie/${tmdbId}")
 
-      Store.db.withSession { implicit session ⇒
-        val res = Store.movies.filter(_.tmdbId === tmdbId).list
-        shelf.addMovieButton.setDisable(!res.isEmpty)
-        shelf.deleteMovieButton.setDisable(res.isEmpty)
-        shelf.refreshMovieButton.setDisable(res.isEmpty)
-      }
+      val res = Await.result(DAO.findById(tmdbId), 5 seconds)
+      shelf.addMovieButton.setDisable(res.isDefined)
+      shelf.deleteMovieButton.setDisable(res.isEmpty)
+      shelf.refreshMovieButton.setDisable(res.isEmpty)
 
     case Utils.RefreshScore(shelf, imdbScore, score) ⇒
       if (imdbScore.isDefined && score.isDefined) {

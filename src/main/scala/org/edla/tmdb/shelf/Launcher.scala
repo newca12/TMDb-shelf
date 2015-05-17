@@ -4,14 +4,12 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.prefs.Preferences
-
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import akka.actor.ActorSystem
 import akka.actor.Props
 import javafx.event.EventHandler
@@ -54,13 +52,13 @@ trait WithUncaughtExceptionHandlerDialog {
 
 object Launcher {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]) = {
     new Launcher().launch
   }
 
   import java.nio.file.{ Paths, Files }
   val tmpDir = System.getProperty("java.io.tmpdir")
-  Files.createDirectories(Paths.get(Store.localStore))
+  Files.createDirectories(Paths.get(localStore))
 
   val system = ActorSystem("ShelfSystem")
   val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
@@ -70,7 +68,7 @@ object Launcher {
 
 class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
 
-  def launch = javafx.application.Application.launch()
+  def launch() = javafx.application.Application.launch()
 
   import java.io.IOException
   val resource = getClass.getResource("view/Shelf.fxml")
@@ -82,10 +80,10 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
   import javafx.{ scene ⇒ jfxs }
   val root: jfxs.Parent = jfxf.FXMLLoader.load(resource)
 
-  override def start(primaryStage: Stage) {
+  override def start(primaryStage: Stage) = {
     Launcher.stage = primaryStage
     val scene = new Scene(root)
-    primaryStage.setTitle("TMDb-shelf 0.8")
+    primaryStage.setTitle("TMDb-shelf 0.9")
     primaryStage.setScene(scene)
     primaryStage.show()
     val apiKey = checkOrAskApiKey(primaryStage)
@@ -113,7 +111,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
     } else apiKey
   }
 
-  def validateApiKey(apiKey: String) {
+  def validateApiKey(apiKey: String) = {
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     //uncomment to clean store
     //prefs.remove("apiKey")
@@ -147,7 +145,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
           setContentText("(e.getMessage()")
         }
         sys.exit
-      //} else throw (e))
+      //} else throw (e)))
     }
   }
 

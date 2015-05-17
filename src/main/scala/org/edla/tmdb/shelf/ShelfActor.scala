@@ -17,8 +17,9 @@ import javafx.scene.input.MouseEvent
 import org.edla.tmdb.api._
 import org.edla.tmdb.api.Protocol._
 import scala.util.Success
-import scala.slick.driver.H2Driver.simple._
+import slick.driver.H2Driver.api._
 import java.nio.file.{ Paths, Files }
+import scala.async.Async.async
 
 object ShelfActor {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new ShelfActor(apiKey, tmdbTimeOut)
@@ -42,7 +43,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   var selectedCollectionFilter: Number = 0
   var selectedSearchFilter: Number = 0
 
-  def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long) {
+  def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long) = {
     val releases = tmdbClient.getReleases(tmdbId)
     releases.onSuccess {
       case release ⇒
@@ -81,7 +82,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     imageView_.setSmooth(true)
     imageView_.setEffect(ds)
     imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
-      override def handle(event: MouseEvent) {
+      override def handle(event: MouseEvent) = {
         event.consume
         selectedMovie = tmdbId
         shelf.posterImageView.setImage(poster)
@@ -95,22 +96,18 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           case e: Exception ⇒
             log.error(s"addToShelf: Future getMovie(${tmdbId}) failed : ${e.getMessage()}")
         }
-        import scala.async.Async.async
-        val futureDb = async {
-          Store.db.withSession { implicit session ⇒
-            val q = Store.movies.filter(_.tmdbId === tmdbId)
-            if (q.list.isEmpty) {
-              val imdbInfo = ImdbInfo.getInfoFromId(imdbID)
-              Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
-              Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, imdbInfo._1)
-              if ((imdbInfo._2.isEmpty) || (imdbInfo._2.get)) Launcher.scalaFxActor ! Utils.TVPoster(shelf, imageView_)
-            } else
-              q.firstOption.map {
-                case m: (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment) ⇒
-                  Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m._10, ImdbInfo.getScoreFromId(imdbID))
-                  Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m._7, m._12)
-                case _ ⇒ log.error("unhandled futureDb match")
-              }
+
+        async {
+          val q = Await.result(DAO.findById(tmdbId), 5 seconds)
+          if (q.isEmpty) {
+            val imdbInfo = ImdbInfo.getInfoFromId(imdbID)
+            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
+            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, imdbInfo._1)
+            if ((imdbInfo._2.isEmpty) || (imdbInfo._2.get)) Launcher.scalaFxActor ! Utils.TVPoster(shelf, imageView_)
+          } else {
+            val m = q.get
+            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, ImdbInfo.getScoreFromId(imdbID))
+            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment)
           }
         }
         refreshInfo(shelf, tmdbId)
@@ -139,7 +136,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val results = tmdbClient.searchMovie(search, page * 2 - 1)
       results.onSuccess {
         case results ⇒
-          maxPage = results.total_pages
+          //TODO type change needed in tmdb-async-client
+          maxPage = results.total_pages.toLong
           Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toLong)
           for (movie ← results.results) {
             tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
@@ -201,23 +199,23 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.SaveMovie(shelf) ⇒
       val filename = s"${Launcher.tmpDir}/${selectedMovie}.jpg"
       if (Files.exists(Paths.get(filename)))
-        Files.copy(Paths.get(filename), Paths.get(s"${Store.localStore}/${selectedMovie}.jpg"))
+        Files.copy(Paths.get(filename), Paths.get(s"${localStore}/${selectedMovie}.jpg"))
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits = Await.result(tmdbClient.getCredits(selectedMovie), 5 seconds)
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
-      try {
-        Store.db.withSession { implicit session ⇒
-          val tmp = (movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
+      async {
+        try {
+          val tmp = MovieDB(movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
             new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, ImdbInfo.getScoreFromId(movie.imdb_id), false, "")
-          Store.movies += tmp
+          val q = Await.result(DAO.insert(tmp), 5 seconds)
+          log.info(s"${movie.title} registered")
+          refreshInfo(shelf, movie.id)
+          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Registered")
+        } catch {
+          case e: Exception ⇒
+            log.error(e.getMessage())
+            Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
-        log.info(s"${movie.title} registered")
-        refreshInfo(shelf, movie.id)
-        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Registered")
-      } catch {
-        case e: Exception ⇒
-          log.error(e.getMessage())
-          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
     //Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, movie.id, credits)
     case Utils.RemoveMovie(shelf) ⇒
@@ -225,10 +223,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       Launcher.scalaFxActor ! Utils.ConfirmDeletion(shelf, movie)
     case Utils.DeletionConfirmed(shelf, movie) ⇒
       try {
-        Store.db.withSession { implicit session ⇒
-          Store.movies.filter(_.tmdbId === movie.id).delete
-        }
-        Files.delete(Paths.get(s"${Store.localStore}/${movie.id}.jpg"))
+        Await.result(DAO.delete(movie.id), 5 seconds)
+        Files.delete(Paths.get(s"${localStore}/${movie.id}.jpg"))
         log.warning(s"Movie ${movie.id} ${movie.title} removed")
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "REMOVED")
         refreshInfo(shelf, movie.id)
@@ -243,59 +239,47 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       this.search = search.toLowerCase()
       if (user) page = 1
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
-      Store.db.withSession { implicit session ⇒
-        val res_ = selectedCollectionFilter.intValue() match {
-          case 0 ⇒ Store.movies.filter(_.seen === false)
-            .filter(_.availability === true)
-            .sortBy(m ⇒ (m.imdbScore.desc, m.releaseDate))
-          case 1 ⇒ Store.movies.sortBy(m ⇒ m.title.asc)
-          case 2 ⇒ Store.movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
-          case 3 ⇒ Store.movies.filter(_.availability === false).sortBy(m ⇒ m.title.asc)
-        }
 
-        val res = selectedSearchFilter.intValue() match {
-          case 0 ⇒ res_
-          case 1 ⇒ res_.filter(_.director.toLowerCase like s"%${search}%")
-          case 2 ⇒ res_.filter(_.title.toLowerCase like s"%${search}%")
-        }
-        //TODO not efficient
-        maxPage = (res.list.size / maxItems) + 1
-        Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
-        res.drop((page - 1) * maxItems).take(maxItems) foreach {
-          //TODO match seen true/false
-          case (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbID, imdbScore, seen, comment) ⇒
-            val filename = s"${Store.localStore}/${tmdbId}.jpg"
-            val image =
-              if (Files.exists(Paths.get(filename))) new Image(s"file:///${filename}")
-              else new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
-            addToShelf(shelf, tmdbId, releaseDate.toString, title, originalTitle, imdbID, image)
-        }
+      val futureResDB = DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search)
+      val resDB = futureResDB.map {
+        result ⇒
+          maxPage = (result.size.toLong / maxItems) + 1
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
+          val dropN: Int = ((page - 1) * maxItems).toInt
+          result.drop(dropN).take(maxItems) foreach {
+            //TODO match seen true/false
+            case m: MovieDB ⇒
+              val filename = s"${localStore}/${m.tmdbId}.jpg"
+              val image =
+                if (Files.exists(Paths.get(filename))) new Image(s"file:///${filename}")
+                else new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
+              addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image)
+          }
+      }.recover {
+        case e: Exception ⇒
+          log.error("Problem found in ShowCollection filter process")
+          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
+
     case Utils.SaveSeenDate(shelf, seenDate) ⇒
-      try {
-        Store.db.withSession { implicit session ⇒
-          val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie } yield (movie.viewingDate, movie.seen)
-          val res = q.update((Some(seenDate), true))
-        }
-        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Date updated")
-      } catch {
+
+      val futureResDB = DAO.updateSeenDate(selectedMovie, seenDate).map {
+        result ⇒ Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Date updated")
+      }.recover {
         case e: Exception ⇒
-          log.error(e.getMessage())
+          log.error("Problem found in updateSeenDate process")
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
+
     case Utils.RefreshMovie(shelf) ⇒
-      val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
-      try {
-        Store.db.withSession { implicit session ⇒
-          val q = for { movie ← Store.movies if movie.tmdbId === selectedMovie } yield (movie.imdbScore, movie.comment)
-          val res = q.update(ImdbInfo.getScoreFromId(movie.imdb_id), shelf.commentTextArea.getText())
-        }
-        Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
-      } catch {
+      val futureResDB = DAO.refreshMovie(selectedMovie, shelf.commentTextArea.getText()).map {
+        result ⇒ Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
+      }.recover {
         case e: Exception ⇒
-          log.error(e.getMessage())
+          log.error("Problem found in refreshMovie process")
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
+
     case Utils.SetCollectionFilter(shelf, filter) ⇒
       selectedCollectionFilter = filter
     case Utils.SetSearchFilter(shelf, filter) ⇒

@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.8"
+version := "0.9"
 
 jfxSettings
 
@@ -15,20 +15,31 @@ JFX.nativeBundles := "all"
 
 scalaVersion := "2.11.6"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
-
-scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
+scalacOptions ++= Seq(
+  "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
+  //"-optimize",
+  "-deprecation",
+  "-encoding", "UTF-8", // yes, this is 2 args
+  "-feature",
+  "-unchecked",
+  //"-Xfatal-warnings",
+  "-Xlint",
+  //"-Yno-adapted-args", //lead to compilation error with slick : too many arguments for method update
+  "-Ywarn-numeric-widen",
+  "-Ywarn-value-discard",
+  "-Xfuture"
+)
 
 resolvers += "edla" at "http://www.edla.org/releases"
 
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.3.9",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
   "org.scala-lang.modules" %% "scala-async" % "0.9.3",
   "org.edla" %% "tmdb-async-client" % "0.7" exclude("io.spray", "spray-client"),
-  "com.typesafe.slick" %% "slick" % "2.1.0",
-  "com.h2database" % "h2" % "1.4.186",
+  "com.typesafe.slick" %% "slick" % "3.0.0",
+  "com.h2database" % "h2" % "1.4.187",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.10",
   "org.apache.commons" % "commons-lang3" % "3.3.2"
 )

@@ -93,13 +93,13 @@ class TmdbPresenter extends Initializable {
   import java.util.ResourceBundle
   import javafx.beans.value.ChangeListener
   import javafx.beans.value.ObservableValue
-  override def initialize(fxmlFileLocation: URL, resources: ResourceBundle) {
+  override def initialize(fxmlFileLocation: URL, resources: ResourceBundle) = {
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
     filterCollectionChoiceBox.getItems().addAll("Not seen", "All", "Seen", "Not available")
     filterCollectionChoiceBox.getSelectionModel().selectFirst()
     filterCollectionChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
       new ChangeListener[Number]() {
-        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) {
+        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
           val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           shelfActor ! Utils.SetCollectionFilter(TmdbPresenter.this, newValue)
         }
@@ -110,7 +110,7 @@ class TmdbPresenter extends Initializable {
     filterSearchChoiceBox.getSelectionModel().selectFirst()
     filterSearchChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
       new ChangeListener[Number]() {
-        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) {
+        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
           val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
           shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
         }
@@ -119,58 +119,58 @@ class TmdbPresenter extends Initializable {
   }
 
   @jfxf.FXML
-  def previousPage(event: jfxe.ActionEvent) {
+  def previousPage(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.ChangePage(this, -1)
   }
 
-  def nextPage(event: jfxe.ActionEvent) {
+  def nextPage(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.ChangePage(this, 1)
   }
 
-  def showCollection(event: jfxe.ActionEvent) {
+  def showCollection(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.ShowCollection(this, searchTextField.getText(), true)
   }
 
-  def addMovie(event: jfxe.ActionEvent) {
+  def addMovie(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.SaveMovie(this)
   }
 
-  def refreshMovie(event: jfxe.ActionEvent) {
+  def refreshMovie(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.RefreshMovie(this)
   }
 
-  def deleteMovie(event: jfxe.ActionEvent) {
+  def deleteMovie(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.RemoveMovie(this)
   }
 
-  def search(event: jfxe.ActionEvent) {
+  def search(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.Search(this, searchTextField.getText().replace('.', ' '), true)
   }
 
-  def handleClear(event: jfxe.ActionEvent) {
+  def handleClear(event: jfxe.ActionEvent) = {
     searchTextField.setText("")
   }
 
-  def openImdbWebpage(event: jfxe.ActionEvent) {
+  def openImdbWebpage(event: jfxe.ActionEvent) = {
     java.awt.Desktop.getDesktop().browse(new java.net.URL(imdbHyperlink.getText()).toURI())
   }
 
-  def openTmdbWebpage(event: jfxe.ActionEvent) {
+  def openTmdbWebpage(event: jfxe.ActionEvent) = {
     java.awt.Desktop.getDesktop().browse(new java.net.URL(tmdbHyperlink.getText()).toURI())
   }
 
-  def updateSeenDate(event: jfxe.ActionEvent) {
+  def updateSeenDate(event: jfxe.ActionEvent) = {
     //not auto saving seenDate here since setting a date programmatically trigger ActionEvent 
   }
 
-  def saveSeenDate(event: jfxe.ActionEvent) {
+  def saveSeenDate(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     val date = seenDatePicker.getValue()
     if (date != null)
