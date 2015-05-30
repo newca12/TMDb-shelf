@@ -33,8 +33,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
   val tmdbClient = TmdbClient(apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
   @volatile var nbItems = 0
-  var page: Long = 1
-  var maxPage: Long = 1
+  var page: Int = 1
+  var maxPage: Int = 1
   val maxItems = 40
   var items: Array[javafx.scene.image.ImageView] = new Array[javafx.scene.image.ImageView](maxItems)
   var searchMode = SearchMode.Search
@@ -66,7 +66,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   }
 
   def addToShelf_(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
-    addToShelf(shelf, movie.id, movie.release_date.toString, movie.title, movie.original_title, movie.imdb_id, poster)
+    println(movie.release_date)
+    addToShelf(shelf, movie.id, movie.release_date.getOrElse("Unknown"), movie.title, movie.original_title, movie.imdb_id, poster)
   }
 
   def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, releaseDate: String, title: String, originalTitle: String, imdbID: String, poster: javafx.scene.image.Image) = {
@@ -136,9 +137,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val results = tmdbClient.searchMovie(search, page * 2 - 1)
       results.onSuccess {
         case results ⇒
-          //TODO type change needed in tmdb-async-client
-          maxPage = results.total_pages.toLong
-          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toLong)
+          maxPage = results.total_pages
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toInt)
           for (movie ← results.results) {
             tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
             self ! Utils.GetResult(shelf, movie)
@@ -205,7 +205,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
       async {
         try {
-          val tmp = MovieDB(movie.id, java.sql.Date.valueOf(movie.release_date), movie.title, movie.original_title, director,
+          val tmp = MovieDB(movie.id, java.sql.Date.valueOf(movie.release_date.getOrElse("Unknown")), movie.title, movie.original_title, director,
             new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, ImdbInfo.getScoreFromId(movie.imdb_id), false, "")
           val q = Await.result(DAO.insert(tmp), 5 seconds)
           log.info(s"${movie.title} registered")
@@ -243,7 +243,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val futureResDB = DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search)
       val resDB = futureResDB.map {
         result ⇒
-          maxPage = (result.size.toLong / maxItems) + 1
+          maxPage = (result.size / maxItems) + 1
           Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
           val dropN: Int = ((page - 1) * maxItems).toInt
           result.drop(dropN).take(maxItems) foreach {

@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.9"
+version := "0.10"
 
 jfxSettings
 
@@ -37,7 +37,7 @@ resolvers += "ConJars" at "http://conjars.org/repo"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.3.11",
   "org.scala-lang.modules" %% "scala-async" % "0.9.3",
-  "org.edla" %% "tmdb-async-client" % "0.7" exclude("io.spray", "spray-client"),
+  "org.edla" %% "tmdb-async-client" % "0.8" exclude("io.spray", "spray-client"),
   "com.typesafe.slick" %% "slick" % "3.0.0",
   "com.h2database" % "h2" % "1.4.187",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.10",

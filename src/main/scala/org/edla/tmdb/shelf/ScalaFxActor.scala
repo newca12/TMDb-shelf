@@ -53,7 +53,7 @@ class ScalaFxActor extends Actor {
       val release = releases.countries.filter(
         country ⇒ country.iso_3166_1 == java.util.Locale.getDefault().getCountry
       ).headOption.getOrElse(unReleased).release_date
-      shelf.localizedReleaseLabel.setText(if (release != "") release else "Localized release")
+      shelf.localizedReleaseLabel.setText(if (release != "Unknown") release else "Localized release")
 
     case Utils.ShowSeenDate(shelf, seenDate, comment) ⇒
       shelf.commentTextArea.setText(comment)
@@ -66,7 +66,7 @@ class ScalaFxActor extends Actor {
     case Utils.RefreshMovieFromDb(shelf, title, original_title, release_date, imdb_id) ⇒
       shelf.titleLabel.setText(title)
       shelf.originalTitleLabel.setText(original_title)
-      shelf.releaseLabel.setText(release_date)
+      shelf.releaseLabel.setText(if (release_date != "") release_date else "Release")
       shelf.imdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(imdb_id))
       shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${imdb_id}")
 
@@ -77,7 +77,7 @@ class ScalaFxActor extends Actor {
     case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒
       import scala.slick.driver.H2Driver.simple._
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
-      shelf.directorLabel.setText(director)
+      shelf.directorLabel.setText(if (director != "Unknown") director else "Director")
       shelf.tmdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(tmdbId.toString))
       shelf.tmdbHyperlink.setText(s"http://www.themoviedb.org/movie/${tmdbId}")
 
