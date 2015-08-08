@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.10"
+version := "0.11"
 
 jfxSettings
 
@@ -13,7 +13,7 @@ JFX.nativeBundles := "all"
 //required for Windows sbt package-javafx
 //JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_45")
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 scalacOptions ++= Seq(
   "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
@@ -22,9 +22,9 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8", // yes, this is 2 args
   "-feature",
   "-unchecked",
-  //"-Xfatal-warnings",
+  "-Xfatal-warnings",
   "-Xlint",
-  //"-Yno-adapted-args", //lead to compilation error with slick : too many arguments for method update
+  "-Yno-adapted-args",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
   "-Xfuture"
@@ -35,14 +35,21 @@ resolvers += "edla" at "http://www.edla.org/releases"
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
-  "org.scala-lang.modules" %% "scala-async" % "0.9.3",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.12",
+  "org.scala-lang.modules" %% "scala-async" % "0.9.5",
   "org.edla" %% "tmdb-async-client" % "0.8" exclude("io.spray", "spray-client"),
-  "com.typesafe.slick" %% "slick" % "3.0.0",
+  "com.typesafe.slick" %% "slick" % "3.0.1",
   "com.h2database" % "h2" % "1.4.187",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.10",
-  "org.apache.commons" % "commons-lang3" % "3.3.2"
+  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.13",
+  "org.apache.commons" % "commons-lang3" % "3.4"
 )
+
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "org.edla.tmdb.shelf"
+  )
 
 fork := true
 

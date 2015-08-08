@@ -71,7 +71,7 @@ class ScalaFxActor extends Actor {
       shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/${imdb_id}")
 
     case Utils.RefreshMovieFromTmdb(shelf, movie) ⇒
-      val runtime = movie.runtime.getOrElse("Runtime").toString
+      val runtime = movie.runtime.getOrElse(0.toLong).toString
       shelf.runtimeLabel.setText(if (runtime != "0") runtime + " min" else "Runtime")
 
     case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒

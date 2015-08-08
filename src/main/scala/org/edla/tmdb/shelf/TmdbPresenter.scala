@@ -131,7 +131,7 @@ class TmdbPresenter extends Initializable {
 
   def showCollection(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.ShowCollection(this, searchTextField.getText(), true)
+    shelfActor ! Utils.ShowCollection(this, searchTextField.getText().toLowerCase(), true)
   }
 
   def addMovie(event: jfxe.ActionEvent) = {
@@ -151,7 +151,7 @@ class TmdbPresenter extends Initializable {
 
   def search(event: jfxe.ActionEvent) = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.Search(this, searchTextField.getText().replace('.', ' '), true)
+    shelfActor ! Utils.Search(this, searchTextField.getText().replace('.', ' ').toLowerCase(), true)
   }
 
   def handleClear(event: jfxe.ActionEvent) = {

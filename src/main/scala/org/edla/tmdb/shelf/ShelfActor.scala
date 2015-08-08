@@ -203,7 +203,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits = Await.result(tmdbClient.getCredits(selectedMovie), 5 seconds)
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
-      async {
+      val _ = async {
         try {
           val tmp = MovieDB(movie.id, java.sql.Date.valueOf(movie.release_date.getOrElse("Unknown")), movie.title, movie.original_title, director,
             new java.sql.Date(new java.util.Date().getTime()), None, true, movie.imdb_id, ImdbInfo.getScoreFromId(movie.imdb_id), false, "")
