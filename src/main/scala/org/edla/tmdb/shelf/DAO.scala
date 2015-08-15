@@ -71,7 +71,7 @@ object DAO extends DAOComponent {
     val res = selectedSearchFilter match {
       case 0 ⇒ res_
       case 1 ⇒ res_.filter(_.director.toLowerCase like s"%${search}%")
-      case 2 ⇒ res_.filter(_.title.toLowerCase like s"%${search}%")
+      case 2 ⇒ res_.filter(m ⇒ ((m.title.toLowerCase like s"%${search}%") || (m.originalTitle.toLowerCase like s"%${search}%")))
     }
 
     db.run(res.result)
