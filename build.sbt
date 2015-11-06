@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.12"
+version := "0.13"
 
 jfxSettings
 
@@ -11,7 +11,7 @@ JFX.mainClass := Some("org.edla.tmdb.shelf.Launcher")
 JFX.nativeBundles := "all"
 
 //required for Windows sbt package-javafx
-//JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_45")
+//JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_66")
 
 scalaVersion := "2.11.7"
 
@@ -35,12 +35,12 @@ resolvers += "edla" at "http://www.edla.org/releases"
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.3.12",
+  "com.typesafe.akka" %% "akka-actor" % "2.4.0",
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
   "org.edla" %% "tmdb-async-client" % "0.8" exclude("io.spray", "spray-client"),
-  "com.typesafe.slick" %% "slick" % "3.0.1",
-  "com.h2database" % "h2" % "1.4.187",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.13",
+  "com.typesafe.slick" %% "slick" % "3.0.3",
+  "com.h2database" % "h2" % "1.4.190",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.15",
   "org.apache.commons" % "commons-lang3" % "3.4"
 )
 

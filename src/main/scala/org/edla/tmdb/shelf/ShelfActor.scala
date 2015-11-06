@@ -20,6 +20,7 @@ import scala.util.Success
 import slick.driver.H2Driver.api._
 import java.nio.file.{ Paths, Files }
 import scala.async.Async.async
+import java.nio.file.StandardCopyOption
 
 object ShelfActor {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new ShelfActor(apiKey, tmdbTimeOut)
@@ -199,7 +200,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.SaveMovie(shelf) ⇒
       val filename = s"${Launcher.tmpDir}/${selectedMovie}.jpg"
       if (Files.exists(Paths.get(filename)))
-        Files.copy(Paths.get(filename), Paths.get(s"${localStore}/${selectedMovie}.jpg"))
+        Files.copy(Paths.get(filename), Paths.get(s"${localStore}/${selectedMovie}.jpg"), StandardCopyOption.REPLACE_EXISTING)
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits = Await.result(tmdbClient.getCredits(selectedMovie), 5 seconds)
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
@@ -224,7 +225,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.DeletionConfirmed(shelf, movie) ⇒
       try {
         Await.result(DAO.delete(movie.id), 5 seconds)
-        Files.delete(Paths.get(s"${localStore}/${movie.id}.jpg"))
+        Files.deleteIfExists(Paths.get(s"${localStore}/${movie.id}.jpg"))
         log.warning(s"Movie ${movie.id} ${movie.title} removed")
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "REMOVED")
         refreshInfo(shelf, movie.id)
