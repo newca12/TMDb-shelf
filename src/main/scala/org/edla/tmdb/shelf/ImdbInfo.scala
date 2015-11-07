@@ -12,17 +12,17 @@ object ImdbInfo {
     val props = cleaner.getProperties
     val rootNode = cleaner.clean(new URL(url))
     val elementsTitle = rootNode.getElementsByName("title", true)
-    val isTVMovie = elementsTitle(0).getText().toString.contains("(TV Movie")
+    val isTheatricalFilm = List("TV Movie", "Video").exists { elementsTitle(0).getText().toString.contains }
     val elements = rootNode.getElementsByName("div", true)
     for (elem ← elements) {
       val classType = elem.getAttributeByName("class")
       if (classType != null && classType.equalsIgnoreCase("titlePageSprite star-box-giga-star")) {
         // stories might be "dirty" with text like "'", clean it up
         val score = StringEscapeUtils.unescapeHtml4(elem.getText.toString)
-        return (Some(BigDecimal(score.trim)), isTVMovie)
+        return (Some(BigDecimal(score.trim)), isTheatricalFilm)
       }
     }
-    return (None, isTVMovie)
+    return (None, isTheatricalFilm)
   }
 
   def getScoreFromId(imdbId: String): Option[BigDecimal] = {

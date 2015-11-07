@@ -30,7 +30,7 @@ class ScalaFxActor extends Actor {
   import javafx.scene.input.MouseEvent
 
   def receive = {
-    case Utils.TVPoster(shelf, poster) ⇒
+    case Utils.NotTheatricalFilmPoster(shelf, poster) ⇒
       val effect = new javafx.scene.effect.Shadow()
       effect.setColor(javafx.scene.paint.Color.BEIGE)
       //poster.setEffect(effect)

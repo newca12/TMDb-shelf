@@ -105,7 +105,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val imdbInfo = ImdbInfo.getInfoFromId(imdbID)
             Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
             Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, imdbInfo._1)
-            if ((imdbInfo._2.isEmpty) || (imdbInfo._2.get)) Launcher.scalaFxActor ! Utils.TVPoster(shelf, imageView_)
+            if ((imdbInfo._2.getOrElse(false))) Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
           } else {
             val m = q.get
             Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, ImdbInfo.getScoreFromId(imdbID))
