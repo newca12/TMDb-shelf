@@ -106,7 +106,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
         setContentText("Enter your API key")
       }
       val response = dialog.showAndWait()
-      if (response.isPresent()) response.get()
+      if (response.isPresent()) response.get().trim()
       else sys.exit
     } else apiKey
   }

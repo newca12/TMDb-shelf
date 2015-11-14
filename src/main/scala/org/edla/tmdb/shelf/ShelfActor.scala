@@ -67,7 +67,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   }
 
   def addToShelf_(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie, poster: javafx.scene.image.Image) = {
-    println(movie.release_date)
     addToShelf(shelf, movie.id, movie.release_date.getOrElse("Unknown"), movie.title, movie.original_title, movie.imdb_id, poster)
   }
 

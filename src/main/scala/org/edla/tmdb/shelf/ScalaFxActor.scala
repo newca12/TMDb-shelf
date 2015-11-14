@@ -2,10 +2,6 @@ package org.edla.tmdb.shelf
 
 import scala.language.postfixOps
 import scala.math.BigDecimal.int2bigDecimal
-import scala.slick.driver.H2Driver.simple.columnExtensionMethods
-import scala.slick.driver.H2Driver.simple.longColumnType
-import scala.slick.driver.H2Driver.simple.queryToAppliedQueryInvoker
-import scala.slick.driver.H2Driver.simple.valueToConstColumn
 
 import org.edla.tmdb.api.Protocol.noCrew
 import org.edla.tmdb.api.Protocol.unReleased
@@ -75,7 +71,6 @@ class ScalaFxActor extends Actor {
       shelf.runtimeLabel.setText(if (runtime != "0") runtime + " min" else "Runtime")
 
     case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒
-      import scala.slick.driver.H2Driver.simple._
       val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption.getOrElse(noCrew).name
       shelf.directorLabel.setText(if (director != "Unknown") director else "Director")
       shelf.tmdbHyperlink.setTooltip(new javafx.scene.control.Tooltip(tmdbId.toString))
