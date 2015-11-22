@@ -140,7 +140,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           maxPage = results.total_pages
           Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toInt)
           for (movie ← results.results) {
-            tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
             self ! Utils.GetResult(shelf, movie)
           }
           if (page < maxPage) {
@@ -148,7 +147,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             results.onSuccess {
               case results ⇒
                 for (movie ← results.results) {
-                  tmdbClient.log.info(s"find ${movie.id} - ${movie.title}")
                   self ! Utils.GetResult(shelf, movie)
                 }
             }
