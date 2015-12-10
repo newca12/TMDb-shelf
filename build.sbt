@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.16"
+version := "0.17"
 
 jfxSettings
 
@@ -31,12 +31,12 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.4.0",
+  "com.typesafe.akka" %% "akka-actor" % "2.4.1",
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-  "org.edla" %% "tmdb-async-client" % "1.0.1",
+  "org.edla" %% "tmdb-async-client" % "1.0.2",
   "com.typesafe.slick" %% "slick" % "3.1.0",
   "com.h2database" % "h2" % "1.4.190",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.15",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
   "org.apache.commons" % "commons-lang3" % "3.4"
 )
 
