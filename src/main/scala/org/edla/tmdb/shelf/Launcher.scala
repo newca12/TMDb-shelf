@@ -118,7 +118,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
     val apiKeyStored = prefs.get("apiKey", "")
     //http://tersesystems.com/2012/12/27/error-handling-in-scala/
     //http://mauricio.github.io/2014/02/17/scala-either-try-and-the-m-word.html
-    val shelfActor = Launcher.system.actorOf(Props(ShelfActor(apiKey, 45 second)), name = "shelfactor")
+    val shelfActor = Launcher.system.actorOf(ShelfActor.props(apiKey, 45 second), name = "shelfactor")
     val tmdbClient = Utils.getTmdbClient
     val token = Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     token match {

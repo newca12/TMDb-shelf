@@ -21,9 +21,10 @@ import slick.driver.H2Driver.api._
 import java.nio.file.{ Paths, Files }
 import scala.async.Async.async
 import java.nio.file.StandardCopyOption
+import akka.actor.Props
 
 object ShelfActor {
-  def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new ShelfActor(apiKey, tmdbTimeOut)
+  def props(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = Props(new ShelfActor(apiKey, tmdbTimeOut))
 }
 
 object SearchMode extends Enumeration {
