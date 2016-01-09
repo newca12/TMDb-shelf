@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.19"
+version := "0.20"
 
 jfxSettings
 
@@ -37,7 +37,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.1.1",
   "com.h2database" % "h2" % "1.4.190",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
-  "org.apache.commons" % "commons-lang3" % "3.4"
+  "org.apache.commons" % "commons-lang3" % "3.4",
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 
 lazy val root = (project in file(".")).
