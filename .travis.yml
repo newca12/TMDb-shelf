@@ -1,11 +1,13 @@
 language: scala
-sudo: required
-scala: 
-- 2.11.7
 jdk:
-  - oraclejdk8
-install: true
+- oraclejdk8
+scala:
+- 2.11.7
+sudo: false
+
+# codecov
 script:
-  - sudo apt-get update && sudo apt-get install oracle-java8-installer
-  - java -version
-  - sbt ++$TRAVIS_SCALA_VERSION test
+  - sbt clean coverage test
+
+after_success:
+  - pip install --user codecov && codecov
