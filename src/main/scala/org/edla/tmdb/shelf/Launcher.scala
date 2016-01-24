@@ -52,7 +52,7 @@ trait WithUncaughtExceptionHandlerDialog {
 
 object Launcher {
 
-  def main(args: Array[String]) = {
+  def main(args: Array[String]): Unit = {
     new Launcher().launch
   }
 
@@ -68,19 +68,19 @@ object Launcher {
 
 class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
 
-  def launch() = javafx.application.Application.launch()
+  private def launch() = javafx.application.Application.launch()
 
   import java.io.IOException
-  val resource = getClass.getResource("view/Shelf.fxml")
-  if (resource == null) {
+  val resource = Option(getClass.getResource("view/Shelf.fxml"))
+  if (resource.isEmpty) {
     throw new IOException("Cannot load resource: view/Shelf.fxml")
   }
 
   import javafx.{ fxml ⇒ jfxf }
   import javafx.{ scene ⇒ jfxs }
-  val root: jfxs.Parent = jfxf.FXMLLoader.load(resource)
+  val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
 
-  override def start(primaryStage: Stage) = {
+  override def start(primaryStage: Stage): Unit = {
     Launcher.stage = primaryStage
     val scene = new Scene(root)
     primaryStage.setTitle(s"${BuildInfo.name} ${BuildInfo.version}")
@@ -94,7 +94,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
     })
   }
 
-  def checkOrAskApiKey(primaryStage: Stage) = {
+  private def checkOrAskApiKey(primaryStage: Stage) = {
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     val apiKey = prefs.get("apiKey", "")
     if (apiKey.isEmpty()) {
@@ -102,16 +102,23 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
         initOwner(Launcher.stage)
         initModality(Modality.APPLICATION_MODAL)
         setTitle("Information needed")
+        // scalastyle:off null
         setHeaderText(null)
+        // scalastyle:on null
         setContentText("Enter your API key")
       }
       val response = dialog.showAndWait()
-      if (response.isPresent()) response.get().trim()
-      else sys.exit
-    } else apiKey
+      if (response.isPresent()) {
+        response.get().trim()
+      } else {
+        sys.exit
+      }
+    } else {
+      apiKey
+    }
   }
 
-  def validateApiKey(apiKey: String) = {
+  private def validateApiKey(apiKey: String) = {
     val prefs = Preferences.userRoot().node(this.getClass().getName())
     //uncomment to clean store
     //prefs.remove("apiKey")
@@ -130,7 +137,9 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
           initOwner(Launcher.stage)
           initModality(Modality.APPLICATION_MODAL)
           setTitle("Information")
+          // scalastyle:off null
           setHeaderText(null)
+          // scalastyle:on null
           setContentText("Perfect ! Your API key is valid")
           showAndWait()
         }
@@ -141,7 +150,9 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
           initOwner(Launcher.stage)
           initModality(Modality.APPLICATION_MODAL)
           setTitle("Alert")
+          // scalastyle:off null
           setHeaderText(null)
+          // scalastyle:on null
           setContentText("(e.getMessage()")
         }
         sys.exit
@@ -150,3 +161,4 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
   }
 
 }
+

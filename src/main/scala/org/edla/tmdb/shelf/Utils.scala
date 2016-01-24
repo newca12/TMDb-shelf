@@ -50,7 +50,7 @@ object Utils {
   case class SetCollectionFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
   case class SetSearchFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
 
-  def getTmdbClient = {
+  def getTmdbClient: TmdbClient = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     implicit val timeout = Timeout(5 seconds)
     val future: Future[TmdbClient] = ask(shelfActor, "instance").mapTo[TmdbClient]
@@ -69,22 +69,33 @@ trait JfxUtils {
       }
     }
   }
-  def mkListChangeListener[E](onChangedAction: ListChangeListener.Change[_ <: E] ⇒ Unit) = new ListChangeListener[E] {
-    def onChanged(changeItem: ListChangeListener.Change[_ <: E]): Unit = {
-      onChangedAction(changeItem)
+  def mkListChangeListener[E](onChangedAction: ListChangeListener.Change[_ <: E] ⇒ Unit): ListChangeListener[E] = {
+    new ListChangeListener[E] {
+      def onChanged(changeItem: ListChangeListener.Change[_ <: E]): Unit = {
+        onChangedAction(changeItem)
+      }
     }
   }
 
-  def mkCellFactoryCallback[T](listCellGenerator: ListView[T] ⇒ ListCell[T]) = new Callback[ListView[T], ListCell[T]]() {
-    override def call(list: ListView[T]): ListCell[T] = listCellGenerator(list)
+  def mkCellFactoryCallback[T](listCellGenerator: ListView[T] ⇒ ListCell[T]): Callback[ListView[T], ListCell[T]] = {
+    new Callback[ListView[T], ListCell[T]]() {
+      override def call(list: ListView[T]): ListCell[T] = listCellGenerator(list)
+    }
   }
 
-  def mkEventHandler[E <: Event](f: E ⇒ Unit) = new EventHandler[E] { def handle(e: E) = f(e) }
+  def mkEventHandler[E <: Event](f: E ⇒ Unit): EventHandler[E] = {
+    new EventHandler[E] {
+      def handle(e: E) = f(e)
+    }
+  }
 
   import java.util.Optional
   //import scala.language.implicitConversions
   implicit def fromOptional[T](optional: Optional[T]): Option[T] =
-    if (optional.isPresent) Some(optional.get)
-    else None
+    if (optional.isPresent) {
+      Some(optional.get)
+    } else {
+      None
+    }
 
 }

@@ -19,21 +19,22 @@ abstract class GUIExecutorService extends AbstractExecutorService {
 
   def shutdown(): Unit = ()
 
-  def shutdownNow() = Collections.emptyList[Runnable]
+  def shutdownNow(): java.util.List[Runnable] = Collections.emptyList[Runnable]
 
-  def isShutdown = false
+  def isShutdown: Boolean = false
 
-  def isTerminated = false
+  def isTerminated: Boolean = false
 
-  def awaitTermination(l: Long, timeUnit: TimeUnit) = true
+  def awaitTermination(l: Long, timeUnit: TimeUnit): Boolean = true
 }
 
 object JavaFXExecutorService extends GUIExecutorService {
-  override def execute(command: Runnable) = Platform.runLater(command)
+  override def execute(command: Runnable): Unit = Platform.runLater(command)
 }
 
 // Then we create an ExecutorServiceConfigurator so that Akka can use our JavaFXExecutorService for the dispatchers
-class JavaFXEventThreadExecutorServiceConfigurator(config: Config, prerequisites: DispatcherPrerequisites) extends ExecutorServiceConfigurator(config, prerequisites) {
+class JavaFXEventThreadExecutorServiceConfigurator(config: Config, prerequisites: DispatcherPrerequisites)
+    extends ExecutorServiceConfigurator(config, prerequisites) {
   private val f = new ExecutorServiceFactory {
     def createExecutorService: ExecutorService = JavaFXExecutorService
   }

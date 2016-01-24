@@ -25,7 +25,9 @@ class ScalaFxActor extends Actor {
   import javafx.event.EventHandler
   import javafx.scene.input.MouseEvent
 
-  def receive = {
+  // scalastyle:off cyclomatic.complexity
+  // scalastyle:off method.length
+  def receive: PartialFunction[Any, Unit] = {
     case Utils.NotTheatricalFilmPoster(shelf, poster) ⇒
       val effect = new javafx.scene.effect.Shadow()
       effect.setColor(javafx.scene.paint.Color.BEIGE)
@@ -53,12 +55,14 @@ class ScalaFxActor extends Actor {
 
     case Utils.ShowSeenDate(shelf, seenDate, comment) ⇒
       shelf.commentTextArea.setText(comment)
-      if (seenDate.isDefined)
+      if (seenDate.isDefined) {
         shelf.seenDatePicker.setValue(seenDate.get.toLocalDate())
-      else
+      } else {
         //shelf.seenDatePicker = new javafx.scene.control.DatePicker()
+        // scalastyle:off null
         shelf.seenDatePicker.setValue(null)
-
+        // scalastyle:on null
+      }
     case Utils.RefreshMovieFromDb(shelf, title, original_title, release_date, imdb_id) ⇒
       shelf.titleLabel.setText(title)
       shelf.originalTitleLabel.setText(original_title)
@@ -93,7 +97,9 @@ class ScalaFxActor extends Actor {
           case x if x > 1 ⇒
             shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/upup.png"))
         }
-      } else shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
+      } else {
+        shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
+      }
       shelf.scoreLabel.setText(score.getOrElse("N/A").toString)
 
     case Utils.ShowPopup(shelf, msg) ⇒
@@ -110,10 +116,14 @@ class ScalaFxActor extends Actor {
         initOwner(Launcher.stage)
         initModality(Modality.APPLICATION_MODAL)
         setTitle("Confirmation needed")
+        // scalastyle:off null
         setHeaderText(null)
+        // scalastyle:on null
         setContentText(s"Do you really wan't to remove ${movie.title} ?")
       }.showAndWait()
       if (result.isPresent() && result.get() == ButtonType.OK) sender ! Utils.DeletionConfirmed(shelf, movie)
   }
+  // scalastyle:on method.length
+  // scalastyle:on cyclomatic.complexity
 
 }

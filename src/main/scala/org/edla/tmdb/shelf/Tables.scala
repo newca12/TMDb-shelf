@@ -11,6 +11,7 @@ case class MovieDB(tmdbId: Long, releaseDate: Date, title: String, originalTitle
 class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
 
   // This is the primary key column:
+  // scalastyle:off public.methods.have.type
   def tmdbId = column[Long]("TMDB_ID", O.PrimaryKey)
   def releaseDate = column[Date]("RELEASE_DATE")
   def title = column[String]("TITLE")
@@ -25,5 +26,8 @@ class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
   def comment = column[String]("COMMENT")
 
   // Every table needs a * projection with the same type as the table's type parameter
-  def * = (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbId, imdbScore, seen, comment) <> (MovieDB.tupled, MovieDB.unapply _)
+  // scalastyle:off method.name
+  def * = (tmdbId, releaseDate, title, originalTitle, director, addDate, viewingDate, availability, imdbId, imdbScore, seen, comment) <>
+    (MovieDB.tupled, MovieDB.unapply _)
 }
+

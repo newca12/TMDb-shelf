@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.20"
+version := "0.21"
 
 jfxSettings
 
@@ -33,13 +33,16 @@ scalacOptions ++= Seq(
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.4.1",
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-  "org.edla" %% "tmdb-async-client" % "1.0.3",
+  "org.edla" %% "tmdb-async-client" % "1.0.4",
   "com.typesafe.slick" %% "slick" % "3.1.1",
-  "com.h2database" % "h2" % "1.4.190",
+  "com.h2database" % "h2" % "1.4.191",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
   "org.apache.commons" % "commons-lang3" % "3.4",
+  "com.lihaoyi" %% "acyclic" % "0.1.3" % "provided",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
+addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.3")
+autoCompilerPlugins := true
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).

@@ -23,13 +23,17 @@ object ImdbInfo extends {
   }
 
   def getScoreFromId(imdbId: String): Option[BigDecimal] = {
-    if (imdbId.isEmpty()) None
-    else getInfo(imdbId)._1
+    if (imdbId.isEmpty()) {
+      None
+    } else {
+      getInfo(imdbId)._1
+    }
   }
 
   def getInfoFromId(imdbId: String): (Option[BigDecimal], Option[Boolean]) = {
-    if (imdbId.isEmpty()) (None, None)
-    else {
+    if (imdbId.isEmpty()) {
+      (None, None)
+    } else {
       val info = getInfo(imdbId)
       (info._1, Some(info._2))
     }
