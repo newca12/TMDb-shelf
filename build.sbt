@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.21"
+version := "0.22"
 
 jfxSettings
 
@@ -38,11 +38,8 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.191",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
   "org.apache.commons" % "commons-lang3" % "3.4",
-  "com.lihaoyi" %% "acyclic" % "0.1.3" % "provided",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
-addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.3")
-autoCompilerPlugins := true
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).

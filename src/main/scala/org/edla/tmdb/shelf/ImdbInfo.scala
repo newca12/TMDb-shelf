@@ -8,16 +8,22 @@ import org.htmlcleaner.DomSerializer
 import javax.xml.xpath.XPathFactory
 import javax.xml.xpath.XPathConstants
 
-object ImdbInfo extends {
+object ImdbInfo {
 
   def getInfo(imdbId: String): (Option[BigDecimal], Boolean) = {
     val url = new URL(s"http://www.imdb.com/title/${imdbId}")
     val tagNode = new HtmlCleaner().clean(url)
     val doc: org.w3c.dom.Document = new DomSerializer(new CleanerProperties()).createDOM(tagNode)
     val xpath = XPathFactory.newInstance().newXPath()
-    val rawScore = xpath.evaluate("//div[contains(@class, 'titlePageSprite star-box-giga-star')]", doc, XPathConstants.STRING).toString
-    val rawIsNotTheatricalFilm = xpath.evaluate("//div[contains(@class, 'infobar')]", doc, XPathConstants.STRING).toString
-    val score = Some(BigDecimal(rawScore.trim))
+    val rawScore = xpath.evaluate(
+      "//div[@class='imdbRating']/div[@class='ratingValue']/strong/span[@itemprop='ratingValue']",
+      doc, XPathConstants.STRING
+    ).toString
+    val rawIsNotTheatricalFilm = xpath.evaluate(
+      "//div[@class='mini-article']/div[@id='ratingWidget']",
+      doc, XPathConstants.STRING
+    ).toString
+    val score = Some(BigDecimal(rawScore.trim.replace(",", ".")))
     val isNotTheatricalFilm = List("TV Movie", "Video").exists { rawIsNotTheatricalFilm contains }
     (score, isNotTheatricalFilm)
   }
