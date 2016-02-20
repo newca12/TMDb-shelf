@@ -17,6 +17,8 @@ import javafx.stage.Modality
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.Await
 
+import akka.event.LoggingReceive
+
 class ScalaFxActor extends Actor {
 
   import javafx.scene.image.Image
@@ -27,7 +29,7 @@ class ScalaFxActor extends Actor {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  def receive: PartialFunction[Any, Unit] = {
+  def receive: PartialFunction[Any, Unit] = LoggingReceive {
     case Utils.NotTheatricalFilmPoster(shelf, poster) ⇒
       val effect = new javafx.scene.effect.Shadow()
       effect.setColor(javafx.scene.paint.Color.BEIGE)

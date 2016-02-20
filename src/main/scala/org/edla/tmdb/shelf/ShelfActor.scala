@@ -22,6 +22,7 @@ import java.nio.file.{ Paths, Files }
 import scala.async.Async.async
 import java.nio.file.StandardCopyOption
 import akka.actor.Props
+import akka.event.LoggingReceive
 
 object ShelfActor {
   def props(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds): Props = Props(new ShelfActor(apiKey, tmdbTimeOut))
@@ -124,7 +125,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  def receive: PartialFunction[Any, Unit] = {
+  def receive: PartialFunction[Any, Unit] = LoggingReceive {
     case "instance" ⇒
       log.info("instance asked")
       sender ! tmdbClient

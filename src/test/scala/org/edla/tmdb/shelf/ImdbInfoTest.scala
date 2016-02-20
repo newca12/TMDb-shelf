@@ -5,8 +5,9 @@ import org.scalatest.Matchers
 
 class ImdbInfoTest extends PropSpec with Matchers {
   property("Get correct ratings and detect theatrical films") {
-    ImdbInfo.getInfo("tt1390411") shouldBe ((Some(7.0), false))
-    ImdbInfo.getInfo("tt0304584") shouldBe ((Some(4.3), true))
-    ImdbInfo.getInfo("tt0827521") shouldBe ((Some(5.7), true))
+    ImdbInfo.getInfo("tt1390411") shouldBe ((Some(7.0), Some(false)))
+    ImdbInfo.getInfo("tt0304584") shouldBe ((Some(4.3), Some(true)))
+    ImdbInfo.getInfo("tt0827521") shouldBe ((Some(5.7), Some(true)))
+    ImdbInfo.getInfo("tt5377164") shouldBe ((None, Some(true)))
   }
 }
