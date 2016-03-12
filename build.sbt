@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.23"
+version := "0.24"
 
 jfxSettings
 
@@ -13,7 +13,7 @@ JFX.nativeBundles := "all"
 //required for Windows sbt package-javafx
 //JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_66")
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq(
   "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
@@ -27,17 +27,21 @@ scalacOptions ++= Seq(
   "-Yno-adapted-args",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
-  "-Xfuture"
+  "-Xfuture",
+  "-Ybackend:GenBCode",
+  "-Ydelambdafy:method",
+  "-target:jvm-1.8"
 )
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.4.2",
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-  "org.edla" %% "tmdb-async-client" % "1.0.5",
+  "org.edla" %% "tmdb-async-client" % "1.0.6",
   "com.typesafe.slick" %% "slick" % "3.1.1",
   "com.h2database" % "h2" % "1.4.191",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
   "org.apache.commons" % "commons-lang3" % "3.4",
+  "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 
