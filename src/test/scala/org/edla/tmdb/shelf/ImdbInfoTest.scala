@@ -8,6 +8,6 @@ class ImdbInfoTest extends PropSpec with Matchers {
     ImdbInfo.getInfo("tt1390411") shouldBe ((Some(7.0), Some(false)))
     ImdbInfo.getInfo("tt0304584") shouldBe ((Some(4.3), Some(true)))
     ImdbInfo.getInfo("tt0827521") shouldBe ((Some(5.7), Some(true)))
-    ImdbInfo.getInfo("tt5377164") shouldBe ((None, Some(true)))
+    ImdbInfo.getInfo("tt0001539") shouldBe ((None, Some(false)))
   }
 }
