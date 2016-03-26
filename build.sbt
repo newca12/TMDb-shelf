@@ -1,20 +1,15 @@
 name := "TMDb-shelf"
-
 organization := "org.edla"
-
 version := "0.25"
 
-jfxSettings
+//sbt jdkPackager:packageBin
+mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
+enablePlugins(JDKPackagerPlugin)
+jdkPackagerType := "installer"
 
-JFX.mainClass := Some("org.edla.tmdb.shelf.Launcher")
-
-JFX.nativeBundles := "all"
-
-//required for Windows sbt package-javafx
-//JFX.devKit := JFX.jdk("C:/Program Files/Java/jdk1.8.0_66")
+(antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value
 
 scalaVersion := "2.11.8"
-
 scalacOptions ++= Seq(
   "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
   //"-optimize",
@@ -53,10 +48,5 @@ lazy val root = (project in file(".")).
   )
 
 fork := true
-
 licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
-
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
-
-//conflictWarning := ConflictWarning.disable
-
