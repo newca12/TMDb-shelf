@@ -2,7 +2,7 @@ name := "TMDb-shelf"
 
 organization := "org.edla"
 
-version := "0.24"
+version := "0.25"
 
 jfxSettings
 
@@ -27,6 +27,7 @@ scalacOptions ++= Seq(
   "-Yno-adapted-args",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
+  "-Ywarn-unused-import",
   "-Xfuture",
   "-Ybackend:GenBCode",
   "-Ydelambdafy:method",
@@ -40,7 +41,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.1.1",
   "com.h2database" % "h2" % "1.4.191",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
-  "org.apache.commons" % "commons-lang3" % "3.4",
   "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )

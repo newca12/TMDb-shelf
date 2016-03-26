@@ -1,31 +1,21 @@
 package org.edla.tmdb.shelf
 
+import scala.concurrent.Await
+import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.math.BigDecimal.int2bigDecimal
 
-import org.edla.tmdb.api.Protocol.noCrew
-import org.edla.tmdb.api.Protocol.unReleased
+import org.edla.tmdb.api.Protocol.{ noCrew, unReleased }
 
-import akka.actor.Actor
-import akka.actor.actorRef2Scala
+import akka.actor.{ Actor, actorRef2Scala }
+import akka.event.LoggingReceive
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.ButtonType
 import javafx.scene.image.Image
 import javafx.stage.Modality
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.Await
-
-import akka.event.LoggingReceive
-
 class ScalaFxActor extends Actor {
-
-  import javafx.scene.image.Image
-  import javafx.scene.image.ImageView
-  import javafx.event.ActionEvent
-  import javafx.event.EventHandler
-  import javafx.scene.input.MouseEvent
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length

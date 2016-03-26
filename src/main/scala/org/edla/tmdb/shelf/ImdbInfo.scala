@@ -2,7 +2,6 @@ package org.edla.tmdb.shelf
 
 import org.htmlcleaner.HtmlCleaner
 import java.net.URL
-import org.apache.commons.lang3.StringEscapeUtils
 import org.htmlcleaner.CleanerProperties
 import org.htmlcleaner.DomSerializer
 import javax.xml.xpath.XPathFactory

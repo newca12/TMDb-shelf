@@ -1,34 +1,9 @@
 package org.edla.tmdb.shelf
 
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
-import javafx.scene.input.MouseEvent
-import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.control.TextField
-import javafx.scene.control.Label
-import javafx.scene.layout.GridPane
-import javafx.scene.layout.AnchorPane
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
-import akka.actor.ActorSystem
-import akka.actor.ActorContext
-import akka.actor.Props
-import scala.concurrent.Future
-import akka.pattern.ask
-import akka.util.Timeout
-import org.edla.tmdb.client.TmdbClient
-
-import javafx.scene.{ control ⇒ jfxsc }
-import javafx.scene.{ layout ⇒ jfxsl }
-import javafx.scene.{ image ⇒ jfxsi }
-import javafx.{ event ⇒ jfxe }
-import javafx.{ fxml ⇒ jfxf }
-
-import javafx.collections.FXCollections
+import akka.actor.ActorSelection.toScala
+import javafx.{ event ⇒ jfxe, fxml ⇒ jfxf }
 import javafx.fxml.Initializable
+import javafx.scene.{ control ⇒ jfxsc, image ⇒ jfxsi, layout ⇒ jfxsl }
 
 class TmdbPresenter extends Initializable {
   @jfxf.FXML
@@ -85,9 +60,6 @@ class TmdbPresenter extends Initializable {
   var tmdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.themoviedb.org/")
   @jfxf.FXML
   var commentTextArea: jfxsc.TextArea = _
-
-  import scala.concurrent._
-  import ExecutionContext.Implicits.global
 
   import java.net.URL
   import java.util.ResourceBundle

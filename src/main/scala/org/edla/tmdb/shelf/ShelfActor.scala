@@ -1,28 +1,24 @@
 package org.edla.tmdb.shelf
 
-import org.edla.tmdb.client.TmdbClient
-import scala.concurrent.duration.DurationInt
-import scala.util.Try
-import scala.concurrent.Await
-import akka.actor.Actor
-import scala.language.postfixOps
-import akka.event.Logging
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-import scala.concurrent.duration.FiniteDuration
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
-import javafx.event.EventHandler
-import javafx.scene.input.MouseEvent
-import org.edla.tmdb.api._
-import org.edla.tmdb.api.Protocol._
-import scala.util.Success
-import slick.driver.H2Driver.api._
-import java.nio.file.{ Paths, Files }
-import scala.async.Async.async
 import java.nio.file.StandardCopyOption
-import akka.actor.Props
+
+import scala.async.Async.async
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.{ DurationInt, FiniteDuration }
+import scala.language.postfixOps
+import scala.util.Try
+
+import org.edla.tmdb.api.Protocol.{ Movie, noCrew }
+import org.edla.tmdb.client.TmdbClient
+
+import akka.actor.{ Actor, Props, actorRef2Scala }
 import akka.event.LoggingReceive
+import javafx.event.EventHandler
+import javafx.scene.image.{ Image, ImageView }
+import javafx.scene.input.MouseEvent
+
+import java.nio.file.{ Files, Paths }
 
 object ShelfActor {
   def props(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds): Props = Props(new ShelfActor(apiKey, tmdbTimeOut))

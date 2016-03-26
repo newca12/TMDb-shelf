@@ -1,27 +1,19 @@
 package org.edla.tmdb.shelf
 
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.prefs.Preferences
+
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-import akka.actor.ActorSystem
-import akka.actor.Props
+import scala.util.{ Failure, Success, Try }
+
+import akka.actor.{ ActorSystem, Props }
 import javafx.event.EventHandler
-import javafx.{ fxml ⇒ jfxf }
-import javafx.{ scene ⇒ jfxs }
 import javafx.scene.Scene
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.TextInputDialog
-import javafx.stage.Stage
-import javafx.stage.WindowEvent
-import javafx.stage.Modality
+import javafx.stage.{ Modality, Stage, WindowEvent }
 
 /*//inspired by typesafe migration-manager
 trait WithUncaughtExceptionHandlerDialog {

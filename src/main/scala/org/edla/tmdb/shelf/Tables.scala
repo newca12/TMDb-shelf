@@ -1,7 +1,6 @@
 package org.edla.tmdb.shelf
 
 import slick.driver.H2Driver.api._
-import slick.lifted.{ ProvenShape, ForeignKeyQuery }
 import java.sql.Date
 
 case class MovieDB(tmdbId: Long, releaseDate: Date, title: String, originalTitle: String, director: String, addDate: Date,
