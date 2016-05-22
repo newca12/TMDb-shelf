@@ -101,16 +101,16 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
         async {
           val q = Await.result(DAO.findById(tmdbId), 5 seconds)
+          val (score, isTheatrical) = ImdbInfo.getInfoFromId(imdbID)
           if (q.isEmpty) {
-            val imdbInfo = ImdbInfo.getInfoFromId(imdbID)
             Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
-            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, imdbInfo._1)
-            if ((imdbInfo._2.getOrElse(false))) Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
+            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
           } else {
             val m = q.get
-            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, ImdbInfo.getScoreFromId(imdbID))
+            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, score)
             Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment)
           }
+          if ((isTheatrical.getOrElse(false))) Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
         }
         refreshInfo(shelf, tmdbId)
         log.debug(s"event for movie ${tmdbId} ${title}")
