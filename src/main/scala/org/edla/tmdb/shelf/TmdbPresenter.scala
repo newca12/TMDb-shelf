@@ -1,9 +1,10 @@
 package org.edla.tmdb.shelf
 
-import akka.actor.ActorSelection.toScala
-import javafx.{ event ⇒ jfxe, fxml ⇒ jfxf }
 import javafx.fxml.Initializable
-import javafx.scene.{ control ⇒ jfxsc, image ⇒ jfxsi, layout ⇒ jfxsl }
+import javafx.scene.{control => jfxsc, image => jfxsi, layout => jfxsl}
+import javafx.{event => jfxe, fxml => jfxf}
+
+import akka.actor.ActorSelection.toScala
 
 class TmdbPresenter extends Initializable {
   @jfxf.FXML
@@ -51,43 +52,57 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var saveSeenDateButton: jfxsc.Button = _
   @jfxf.FXML
-  var imdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.imdb.com")
+  var imdbHyperlink: jfxsc.Hyperlink =
+    new jfxsc.Hyperlink("http://www.imdb.com")
   @jfxf.FXML
   var scoreLabel: jfxsc.Label = _
   @jfxf.FXML
   var scoreImageView: jfxsi.ImageView = _
   @jfxf.FXML
-  var tmdbHyperlink: jfxsc.Hyperlink = new jfxsc.Hyperlink("http://www.themoviedb.org/")
+  var tmdbHyperlink: jfxsc.Hyperlink =
+    new jfxsc.Hyperlink("http://www.themoviedb.org/")
   @jfxf.FXML
   var commentTextArea: jfxsc.TextArea = _
 
   import java.net.URL
   import java.util.ResourceBundle
-  import javafx.beans.value.ChangeListener
-  import javafx.beans.value.ObservableValue
-  override def initialize(fxmlFileLocation: URL, resources: ResourceBundle): Unit = {
+  import javafx.beans.value.{ChangeListener, ObservableValue}
+  override def initialize(
+      fxmlFileLocation: URL, resources: ResourceBundle): Unit = {
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
-    filterCollectionChoiceBox.getItems().addAll("Not seen", "All", "Seen", "Not available")
-    filterCollectionChoiceBox.getSelectionModel().selectFirst()
-    filterCollectionChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
-      new ChangeListener[Number]() {
-        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
-          val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-          shelfActor ! Utils.SetCollectionFilter(TmdbPresenter.this, newValue)
-        }
-      }
-    )
+    filterCollectionChoiceBox.getItems.addAll(
+        "Not seen", "All", "Seen", "Not available")
+    filterCollectionChoiceBox.getSelectionModel.selectFirst()
+    filterCollectionChoiceBox.getSelectionModel
+      .selectedIndexProperty()
+      .addListener(
+          new ChangeListener[Number]() {
+            def changed(ov: ObservableValue[_ <: Number],
+                        value: Number,
+                        newValue: Number) = {
+              val shelfActor =
+                Launcher.system.actorSelection("/user/shelfactor")
+              shelfActor ! Utils.SetCollectionFilter(
+                  TmdbPresenter.this, newValue)
+            }
+          }
+      )
 
-    filterSearchChoiceBox.getItems().addAll("All", "Director", "Movie name")
-    filterSearchChoiceBox.getSelectionModel().selectFirst()
-    filterSearchChoiceBox.getSelectionModel().selectedIndexProperty().addListener(
-      new ChangeListener[Number]() {
-        def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
-          val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-          shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
-        }
-      }
-    )
+    filterSearchChoiceBox.getItems.addAll("All", "Director", "Movie name")
+    filterSearchChoiceBox.getSelectionModel.selectFirst()
+    filterSearchChoiceBox.getSelectionModel
+      .selectedIndexProperty()
+      .addListener(
+          new ChangeListener[Number]() {
+            def changed(ov: ObservableValue[_ <: Number],
+                        value: Number,
+                        newValue: Number) = {
+              val shelfActor =
+                Launcher.system.actorSelection("/user/shelfactor")
+              shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
+            }
+          }
+      )
   }
 
   @jfxf.FXML
@@ -103,7 +118,8 @@ class TmdbPresenter extends Initializable {
 
   def showCollection(event: jfxe.ActionEvent): Unit = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.ShowCollection(this, searchTextField.getText().toLowerCase(), true)
+    shelfActor ! Utils.ShowCollection(
+        this, searchTextField.getText().toLowerCase(), user = true)
   }
 
   def addMovie(event: jfxe.ActionEvent): Unit = {
@@ -123,7 +139,10 @@ class TmdbPresenter extends Initializable {
 
   def search(event: jfxe.ActionEvent): Unit = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.Search(this, searchTextField.getText().replace('.', ' ').toLowerCase(), true)
+    shelfActor ! Utils.Search(
+        this,
+        searchTextField.getText().replace('.', ' ').toLowerCase(),
+        user = true)
   }
 
   def handleClear(event: jfxe.ActionEvent): Unit = {
@@ -131,11 +150,13 @@ class TmdbPresenter extends Initializable {
   }
 
   def openImdbWebpage(event: jfxe.ActionEvent): Unit = {
-    java.awt.Desktop.getDesktop().browse(new java.net.URL(imdbHyperlink.getText()).toURI())
+    java.awt.Desktop.getDesktop
+      .browse(new java.net.URL(imdbHyperlink.getText).toURI)
   }
 
   def openTmdbWebpage(event: jfxe.ActionEvent): Unit = {
-    java.awt.Desktop.getDesktop().browse(new java.net.URL(tmdbHyperlink.getText()).toURI())
+    java.awt.Desktop.getDesktop
+      .browse(new java.net.URL(tmdbHyperlink.getText).toURI)
   }
 
   def updateSeenDate(event: jfxe.ActionEvent): Unit = {
@@ -144,10 +165,9 @@ class TmdbPresenter extends Initializable {
 
   def saveSeenDate(event: jfxe.ActionEvent): Unit = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    val date = Option(seenDatePicker.getValue())
+    val date = Option(seenDatePicker.getValue)
     if (date.isDefined) {
       shelfActor ! Utils.SaveSeenDate(this, java.sql.Date.valueOf(date.get))
     }
   }
-
 }

@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "0.26"
+version := "0.27"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -32,7 +32,7 @@ scalacOptions ++= Seq(
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.4.6",
   "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-  "org.edla" %% "tmdb-async-client" % "1.0.6",
+  "org.edla" %% "tmdb-async-client" % "1.0.7",
   "com.typesafe.slick" %% "slick" % "3.1.1",
   "com.h2database" % "h2" % "1.4.191",
   "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
@@ -44,7 +44,8 @@ lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
   settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "org.edla.tmdb.shelf"
+    buildInfoPackage := "org.edla.tmdb.shelf",
+    buildInfoUsePackageAsPath := true
   )
 
 fork := true

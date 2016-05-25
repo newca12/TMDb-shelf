@@ -4,14 +4,14 @@ package org.edla.tmdb.shelf
 // original work copyright 2012 Viktor Klang
 
 /**
- * (A). define the gui dispatchers programmaticaly
- */
-
-import akka.dispatch.{ DispatcherPrerequisites, ExecutorServiceFactory, ExecutorServiceConfigurator }
-import com.typesafe.config.Config
-import java.util.concurrent.{ ExecutorService, AbstractExecutorService, ThreadFactory, TimeUnit }
+  * (A). define the gui dispatchers programmaticaly
+  */
 import java.util.Collections
+import java.util.concurrent.{AbstractExecutorService, ExecutorService, ThreadFactory, TimeUnit}
 import javafx.application.Platform
+
+import akka.dispatch.{DispatcherPrerequisites, ExecutorServiceConfigurator, ExecutorServiceFactory}
+import com.typesafe.config.Config
 
 // First we wrap invokeLater/runLater as an ExecutorService
 abstract class GUIExecutorService extends AbstractExecutorService {
@@ -33,11 +33,13 @@ object JavaFXExecutorService extends GUIExecutorService {
 }
 
 // Then we create an ExecutorServiceConfigurator so that Akka can use our JavaFXExecutorService for the dispatchers
-class JavaFXEventThreadExecutorServiceConfigurator(config: Config, prerequisites: DispatcherPrerequisites)
+class JavaFXEventThreadExecutorServiceConfigurator(
+    config: Config, prerequisites: DispatcherPrerequisites)
     extends ExecutorServiceConfigurator(config, prerequisites) {
   private val f = new ExecutorServiceFactory {
     def createExecutorService: ExecutorService = JavaFXExecutorService
   }
 
-  def createExecutorServiceFactory(id: String, threadFactory: ThreadFactory): ExecutorServiceFactory = f
+  def createExecutorServiceFactory(
+      id: String, threadFactory: ThreadFactory): ExecutorServiceFactory = f
 }
