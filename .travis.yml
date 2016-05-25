@@ -1,5 +1,6 @@
-# Use Docker-based container (instead of OpenVZ)
-sudo: false
+# Cannot use Docker-based container (instead of OpenVZ)
+# because still using old java version "1.8.0_31" and  Java 8u40 or later is required
+sudo: required
 language: scala
 scala: 
 - 2.11.8
