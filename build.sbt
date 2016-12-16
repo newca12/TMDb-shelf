@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "0.27"
+version := "0.28"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -9,40 +9,41 @@ jdkPackagerType := "installer"
 
 (antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
 scalacOptions ++= Seq(
-  "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
+  "-language:postfixOps",
+  "-language:existentials",
+  "-language:implicitConversions",
   //"-optimize",
   "-deprecation",
-  "-encoding", "UTF-8", // yes, this is 2 args
+  "-encoding", // yes this
+  "UTF-8", // is 2 args
   "-feature",
   "-unchecked",
   "-Xfatal-warnings",
   "-Xlint",
   "-Yno-adapted-args",
+  //"-Ywarn-dead-code",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
-  "-Ywarn-unused-import",
-  "-Xfuture",
-  "-Ybackend:GenBCode",
-  "-Ydelambdafy:method",
-  "-target:jvm-1.8"
+  "-Xfuture"
 )
+scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.4.6",
-  "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-  "org.edla" %% "tmdb-async-client" % "1.0.7",
-  "com.typesafe.slick" %% "slick" % "3.1.1",
-  "com.h2database" % "h2" % "1.4.191",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.16",
-  "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+  "com.typesafe.akka"           %% "akka-actor"         % "2.4.14",
+  "org.scala-lang.modules"      %% "scala-async"        % "0.9.6",
+  "org.edla"                    %% "tmdb-async-client"  % "1.1.0",
+  "com.typesafe.slick"          %% "slick"              % "3.2.0-M2",
+  "com.h2database"              % "h2"                  % "1.4.193",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.18",
+  "org.scala-lang.modules"      %% "scala-java8-compat" % "0.8.0",
+  "org.scalatest"               %% "scalatest"          % "3.0.1" % "test"
 )
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin).
-  settings(
+lazy val root = (project in file("."))
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.edla.tmdb.shelf",
     buildInfoUsePackageAsPath := true

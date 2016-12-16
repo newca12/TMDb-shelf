@@ -17,6 +17,8 @@ import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.language.postfixOps
 import scala.util.Try
 
+import scala.util.{Success, Failure}
+
 object ShelfActor {
   def props(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds): Props =
     Props(new ShelfActor(apiKey, tmdbTimeOut))
@@ -26,48 +28,38 @@ object SearchMode extends Enumeration {
   val Search, Collection = Value
 }
 
-class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration)
-    extends Actor
-    with akka.actor.ActorLogging {
+class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with akka.actor.ActorLogging {
 
   val PosterSize = 108.0
-  val MaxItems = 40
+  val MaxItems   = 40
 
-  val tmdbClient = TmdbClient(
-      apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
+  val tmdbClient        = TmdbClient(apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
   @volatile var nbItems = 0
-  var page: Int = 1
-  var maxPage: Int = 1
+  var page: Int         = 1
+  var maxPage: Int      = 1
   var items: Array[javafx.scene.image.ImageView] =
     new Array[javafx.scene.image.ImageView](MaxItems)
-  var searchMode = SearchMode.Search
-  var search: String = ""
-  var selectedMovie: Long = _
+  var searchMode                       = SearchMode.Search
+  var search: String                   = ""
+  var selectedMovie: Long              = _
   var selectedCollectionFilter: Number = 0
-  var selectedSearchFilter: Number = 0
+  var selectedSearchFilter: Number     = 0
 
-  private def refreshInfo(
-      shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long) = {
+  private def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long) = {
     val releases = tmdbClient.getReleases(tmdbId)
-    releases.onSuccess {
-      case release ⇒
+    releases.onComplete {
+      case Success(release) ⇒
         Launcher.scalaFxActor ! Utils.ShowReleases(shelf, release)
-    }
-    releases.onFailure {
-      case e: Exception ⇒
-        log.error(
-            s"refreshInfo: Future getReleases($tmdbId) failed : ${e.getMessage}")
+      case Failure(e) ⇒
+        log.error(s"refreshInfo: Future getReleases($tmdbId) failed : ${e.getMessage}")
     }
     val credits = tmdbClient.getCredits(tmdbId)
-    credits.onSuccess {
-      case credits ⇒
+    credits.onComplete {
+      case Success(credits) ⇒
         selectedMovie = tmdbId
         Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, tmdbId, credits)
-    }
-    credits.onFailure {
-      case e: Exception ⇒
-        log.error(
-            s"refreshInfo: Future getCredits($tmdbId) failed : ${e.getMessage}")
+      case Failure(e) ⇒
+        log.error(s"refreshInfo: Future getCredits($tmdbId) failed : ${e.getMessage}")
     }
   }
 
@@ -106,35 +98,28 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration)
         event.consume()
         selectedMovie = tmdbId
         shelf.posterImageView.setImage(poster)
-        Launcher.scalaFxActor ! Utils.RefreshMovieFromDb(
-            shelf, title, originalTitle, releaseDate, imdbID)
+        Launcher.scalaFxActor ! Utils.RefreshMovieFromDb(shelf, title, originalTitle, releaseDate, imdbID)
         val movie = tmdbClient.getMovie(tmdbId)
-        movie.onSuccess {
-          case movie ⇒
+        movie.onComplete {
+          case Success(movie) ⇒
             Launcher.scalaFxActor ! Utils.RefreshMovieFromTmdb(shelf, movie)
-        }
-        movie.onFailure {
-          case e: Exception ⇒
-            log.error(
-                s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
+          case Failure(e) ⇒
+            log.error(s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
         }
 
         async {
-          val q = Await.result(DAO.findById(tmdbId), 5 seconds)
+          val q                     = Await.result(DAO.findById(tmdbId), 5 seconds)
           val (score, isTheatrical) = ImdbInfo.getInfoFromId(imdbID)
           if (q.isEmpty) {
             Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
             Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
           } else {
             val m = q.get
-            Launcher.scalaFxActor ! Utils.RefreshScore(
-                shelf, m.imdbScore, score)
-            Launcher.scalaFxActor ! Utils.ShowSeenDate(
-                shelf, m.viewingDate, m.comment)
+            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, score)
+            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment)
           }
           if (isTheatrical.getOrElse(false)) {
-            Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf,
-                                                                  imageView_)
+            Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
           }
         }
         refreshInfo(shelf, tmdbId)
@@ -165,83 +150,65 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration)
       nbItems = 0
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       val results = tmdbClient.searchMovie(search, page * 2 - 1)
-      results.onSuccess {
-        case results ⇒
+      results.onComplete {
+        case Success(results) ⇒
           maxPage = results.total_pages
-          Launcher.scalaFxActor ! Utils.ShowPage(
-              shelf, page, Math.ceil(maxPage / 2.0).toInt)
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toInt)
           for (movie ← results.results) {
             self ! Utils.GetResult(shelf, movie)
           }
           if (page < maxPage) {
             val results = tmdbClient.searchMovie(search, page * 2)
-            results.onSuccess {
-              case results ⇒
+            results.onComplete {
+              case Success(results) ⇒
                 for (movie ← results.results) {
                   self ! Utils.GetResult(shelf, movie)
                 }
-            }
-            results.onFailure {
-              case e: Exception ⇒
-                log.error(
-                    s"ShelfActor:receive: Future searchMovie($search,${page * 2} failed : ${e.getMessage}")
+              case Failure(e) ⇒
+                log.error(s"ShelfActor:receive: Future searchMovie($search,${page * 2} failed : ${e.getMessage}")
             }
           }
-      }
-      results.onFailure {
-        case e: Exception ⇒
-          log.error(
-              s"ShelfActor:receive: Future searchMovie($search,${page * 2 -
-          1} failed : ${e.getMessage}")
+        case Failure(e) ⇒
+          log.error(s"ShelfActor:receive: Future searchMovie($search,${page * 2 -
+            1} failed : ${e.getMessage}")
       }
     case "token" ⇒
       sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     case Utils.GetResult(shelf, result) ⇒
       val movie = tmdbClient.getMovie(result.id)
-      movie.onSuccess {
-        case movie ⇒
+      movie.onComplete {
+        case Success(movie) ⇒
           import java.nio.file.{Files, Paths}
-          val filename = s"${Launcher.tmpDir}/${movie.id}.jpg"
-          if (!Files.exists(Paths.get(filename))) {
+          val filename = Paths.get(s"${Launcher.tmpDir}/${movie.id}.jpg")
+          if (!Files.exists(filename)) {
             val f = tmdbClient.downloadPoster(movie, filename)
-            f.onSuccess {
-              case true ⇒
-                addToShelf(shelf, movie, new Image(s"file:///$filename"))
-              case false ⇒
-                addToShelf(
-                    shelf,
-                    movie,
-                    new Image(
-                        "/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
-            }
-            f.onFailure {
-              case e: Exception ⇒
-                log.error(
-                    s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
+            if (f.isDefined) {
+              f.get.onComplete {
+                case Success(io) => addToShelf(shelf, movie, new Image(s"file:///$filename"))
+                case Failure(e) ⇒
+                  log.error(s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
+              }
+            } else {
+              addToShelf(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
             }
           } else {
             log.debug("poster already there:" + movie.id)
             addToShelf(shelf, movie, new Image(s"file:///$filename"))
           }
-      }
-      movie.onFailure {
-        case e: Exception ⇒
-          log.error(
-              s"ShelfActor:receive: Future getMovie(${result.id}) failed : ${e.getMessage}")
+        case Failure(e) ⇒
+          log.error(s"ShelfActor:receive: Future getMovie(${result.id}) failed : ${e.getMessage}")
       }
     case Utils.AddPoster(shelf, imageView) ⇒
       if (nbItems < MaxItems) {
-        Launcher.scalaFxActor ! Utils.AddPosterXy(
-            shelf, imageView, Utils.Position(nbItems % 8, nbItems / 8))
+        Launcher.scalaFxActor ! Utils.AddPosterXy(shelf, imageView, Utils.Position(nbItems % 8, nbItems / 8))
         items(nbItems) = imageView
       }
       nbItems = nbItems + 1
     case Utils.SaveMovie(shelf) ⇒
       val filename = s"${Launcher.tmpDir}/$selectedMovie.jpg"
       if (Files.exists(Paths.get(filename))) {
-        Files.copy(Paths.get(filename),
-                   Paths.get(s"$localStore/$selectedMovie.jpg"),
-                   StandardCopyOption.REPLACE_EXISTING)
+        Files
+          .copy(Paths.get(filename), Paths.get(s"$localStore/$selectedMovie.jpg"), StandardCopyOption.REPLACE_EXISTING)
       }
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits =
@@ -250,19 +217,18 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration)
         credits.crew.find(crew ⇒ crew.job == "Director").getOrElse(noCrew).name
       val _ = async {
         try {
-          val tmp = MovieDB(
-              movie.id,
-              java.sql.Date.valueOf(movie.release_date.getOrElse("Unknown")),
-              movie.title,
-              movie.original_title,
-              director,
-              new java.sql.Date(new java.util.Date().getTime),
-              None,
-              availability = true,
-              movie.imdb_id,
-              ImdbInfo.getScoreFromId(movie.imdb_id),
-              seen = false,
-              "")
+          val tmp = MovieDB(movie.id,
+                            java.sql.Date.valueOf(movie.release_date.getOrElse("Unknown")),
+                            movie.title,
+                            movie.original_title,
+                            director,
+                            new java.sql.Date(new java.util.Date().getTime),
+                            None,
+                            availability = true,
+                            movie.imdb_id,
+                            ImdbInfo.getScoreFromId(movie.imdb_id),
+                            seen = false,
+                            "")
           Await.result(DAO.insert(tmp), 5 seconds)
           log.info(s"${movie.title} registered")
           refreshInfo(shelf, movie.id)
@@ -296,9 +262,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration)
       if (user) page = 1
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
 
-      val futureResDB = DAO.filter(selectedCollectionFilter.intValue(),
-                                   selectedSearchFilter.intValue(),
-                                   search)
+      val futureResDB = DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search)
       futureResDB.map { result ⇒
         maxPage = (result.size / MaxItems) + 1
         Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
@@ -311,16 +275,9 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration)
               if (Files.exists(Paths.get(filename))) {
                 new Image(s"file:///$filename")
               } else {
-                new Image(
-                    "/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
+                new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
               }
-            addToShelf(shelf,
-                       m.tmdbId,
-                       m.releaseDate.toString,
-                       m.title,
-                       m.originalTitle,
-                       m.imdbId,
-                       image)
+            addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image)
         }
       }.recover {
         case e: Exception ⇒

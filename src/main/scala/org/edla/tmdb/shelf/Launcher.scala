@@ -1,19 +1,21 @@
 package org.edla.tmdb.shelf
 
+import java.io.IOException
+import java.nio.file.{Files, Paths}
 import java.util.prefs.Preferences
+import javafx.event.EventHandler
+import javafx.scene.Scene
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.{Alert, TextInputDialog}
+import javafx.stage.{Modality, Stage, WindowEvent}
+import javafx.{fxml => jfxf, scene => jfxs}
+
+import akka.actor.{ActorSystem, Props}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
-
-import akka.actor.{ActorSystem, Props}
-import javafx.event.EventHandler
-import javafx.scene.Scene
-import javafx.scene.control.Alert
-import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.TextInputDialog
-import javafx.stage.{Modality, Stage, WindowEvent}
 
 /*//inspired by typesafe migration-manager
 trait WithUncaughtExceptionHandlerDialog {
@@ -44,35 +46,24 @@ trait WithUncaughtExceptionHandlerDialog {
 
 object Launcher {
 
+  val tmpDir = System.getProperty("java.io.tmpdir")
+  val system = ActorSystem("ShelfSystem")
+  Files.createDirectories(Paths.get(localStore))
+  lazy val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
+  var stage: Stage      = _
+
   def main(args: Array[String]): Unit = {
     new Launcher().launch()
   }
-
-  import java.nio.file.{Paths, Files}
-  val tmpDir = System.getProperty("java.io.tmpdir")
-  Files.createDirectories(Paths.get(localStore))
-
-  val system = ActorSystem("ShelfSystem")
-  val scalaFxActor = system.actorOf(
-      Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
-
-  var stage: Stage = _
 }
 
-class Launcher
-    extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
+class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
 
-  private def launch() = javafx.application.Application.launch()
-
-  import java.io.IOException
-  val resource = Option(getClass.getResource("view/Shelf.fxml"))
+  lazy val resource          = Option(getClass.getResource("view/Shelf.fxml"))
+  lazy val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
   if (resource.isEmpty) {
     throw new IOException("Cannot load resource: view/Shelf.fxml")
   }
-
-  import javafx.{fxml ⇒ jfxf}
-  import javafx.{scene ⇒ jfxs}
-  val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
 
   override def start(primaryStage: Stage): Unit = {
     Launcher.stage = primaryStage
@@ -89,7 +80,7 @@ class Launcher
   }
 
   private def checkOrAskApiKey(primaryStage: Stage) = {
-    val prefs = Preferences.userRoot().node(this.getClass.getName)
+    val prefs  = Preferences.userRoot().node(this.getClass.getName)
     val apiKey = prefs.get("apiKey", "")
     if (apiKey.isEmpty) {
       val dialog = new TextInputDialog() {
@@ -119,10 +110,9 @@ class Launcher
     val apiKeyStored = prefs.get("apiKey", "")
     //http://tersesystems.com/2012/12/27/error-handling-in-scala/
     //http://mauricio.github.io/2014/02/17/scala-either-try-and-the-m-word.html
-    Launcher.system.actorOf(
-        ShelfActor.props(apiKey, 45 second), name = "shelfactor")
+    Launcher.system.actorOf(ShelfActor.props(apiKey, 45 second), name = "shelfactor")
     val tmdbClient = Utils.getTmdbClient
-    val token = Try(Await.result(tmdbClient.getToken, 5 second).request_token)
+    val token      = Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     token match {
       case Success(v) ⇒
         //comment to clean store
@@ -156,4 +146,6 @@ class Launcher
       //} else throw (e))))
     }
   }
+
+  private def launch() = javafx.application.Application.launch()
 }
