@@ -8,7 +8,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.{Alert, TextInputDialog}
 import javafx.stage.{Modality, Stage, WindowEvent}
-import javafx.{fxml => jfxf, scene => jfxs}
+import javafx.{fxml ⇒ jfxf, scene ⇒ jfxs}
 
 import akka.actor.{ActorSystem, Props}
 
@@ -59,11 +59,11 @@ object Launcher {
 
 class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
 
-  lazy val resource          = Option(getClass.getResource("view/Shelf.fxml"))
-  lazy val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
+  val resource = Option(getClass.getResource("view/Shelf.fxml"))
   if (resource.isEmpty) {
     throw new IOException("Cannot load resource: view/Shelf.fxml")
   }
+  val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
 
   override def start(primaryStage: Stage): Unit = {
     Launcher.stage = primaryStage
@@ -133,7 +133,7 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
         if (!apiKeyStored.isEmpty && apiKeyStored == apiKey) {
           prefs.remove("apiKey")
         }
-        val alert = new Alert(AlertType.INFORMATION) {
+        new Alert(AlertType.INFORMATION) {
           initOwner(Launcher.stage)
           initModality(Modality.APPLICATION_MODAL)
           setTitle("Alert")

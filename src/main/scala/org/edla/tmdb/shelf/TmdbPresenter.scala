@@ -1,8 +1,8 @@
 package org.edla.tmdb.shelf
 
 import javafx.fxml.Initializable
-import javafx.scene.{control => jfxsc, image => jfxsi, layout => jfxsl}
-import javafx.{event => jfxe, fxml => jfxf}
+import javafx.scene.{control ⇒ jfxsc, image ⇒ jfxsi, layout ⇒ jfxsl}
+import javafx.{event ⇒ jfxe, fxml ⇒ jfxf}
 
 import akka.actor.ActorSelection.toScala
 
@@ -67,25 +67,20 @@ class TmdbPresenter extends Initializable {
   import java.net.URL
   import java.util.ResourceBundle
   import javafx.beans.value.{ChangeListener, ObservableValue}
-  override def initialize(
-      fxmlFileLocation: URL, resources: ResourceBundle): Unit = {
+  override def initialize(fxmlFileLocation: URL, resources: ResourceBundle): Unit = {
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
-    filterCollectionChoiceBox.getItems.addAll(
-        "Not seen", "All", "Seen", "Not available")
+    filterCollectionChoiceBox.getItems.addAll("Not seen", "All", "Seen", "Not available")
     filterCollectionChoiceBox.getSelectionModel.selectFirst()
     filterCollectionChoiceBox.getSelectionModel
       .selectedIndexProperty()
       .addListener(
-          new ChangeListener[Number]() {
-            def changed(ov: ObservableValue[_ <: Number],
-                        value: Number,
-                        newValue: Number) = {
-              val shelfActor =
-                Launcher.system.actorSelection("/user/shelfactor")
-              shelfActor ! Utils.SetCollectionFilter(
-                  TmdbPresenter.this, newValue)
-            }
+        new ChangeListener[Number]() {
+          def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
+            val shelfActor =
+              Launcher.system.actorSelection("/user/shelfactor")
+            shelfActor ! Utils.SetCollectionFilter(TmdbPresenter.this, newValue)
           }
+        }
       )
 
     filterSearchChoiceBox.getItems.addAll("All", "Director", "Movie name")
@@ -93,15 +88,13 @@ class TmdbPresenter extends Initializable {
     filterSearchChoiceBox.getSelectionModel
       .selectedIndexProperty()
       .addListener(
-          new ChangeListener[Number]() {
-            def changed(ov: ObservableValue[_ <: Number],
-                        value: Number,
-                        newValue: Number) = {
-              val shelfActor =
-                Launcher.system.actorSelection("/user/shelfactor")
-              shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
-            }
+        new ChangeListener[Number]() {
+          def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
+            val shelfActor =
+              Launcher.system.actorSelection("/user/shelfactor")
+            shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
           }
+        }
       )
   }
 
@@ -118,8 +111,7 @@ class TmdbPresenter extends Initializable {
 
   def showCollection(event: jfxe.ActionEvent): Unit = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.ShowCollection(
-        this, searchTextField.getText().toLowerCase(), user = true)
+    shelfActor ! Utils.ShowCollection(this, searchTextField.getText().toLowerCase(), user = true)
   }
 
   def addMovie(event: jfxe.ActionEvent): Unit = {
@@ -139,10 +131,7 @@ class TmdbPresenter extends Initializable {
 
   def search(event: jfxe.ActionEvent): Unit = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    shelfActor ! Utils.Search(
-        this,
-        searchTextField.getText().replace('.', ' ').toLowerCase(),
-        user = true)
+    shelfActor ! Utils.Search(this, searchTextField.getText().replace('.', ' ').toLowerCase(), user = true)
   }
 
   def handleClear(event: jfxe.ActionEvent): Unit = {
@@ -165,7 +154,7 @@ class TmdbPresenter extends Initializable {
 
   def saveSeenDate(event: jfxe.ActionEvent): Unit = {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
-    val date = Option(seenDatePicker.getValue)
+    val date       = Option(seenDatePicker.getValue)
     if (date.isDefined) {
       shelfActor ! Utils.SaveSeenDate(this, java.sql.Date.valueOf(date.get))
     }

@@ -184,7 +184,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val f = tmdbClient.downloadPoster(movie, filename)
             if (f.isDefined) {
               f.get.onComplete {
-                case Success(io) => addToShelf(shelf, movie, new Image(s"file:///$filename"))
+                case Success(io) ⇒ addToShelf(shelf, movie, new Image(s"file:///$filename"))
                 case Failure(e) ⇒
                   log.error(s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
               }
@@ -217,18 +217,20 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         credits.crew.find(crew ⇒ crew.job == "Director").getOrElse(noCrew).name
       val _ = async {
         try {
-          val tmp = MovieDB(movie.id,
-                            java.sql.Date.valueOf(movie.release_date.getOrElse("Unknown")),
-                            movie.title,
-                            movie.original_title,
-                            director,
-                            new java.sql.Date(new java.util.Date().getTime),
-                            None,
-                            availability = true,
-                            movie.imdb_id,
-                            ImdbInfo.getScoreFromId(movie.imdb_id),
-                            seen = false,
-                            "")
+          val tmp = MovieDB(
+            movie.id,
+            java.sql.Date.valueOf(movie.release_date.getOrElse("Unknown")),
+            movie.title,
+            movie.original_title,
+            director,
+            new java.sql.Date(new java.util.Date().getTime),
+            None,
+            availability = true,
+            movie.imdb_id,
+            ImdbInfo.getScoreFromId(movie.imdb_id),
+            seen = false,
+            ""
+          )
           Await.result(DAO.insert(tmp), 5 seconds)
           log.info(s"${movie.title} registered")
           refreshInfo(shelf, movie.id)
@@ -263,27 +265,29 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
 
       val futureResDB = DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search)
-      futureResDB.map { result ⇒
-        maxPage = (result.size / MaxItems) + 1
-        Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
-        val dropN: Int = (page - 1) * MaxItems
-        result.slice(dropN, dropN + MaxItems) foreach {
-          //TODO match seen true/false
-          case m: MovieDB ⇒
-            val filename = s"$localStore/${m.tmdbId}.jpg"
-            val image =
-              if (Files.exists(Paths.get(filename))) {
-                new Image(s"file:///$filename")
-              } else {
-                new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
-              }
-            addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image)
+      futureResDB
+        .map { result ⇒
+          maxPage = (result.size / MaxItems) + 1
+          Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
+          val dropN: Int = (page - 1) * MaxItems
+          result.slice(dropN, dropN + MaxItems) foreach {
+            //TODO match seen true/false
+            case m: MovieDB ⇒
+              val filename = s"$localStore/${m.tmdbId}.jpg"
+              val image =
+                if (Files.exists(Paths.get(filename))) {
+                  new Image(s"file:///$filename")
+                } else {
+                  new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
+                }
+              addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image)
+          }
         }
-      }.recover {
-        case e: Exception ⇒
-          log.error("Problem found in ShowCollection filter process")
-          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
-      }
+        .recover {
+          case e: Exception ⇒
+            log.error("Problem found in ShowCollection filter process")
+            Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
+        }
       ()
 
     case Utils.SaveSeenDate(shelf, seenDate) ⇒
