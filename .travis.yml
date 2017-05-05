@@ -1,6 +1,4 @@
-# Cannot use Docker-based container (instead of OpenVZ)
-# because Travis still using old java version "1.8.0_31" and  Java 8u40 or later is required
-sudo: required
+sudo: false
 language: scala
 scala:
 - 2.12.2
