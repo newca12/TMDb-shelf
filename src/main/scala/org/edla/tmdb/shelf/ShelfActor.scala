@@ -111,12 +111,12 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           val q                     = Await.result(DAO.findById(tmdbId), 5 seconds)
           val (score, isTheatrical) = ImdbInfo.getInfoFromId(imdbID)
           if (q.isEmpty) {
-            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "")
+            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "", true)
             Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
           } else {
             val m = q.get
             Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, score)
-            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment)
+            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment, m.viewable)
           }
           if (isTheatrical.getOrElse(false)) {
             Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
@@ -229,7 +229,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             movie.imdb_id,
             ImdbInfo.getScoreFromId(movie.imdb_id),
             seen = false,
-            ""
+            "",
+            viewable = false
           )
           Await.result(DAO.insert(tmp), 5 seconds)
           log.info(s"${movie.title} registered")
@@ -305,7 +306,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
     case Utils.RefreshMovie(shelf) ⇒
       DAO
-        .refreshMovie(selectedMovie, shelf.commentTextArea.getText())
+        .refreshMovie(selectedMovie, shelf.commentTextArea.getText(), shelf.viewableCheckBox.isSelected)
         .map { result ⇒
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
         }

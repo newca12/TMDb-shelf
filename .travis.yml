@@ -1,6 +1,4 @@
-# Cannot use Docker-based container (instead of OpenVZ)
-# because Travis still using old java version "1.8.0_31" and  Java 8u40 or later is required
-sudo: required
+sudo: false
 language: scala
 scala:
 - 2.12.2
@@ -30,3 +28,9 @@ before_cache:
   # Tricks to avoid unnecessary cache updates
   - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
   - find $HOME/.sbt -name "*.lock" -delete
+
+# Work around for default old version of Java provided by Travis CI
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer

@@ -63,13 +63,15 @@ class TmdbPresenter extends Initializable {
     new jfxsc.Hyperlink("http://www.themoviedb.org/")
   @jfxf.FXML
   var commentTextArea: jfxsc.TextArea = _
+  @jfxf.FXML
+  var viewableCheckBox: jfxsc.CheckBox = _
 
   import java.net.URL
   import java.util.ResourceBundle
   import javafx.beans.value.{ChangeListener, ObservableValue}
   override def initialize(fxmlFileLocation: URL, resources: ResourceBundle): Unit = {
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
-    filterCollectionChoiceBox.getItems.addAll("Not seen", "All", "Seen", "Not available")
+    filterCollectionChoiceBox.getItems.addAll("Not seen", "All", "Seen", "Not available", "Not viewable")
     filterCollectionChoiceBox.getSelectionModel.selectFirst()
     filterCollectionChoiceBox.getSelectionModel
       .selectedIndexProperty()

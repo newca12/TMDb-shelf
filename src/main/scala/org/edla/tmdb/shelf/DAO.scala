@@ -14,7 +14,7 @@ trait DAOComponent {
   def findById(tmdbId: Long): Future[Option[MovieDB]]
   def filter(selectedCollectionFilter: Int, selectedSearchFilter: Int, search: String): Future[Seq[MovieDB]]
   def updateSeenDate(tmdbId: Long, date: java.sql.Date): Future[Int]
-  def refreshMovie(tmdbId: Long, comment: String): Future[Int]
+  def refreshMovie(tmdbId: Long, comment: String, viewable: Boolean): Future[Int]
 }
 
 object DAO extends DAOComponent {
@@ -49,10 +49,10 @@ object DAO extends DAOComponent {
     db.run(q.update((Some(seenDate), true)))
   }
 
-  override def refreshMovie(tmdbId: Long, comment: String): Future[Int] = {
-    val q = for { movie ← movies if movie.tmdbId === tmdbId } yield (movie.imdbScore, movie.comment)
+  override def refreshMovie(tmdbId: Long, comment: String, viewable: Boolean): Future[Int] = {
+    val q = for { movie ← movies if movie.tmdbId === tmdbId } yield (movie.imdbScore, movie.comment, movie.viewable)
     db.run(filterQuery(tmdbId).result.headOption).flatMap { movie ⇒
-      db.run(q.update((ImdbInfo.getScoreFromId(movie.get.imdbId), comment)))
+      db.run(q.update((ImdbInfo.getScoreFromId(movie.get.imdbId), comment, viewable)))
     }
   }
 
@@ -60,10 +60,15 @@ object DAO extends DAOComponent {
 
     val res_ = selectedCollectionFilter match {
       case 0 ⇒
-        movies.filter(_.seen === false).filter(_.availability === true).sortBy(m ⇒ (m.imdbScore.desc, m.releaseDate))
+        movies
+          .filter(_.seen === false)
+          .filter(_.availability === true)
+          .filter(_.viewable === true)
+          .sortBy(m ⇒ (m.imdbScore.desc, m.releaseDate))
       case 1 ⇒ movies.sortBy(m ⇒ m.title.asc)
       case 2 ⇒ movies.filter(_.seen === true).sortBy(m ⇒ m.title.asc)
       case 3 ⇒ movies.filter(_.availability === false).sortBy(m ⇒ m.title.asc)
+      case 4 ⇒ movies.filter(_.viewable === false).sortBy(m ⇒ (m.imdbScore.desc, m.releaseDate))
     }
 
     val res = selectedSearchFilter match {

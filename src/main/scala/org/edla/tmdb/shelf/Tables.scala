@@ -14,7 +14,8 @@ case class MovieDB(tmdbId: Long,
                    imdbId: String,
                    imdbScore: Option[BigDecimal],
                    seen: Boolean,
-                   comment: String)
+                   comment: String,
+                   viewable: Boolean)
 
 class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
 
@@ -31,8 +32,9 @@ class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
   def imdbId        = column[String]("IMDB_ID")
   def imdbScore =
     column[Option[BigDecimal]]("IMDB_SCORE", O.SqlType("DECIMAL(2,1)"))
-  def seen    = column[Boolean]("SEEN")
-  def comment = column[String]("COMMENT")
+  def seen     = column[Boolean]("SEEN")
+  def comment  = column[String]("COMMENT")
+  def viewable = column[Boolean]("VIEWABLE")
 
   // Every table needs a * projection with the same type as the table's type parameter
   // scalastyle:off method.name
@@ -48,6 +50,7 @@ class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
      imdbId,
      imdbScore,
      seen,
-     comment) <>
+     comment,
+     viewable) <>
       (MovieDB.tupled, MovieDB.unapply _)
 }

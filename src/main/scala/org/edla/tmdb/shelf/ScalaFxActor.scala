@@ -44,8 +44,9 @@ class ScalaFxActor extends Actor {
         .release_date
       shelf.localizedReleaseLabel.setText(if (release != "Unknown") release else "Localized release")
 
-    case Utils.ShowSeenDate(shelf, seenDate, comment) ⇒
+    case Utils.ShowSeenDate(shelf, seenDate, comment, viewable) ⇒
       shelf.commentTextArea.setText(comment)
+      shelf.viewableCheckBox.setSelected(viewable)
       if (seenDate.isDefined) {
         shelf.seenDatePicker.setValue(seenDate.get.toLocalDate)
       } else {
