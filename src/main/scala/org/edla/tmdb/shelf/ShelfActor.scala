@@ -230,7 +230,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             ImdbInfo.getScoreFromId(movie.imdb_id),
             seen = false,
             "",
-            viewable = false
+            viewable = true
           )
           Await.result(DAO.insert(tmp), 5 seconds)
           log.info(s"${movie.title} registered")
