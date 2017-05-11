@@ -14,7 +14,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.math.BigDecimal.int2bigDecimal
-import scala.sys.process.Process
+import scala.sys.process._
 
 class ScalaFxActor extends Actor {
 
@@ -130,8 +130,10 @@ class ScalaFxActor extends Actor {
       // scalastyle:off null
       if (selectedFile != null) {
         // scalastyle:on null
-        val cmd = Process(s"/usr/local/bin/mediainfo --Inform=General;%Duration% $selectedFile").lineStream.head
-        if (!cmd.isEmpty) sender ! Utils.CheckedRunTime(shelf, cmd.toInt.millis.toMinutes.toInt)
+        // ffmpeg could also be used conveniently: ffprobe -i <file> -show_entries format=duration -v quiet -of csv="p=0"
+        val cmd      = Seq("/usr/local/bin/mediainfo", "--Inform=General;%Duration%", selectedFile.getCanonicalPath)
+        val duration = cmd.!!.trim
+        if (!duration.isEmpty) sender ! Utils.CheckedRunTime(shelf, duration.toInt.millis.toMinutes.toInt)
       }
 
     case Utils.DisableRunTimeButton(shelf) ⇒
