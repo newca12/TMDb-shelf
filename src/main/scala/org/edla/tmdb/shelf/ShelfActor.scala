@@ -41,11 +41,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     new Array[javafx.scene.image.ImageView](MaxItems)
   var searchMode                       = SearchMode.Search
   var search: String                   = ""
-  var selectedMovie: Long              = _
+  var selectedMovie: Int               = _
   var selectedCollectionFilter: Number = 0
   var selectedSearchFilter: Number     = 0
 
-  private def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long) = {
+  private def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Int) = {
     val releases = tmdbClient.getReleases(tmdbId)
     releases.onComplete {
       case Success(release) ⇒
@@ -65,27 +65,42 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
   private def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter,
                          movie: Movie,
-                         poster: javafx.scene.image.Image): Unit = {
+                         poster: javafx.scene.image.Image,
+                         runTime: Option[Int]): Unit = {
     addToShelf(shelf,
                movie.id,
                movie.release_date.getOrElse("Unknown"),
                movie.title,
                movie.original_title,
-               movie.imdb_id,
-               poster)
+               movie.imdb_id.getOrElse(""),
+               poster,
+               runTime)
   }
 
+  // scalastyle:off method.length
   private def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                         tmdbId: Long,
+                         tmdbId: Int,
                          releaseDate: String,
                          title: String,
                          originalTitle: String,
                          imdbID: String,
-                         poster: javafx.scene.image.Image) = {
+                         poster: javafx.scene.image.Image,
+                         runTime: Option[Int]) = {
     val ds = new javafx.scene.effect.DropShadow()
     ds.setOffsetY(-5.0)
     ds.setOffsetX(5.0)
-    ds.setColor(javafx.scene.paint.Color.BLACK)
+    if (runTime.isDefined)
+      if (runTime.get < 90) {
+        ds.setColor(javafx.scene.paint.Color.RED)
+      } else {
+        if (runTime.get < 95 && runTime.get >= 90) {
+          ds.setColor(javafx.scene.paint.Color.YELLOW)
+        } else {
+          ds.setColor(javafx.scene.paint.Color.BLACK)
+        }
+      } else {
+      ds.setColor(javafx.scene.paint.Color.WHITE)
+    }
     val imageView_ = new ImageView()
     imageView_.setImage(poster)
     imageView_.setFitHeight(PosterSize)
@@ -117,6 +132,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val m = q.get
             Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, score)
             Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment, m.viewable)
+            Launcher.scalaFxActor ! Utils.ShowRunTime(shelf, m.runTime)
+
           }
           if (isTheatrical.getOrElse(false)) {
             Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
@@ -130,7 +147,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   }
 
   // scalastyle:off cyclomatic.complexity
-  // scalastyle:off method.length
   def receive: PartialFunction[Any, Unit] = LoggingReceive {
     case "instance" ⇒
       log.info("instance asked")
@@ -184,19 +200,23 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val f = tmdbClient.downloadPoster(movie, filename)
             if (f.isDefined) {
               f.get.onComplete {
-                case Success(io) ⇒ addToShelf(shelf, movie, new Image(s"file:///$filename"))
+                case Success(io) ⇒ addToShelf(shelf, movie, new Image(s"file:///$filename"), None)
                 case Failure(e) ⇒
                   log.error(s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
               }
             } else {
-              addToShelf(shelf, movie, new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"))
+              addToShelf(shelf,
+                         movie,
+                         new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"),
+                         None)
             }
           } else {
             log.debug("poster already there:" + movie.id)
-            addToShelf(shelf, movie, new Image(s"file:///$filename"))
+            addToShelf(shelf, movie, new Image(s"file:///$filename"), None)
           }
         case Failure(e) ⇒
           log.error(s"ShelfActor:receive: Future getMovie(${result.id}) failed : ${e.getMessage}")
+          e.printStackTrace()
       }
     case Utils.AddPoster(shelf, imageView) ⇒
       if (nbItems < MaxItems) {
@@ -226,11 +246,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             new java.sql.Date(new java.util.Date().getTime),
             None,
             availability = true,
-            movie.imdb_id,
-            ImdbInfo.getScoreFromId(movie.imdb_id),
+            //we do not want to store a movie without an imd_id so we intentionally let the exception occur
+            movie.imdb_id.get,
+            ImdbInfo.getScoreFromId(movie.imdb_id.get),
             seen = false,
             "",
-            viewable = true
+            viewable = true,
+            None //we don't want to store unchecked movie.runtime
           )
           Await.result(DAO.insert(tmp), 5 seconds)
           log.info(s"${movie.title} registered")
@@ -281,12 +303,12 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
                 } else {
                   new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
                 }
-              addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image)
+              addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image, m.runTime)
           }
         }
         .recover {
           case e: Exception ⇒
-            log.error("Problem found in ShowCollection filter process")
+            log.error(s"Problem found in ShowCollection filter process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
@@ -299,7 +321,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
         .recover {
           case e: Exception ⇒
-            log.error("Problem found in updateSeenDate process")
+            log.error(s"Problem found in updateSeenDate process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
@@ -312,7 +334,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
         .recover {
           case e: Exception ⇒
-            log.error("Problem found in refreshMovie process")
+            log.error(s"Problem found in refreshMovie process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
@@ -321,7 +343,24 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       selectedCollectionFilter = filter
     case Utils.SetSearchFilter(shelf, filter) ⇒
       selectedSearchFilter = filter
+
+    case Utils.SetRunTime(shelf) ⇒
+      Launcher.scalaFxActor ! Utils.SetRunTime(shelf)
+
+    case Utils.CheckedRunTime(shelf, runTime: Int) ⇒
+      DAO
+        .saveRunTime(selectedMovie, runTime)
+        .map { result ⇒
+          Launcher.scalaFxActor ! Utils.ShowRunTime(shelf, Some(runTime))
+        }
+        .recover {
+          case e: Exception ⇒
+            log.error(s"Problem found in CheckedRunTime process: $e")
+            Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
+        }
+      ()
+
+    // scalastyle:on method.length
+    // scalastyle:on cyclomatic.complexity
   }
-  // scalastyle:on method.length
-  // scalastyle:on cyclomatic.complexity
 }

@@ -51,7 +51,6 @@
             <Label fx:id="directorLabel" layoutX="14.0" layoutY="337.0" prefHeight="26.0" prefWidth="301.0" text="Director" />
             <Label fx:id="releaseLabel" layoutX="14.0" layoutY="362.0" prefHeight="26.0" prefWidth="301.0" text="Release" />
             <Label fx:id="localizedReleaseLabel" layoutX="14.0" layoutY="392.0" text="Localized release" />
-            <Label fx:id="runtimeLabel" layoutX="15.0" layoutY="416.0" text="Runtime" />
             <DatePicker fx:id="seenDatePicker" layoutX="14.0" layoutY="441.0" onAction="#updateSeenDate" />
             <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="441.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
             <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="474.0" onAction="#openImdbWebpage" text="http://www.imdb.com" />
@@ -60,6 +59,7 @@
             <Hyperlink fx:id="tmdbHyperLink" layoutX="15.0" layoutY="502.0" onAction="#openTmdbWebpage" prefHeight="24.0" prefWidth="202.0" text="http://www.themoviedb.org" />
             <TextArea fx:id="commentTextArea" layoutX="16.0" layoutY="535.0" prefHeight="189.0" prefWidth="259.0" />
             <CheckBox fx:id="viewableCheckBox" layoutX="23.0" layoutY="741.0" mnemonicParsing="false" selected="true" text="Viewable" />
+            <Button fx:id="runTimeButton" layoutX="10.0" layoutY="409.0" mnemonicParsing="false" onAction="#findFile" text="Runtime" />
          </children>
       </AnchorPane>
 </children></AnchorPane>

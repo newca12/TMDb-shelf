@@ -31,7 +31,7 @@ object Utils {
                                 release_date: String,
                                 imdb_id: String)
   case class RefreshMovieFromTmdb(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
-  case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Long, crew: Credits)
+  case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Int, crew: Credits)
   case class RefreshScore(shelf: org.edla.tmdb.shelf.TmdbPresenter,
                           imdbScore: Option[BigDecimal],
                           score: Option[BigDecimal])
@@ -51,6 +51,11 @@ object Utils {
   case class ShowPopup(shelf: org.edla.tmdb.shelf.TmdbPresenter, popup: String)
   case class SetCollectionFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
   case class SetSearchFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
+
+  case class SetRunTime(shelf: org.edla.tmdb.shelf.TmdbPresenter)
+  case class ShowRunTime(shelf: org.edla.tmdb.shelf.TmdbPresenter, runTime: Option[Int])
+  case class CheckedRunTime(shelf: org.edla.tmdb.shelf.TmdbPresenter, runTime: Int)
+  case class DisableRunTimeButton(shelf: org.edla.tmdb.shelf.TmdbPresenter)
 
   def getTmdbClient: TmdbClient = {
     val shelfActor       = Launcher.system.actorSelection("/user/shelfactor")

@@ -7,6 +7,7 @@ import javafx.{event ⇒ jfxe, fxml ⇒ jfxf}
 import akka.actor.ActorSelection.toScala
 
 class TmdbPresenter extends Initializable {
+  //variable name are case sensitive but mistake will be detected only at runtime
   @jfxf.FXML
   var previousButton: jfxsc.Button = _
   @jfxf.FXML
@@ -44,7 +45,7 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var releaseLabel: jfxsc.Label = _
   @jfxf.FXML
-  var runtimeLabel: jfxsc.Label = _
+  var runTimeButton: jfxsc.Button = _
   @jfxf.FXML
   var localizedReleaseLabel: jfxsc.Label = _
   @jfxf.FXML
@@ -160,5 +161,10 @@ class TmdbPresenter extends Initializable {
     if (date.isDefined) {
       shelfActor ! Utils.SaveSeenDate(this, java.sql.Date.valueOf(date.get))
     }
+  }
+
+  def findFile(event: jfxe.ActionEvent): Unit = {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.SetRunTime(this)
   }
 }

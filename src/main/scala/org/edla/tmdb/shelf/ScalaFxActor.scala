@@ -1,5 +1,6 @@
 package org.edla.tmdb.shelf
 
+import java.io.File
 import javafx.scene.control.{Alert, ButtonType}
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.image.Image
@@ -13,6 +14,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.math.BigDecimal.int2bigDecimal
+import scala.sys.process.Process
 
 class ScalaFxActor extends Actor {
 
@@ -63,8 +65,7 @@ class ScalaFxActor extends Actor {
       shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/$imdb_id")
 
     case Utils.RefreshMovieFromTmdb(shelf, movie) ⇒
-      val runtime = movie.runtime.getOrElse(0.toLong).toString
-      shelf.runtimeLabel.setText(if (runtime != "0") runtime + " min" else "Runtime")
+      shelf.runTimeButton.setText(movie.runtime.getOrElse("Runtime").toString)
 
     case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒
       val director =
@@ -120,6 +121,30 @@ class ScalaFxActor extends Actor {
       if (result.isPresent && result.get() == ButtonType.OK) {
         sender ! Utils.DeletionConfirmed(shelf, movie)
       }
+
+    case Utils.SetRunTime(shelf) ⇒
+      import javafx.stage.FileChooser
+      val fileChooser: FileChooser = new FileChooser
+      fileChooser.setTitle("Open Resource File")
+      val selectedFile: File = fileChooser.showOpenDialog(Launcher.stage)
+      // scalastyle:off null
+      if (selectedFile != null) {
+        // scalastyle:on null
+        val cmd = Process(s"/usr/local/bin/mediainfo --Inform=General;%Duration% $selectedFile").lineStream.head
+        if (!cmd.isEmpty) sender ! Utils.CheckedRunTime(shelf, cmd.toInt.millis.toMinutes.toInt)
+      }
+
+    case Utils.DisableRunTimeButton(shelf) ⇒
+      shelf.runTimeButton.setDisable(true)
+
+    case Utils.ShowRunTime(shelf, runTime: Option[Int]) ⇒
+      if (runTime.isDefined) {
+        shelf.runTimeButton.setDisable(true)
+        shelf.runTimeButton.setText(s"${runTime.get.toString} min")
+      } else {
+        shelf.runTimeButton.setDisable(false)
+      }
+
   }
   // scalastyle:on method.length
   // scalastyle:on cyclomatic.complexity

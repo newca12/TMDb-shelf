@@ -3,7 +3,7 @@ package org.edla.tmdb.shelf
 import slick.jdbc.H2Profile.api._
 import java.sql.Date
 
-case class MovieDB(tmdbId: Long,
+case class MovieDB(tmdbId: Int,
                    releaseDate: Date,
                    title: String,
                    originalTitle: String,
@@ -15,13 +15,14 @@ case class MovieDB(tmdbId: Long,
                    imdbScore: Option[BigDecimal],
                    seen: Boolean,
                    comment: String,
-                   viewable: Boolean)
+                   viewable: Boolean,
+                   runTime: Option[Int])
 
 class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
 
   // This is the primary key column:
   // scalastyle:off public.methods.have.type
-  def tmdbId        = column[Long]("TMDB_ID", O.PrimaryKey)
+  def tmdbId        = column[Int]("TMDB_ID", O.PrimaryKey)
   def releaseDate   = column[Date]("RELEASE_DATE")
   def title         = column[String]("TITLE")
   def originalTitle = column[String]("ORIGINAL_TITLE")
@@ -35,6 +36,7 @@ class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
   def seen     = column[Boolean]("SEEN")
   def comment  = column[String]("COMMENT")
   def viewable = column[Boolean]("VIEWABLE")
+  def runTime  = column[Option[Int]]("RUNTIME")
 
   // Every table needs a * projection with the same type as the table's type parameter
   // scalastyle:off method.name
@@ -51,6 +53,7 @@ class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
      imdbScore,
      seen,
      comment,
-     viewable) <>
+     viewable,
+     runTime) <>
       (MovieDB.tupled, MovieDB.unapply _)
 }

@@ -9,12 +9,13 @@ import scala.concurrent.duration.Duration
 trait DAOComponent {
 
   def insert(movie: MovieDB): Future[Int]
-  def update(tmdbId: Long, movie: MovieDB): Future[Int]
-  def delete(tmdbId: Long): Future[Int]
-  def findById(tmdbId: Long): Future[Option[MovieDB]]
+  def update(tmdbId: Int, movie: MovieDB): Future[Int]
+  def delete(tmdbId: Int): Future[Int]
+  def findById(tmdbId: Int): Future[Option[MovieDB]]
   def filter(selectedCollectionFilter: Int, selectedSearchFilter: Int, search: String): Future[Seq[MovieDB]]
-  def updateSeenDate(tmdbId: Long, date: java.sql.Date): Future[Int]
-  def refreshMovie(tmdbId: Long, comment: String, viewable: Boolean): Future[Int]
+  def updateSeenDate(tmdbId: Int, date: java.sql.Date): Future[Int]
+  def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean): Future[Int]
+  def saveRunTime(tmdbId: Int, runTime: Int): Future[Int]
 }
 
 object DAO extends DAOComponent {
@@ -29,30 +30,37 @@ object DAO extends DAOComponent {
     case e: org.h2.jdbc.JdbcSQLException ⇒ println(e.getMessage)
   }
 
-  private def filterQuery(tmdbId: Long): Query[Movies, MovieDB, Seq] =
+  private def filterQuery(tmdbId: Int): Query[Movies, MovieDB, Seq] =
     movies.filter(_.tmdbId === tmdbId)
 
-  override def findById(id: Long): Future[Option[MovieDB]] =
+  override def findById(id: Int): Future[Option[MovieDB]] =
     db.run(filterQuery(id).result.headOption)
 
   override def insert(movie: MovieDB): Future[Int] =
     db.run(movies += movie)
 
-  override def update(tmdbId: Long, movie: MovieDB): Future[Int] =
+  override def update(tmdbId: Int, movie: MovieDB): Future[Int] =
     db.run(filterQuery(tmdbId).update(movie))
 
-  override def delete(tmdbId: Long): Future[Int] =
+  override def delete(tmdbId: Int): Future[Int] =
     db.run(filterQuery(tmdbId).delete)
 
-  override def updateSeenDate(tmdbId: Long, seenDate: java.sql.Date): Future[Int] = {
+  override def updateSeenDate(tmdbId: Int, seenDate: java.sql.Date): Future[Int] = {
     val q = for { movie ← movies if movie.tmdbId === tmdbId } yield (movie.viewingDate, movie.seen)
     db.run(q.update((Some(seenDate), true)))
   }
 
-  override def refreshMovie(tmdbId: Long, comment: String, viewable: Boolean): Future[Int] = {
+  override def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean): Future[Int] = {
     val q = for { movie ← movies if movie.tmdbId === tmdbId } yield (movie.imdbScore, movie.comment, movie.viewable)
     db.run(filterQuery(tmdbId).result.headOption).flatMap { movie ⇒
       db.run(q.update((ImdbInfo.getScoreFromId(movie.get.imdbId), comment, viewable)))
+    }
+  }
+
+  override def saveRunTime(tmdbId: Int, runTime: Int): Future[Int] = {
+    val q = for { movie ← movies if movie.tmdbId === tmdbId } yield (movie.runTime)
+    db.run(filterQuery(tmdbId).result.headOption).flatMap { movie ⇒
+      db.run(q.update((Some(runTime))))
     }
   }
 
