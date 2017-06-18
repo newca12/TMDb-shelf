@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.0.1"
+version := "1.0.2"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -9,7 +9,10 @@ jdkPackagerType := "installer"
 
 (antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value
 
-scalaVersion := "2.12.2"
+scalaVersion in ThisBuild := "2.12.2"
+scalafmtOnCompile in ThisBuild := true
+scalafmtVersion in ThisBuild := "1.0.0-RC3"
+
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
@@ -21,7 +24,7 @@ scalacOptions ++= Seq(
   "-language:higherKinds", // Allow higher-kinded types
   "-language:implicitConversions", // Allow definition of implicit functions called views
   "-language:postfixOps", // Allow postfix operator notation
-  "-unchecked", // Enable additional warnings where generated code depends on assumptions.
+  "-unchecked",  // Enable additional warnings where generated code depends on assumptions.
   "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
   //"-Xfatal-warnings", // Fail the compilation if there are any warnings.
   "-Xfuture", // Turn on future language features.
@@ -61,24 +64,15 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"         % "2.5.1",
+  "com.typesafe.akka"           %% "akka-actor"         % "2.5.2",
   "org.scala-lang.modules"      %% "scala-async"        % "0.9.6",
   "org.edla"                    %% "tmdb-async-client"  % "1.2.1",
   "com.typesafe.slick"          %% "slick"              % "3.2.0",
-  "com.h2database"              % "h2"                  % "1.4.195",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.20",
+  "com.h2database"              % "h2"                  % "1.4.196",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.21",
   "org.scala-lang.modules"      %% "scala-java8-compat" % "0.8.0",
   "org.scalatest"               %% "scalatest"          % "3.0.3" % "test"
 )
-
-def latestScalafmt = "0.7.0-RC1"
-commands += Command.args("scalafmt", "Run scalafmt cli.") {
-  case (state, args) ⇒
-    val Right(scalafmt) =
-      org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
-    scalafmt.main("--non-interactive" +: args.toArray)
-    state
-}
 
 lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
@@ -89,5 +83,5 @@ lazy val root = (project in file("."))
   )
 
 fork := true
-licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
+licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
