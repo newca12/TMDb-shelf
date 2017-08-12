@@ -76,6 +76,7 @@ class ScalaFxActor extends Actor {
 
       val res = Await.result(DAO.findById(tmdbId), 5 seconds)
       shelf.addMovieButton.setDisable(res.isDefined)
+      shelf.runTimeButton.setDisable(res.isDefined && res.get.runTime.isDefined)
       shelf.deleteMovieButton.setDisable(res.isEmpty)
       shelf.refreshMovieButton.setDisable(res.isEmpty)
 

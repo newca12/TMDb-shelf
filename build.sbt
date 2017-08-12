@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.0.2"
+version := "1.0.3"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -9,9 +9,9 @@ jdkPackagerType := "installer"
 
 (antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value
 
-scalaVersion in ThisBuild := "2.12.2"
+scalaVersion in ThisBuild := "2.12.3"
 scalafmtOnCompile in ThisBuild := true
-scalafmtVersion in ThisBuild := "1.0.0-RC3"
+scalafmtVersion in ThisBuild := "1.1.0"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -24,8 +24,8 @@ scalacOptions ++= Seq(
   "-language:higherKinds", // Allow higher-kinded types
   "-language:implicitConversions", // Allow definition of implicit functions called views
   "-language:postfixOps", // Allow postfix operator notation
-  "-unchecked",  // Enable additional warnings where generated code depends on assumptions.
-  "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
+  "-unchecked",           // Enable additional warnings where generated code depends on assumptions.
+  //Failed with Scala 2.12.3 "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
   //"-Xfatal-warnings", // Fail the compilation if there are any warnings.
   "-Xfuture", // Turn on future language features.
   "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
@@ -47,27 +47,27 @@ scalacOptions ++= Seq(
   "-Xlint:unsound-match", // Pattern match may not be typesafe.
   "-Yno-adapted-args", // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver.
   "-Ypartial-unification", // Enable partial unification in type constructor inference
-  "-Ywarn-dead-code", // Warn when dead code is identified.
-  "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
+  "-Ywarn-dead-code",      // Warn when dead code is identified.
+  //intJ "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
   "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
   "-Ywarn-infer-any", // Warn when a type argument is inferred to be `Any`.
   "-Ywarn-nullary-override", // Warn when non-nullary `def f()' overrides nullary `def f'.
-  "-Ywarn-nullary-unit", // Warn when nullary methods return Unit.
-  "-Ywarn-numeric-widen", // Warn when numerics are widened.
-  "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-  "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-  "-Ywarn-unused:locals",  // Warn if a local definition is unused.
+  "-Ywarn-nullary-unit",     // Warn when nullary methods return Unit.
+  //intJ"-Ywarn-numeric-widen", // Warn when numerics are widened.
+  //IntJ "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
+  //IntJ "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
+  //IntJ "-Ywarn-unused:locals",  // Warn if a local definition is unused.
   //"-Ywarn-unused:params", // Warn if a value parameter is unused.
   //"-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
-  "-Ywarn-unused:privates", // Warn if a private member is unused.
+  //IntJ "-Ywarn-unused:privates", // Warn if a private member is unused.
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"         % "2.5.2",
-  "org.scala-lang.modules"      %% "scala-async"        % "0.9.6",
-  "org.edla"                    %% "tmdb-async-client"  % "1.2.1",
-  "com.typesafe.slick"          %% "slick"              % "3.2.0",
+  "com.typesafe.akka"           %% "akka-actor"         % "2.5.4",
+  "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
+  "org.edla"                    %% "tmdb-async-client"  % "1.2.3",
+  "com.typesafe.slick"          %% "slick"              % "3.2.1",
   "com.h2database"              % "h2"                  % "1.4.196",
   "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.21",
   "org.scala-lang.modules"      %% "scala-java8-compat" % "0.8.0",
