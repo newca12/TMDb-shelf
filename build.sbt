@@ -68,7 +68,7 @@ scalacOptions ++= Seq(
 libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-actor"         % "2.5.4",
   "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
-  "org.edla"                    %% "tmdb-async-client"  % "1.2.3",
+  "org.edla"                    %% "tmdb-async-client"  % "1.2.2",
   "com.typesafe.slick"          %% "slick"              % "3.2.1",
   "com.h2database"              % "h2"                  % "1.4.196",
   "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.21",
