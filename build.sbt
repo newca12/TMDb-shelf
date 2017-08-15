@@ -13,6 +13,8 @@ scalaVersion in ThisBuild := "2.12.3"
 scalafmtOnCompile in ThisBuild := true
 scalafmtVersion in ThisBuild := "1.1.0"
 
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
