@@ -8,11 +8,10 @@ import org.htmlcleaner.{CleanerProperties, DomSerializer, HtmlCleaner}
 object ImdbInfo {
 
   def getInfo(imdbId: String): (Option[BigDecimal], Option[Boolean]) = {
-    val url     = new URL(s"http://www.imdb.com/title/$imdbId")
-    val tagNode = new HtmlCleaner().clean(url)
-    val doc: org.w3c.dom.Document =
-      new DomSerializer(new CleanerProperties()).createDOM(tagNode)
-    val xpath = XPathFactory.newInstance().newXPath()
+    val url                       = new URL(s"https://www.imdb.com/title/$imdbId")
+    val tagNode                   = new HtmlCleaner().clean(url)
+    val doc: org.w3c.dom.Document = new DomSerializer(new CleanerProperties()).createDOM(tagNode)
+    val xpath                     = XPathFactory.newInstance().newXPath()
     val rawScore = xpath
       .evaluate(
         "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong/span[@itemprop='ratingValue']",
