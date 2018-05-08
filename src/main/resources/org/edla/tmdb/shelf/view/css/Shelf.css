@@ -2,3 +2,18 @@
     -fx-background-color: null;
     -fx-background-image: url("../images/Shelf.png");
 }
+#back-button {
+    -fx-graphic: url("../images/17-52.png");
+}
+#forward-button {
+    -fx-graphic: url("../images/17-48.png");
+}
+
+
+#back-button, #forward-button {
+    -fx-border-color: transparent;
+}
+
+#back-button:pressed, #forward-button:pressed {
+    -fx-background-color: transparent;
+}

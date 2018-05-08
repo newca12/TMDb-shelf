@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.0.4"
+version := "1.0.5"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -9,8 +9,7 @@ jdkPackagerType := "installer"
 
 (antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value
 
-scalaVersion in ThisBuild := "2.12.5"
-scalafmtOnCompile in ThisBuild := true
+scalaVersion in ThisBuild := "2.12.6"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -67,11 +66,12 @@ scalacOptions ++= Seq(
 libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-actor"         % "2.5.12",
   "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
-  "org.edla"                    %% "tmdb-async-client"  % "1.2.2",
+  "org.edla"                    %% "tmdb-async-client"  % "1.2.3",
   "com.typesafe.slick"          %% "slick"              % "3.2.3",
   "com.h2database"              % "h2"                  % "1.4.197",
-  "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.21",
-  "org.scala-lang.modules"      %% "scala-java8-compat" % "0.8.0",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.22",
+  "org.scala-lang.modules"      %% "scala-java8-compat" % "0.9.0",
+  "me.xdrop"                    % "fuzzywuzzy"          % "1.1.10",
   "org.scalatest"               %% "scalatest"          % "3.0.5" % "test"
 )
 

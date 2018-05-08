@@ -148,6 +148,13 @@ class ScalaFxActor extends Actor {
         shelf.runTimeButton.setDisable(false)
       }
 
+    case Utils.FindchangedScore(shelf) ⇒
+      Commands.findChangedScore(shelf)
+      ()
+
+    case Utils.FoundNewScore(shelf, title) ⇒
+      shelf.logListView.getItems().add(title)
+      ()
   }
   // scalastyle:on method.length
   // scalastyle:on cyclomatic.complexity

@@ -3,13 +3,13 @@ package org.edla.tmdb.shelf
 import java.io.IOException
 import java.nio.file.{Files, Paths}
 import java.util.prefs.Preferences
+
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.{Alert, TextInputDialog}
+import javafx.scene.control.{Alert, MenuBar, TextInputDialog}
 import javafx.stage.{Modality, Stage, WindowEvent}
 import javafx.{fxml ⇒ jfxf, scene ⇒ jfxs}
-
 import akka.actor.{ActorSystem, Props}
 
 import scala.concurrent.Await

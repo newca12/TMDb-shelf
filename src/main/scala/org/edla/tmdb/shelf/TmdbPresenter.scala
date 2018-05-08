@@ -1,10 +1,9 @@
 package org.edla.tmdb.shelf
 
+import akka.actor.ActorSelection.toScala
 import javafx.fxml.Initializable
 import javafx.scene.{control ⇒ jfxsc, image ⇒ jfxsi, layout ⇒ jfxsl}
 import javafx.{event ⇒ jfxe, fxml ⇒ jfxf}
-
-import akka.actor.ActorSelection.toScala
 
 class TmdbPresenter extends Initializable {
   //variable name are case sensitive but mistake will be detected only at runtime
@@ -66,11 +65,18 @@ class TmdbPresenter extends Initializable {
   var commentTextArea: jfxsc.TextArea = _
   @jfxf.FXML
   var viewableCheckBox: jfxsc.CheckBox = _
+  @jfxf.FXML
+  var menuBar: jfxsc.MenuBar = _
+  @jfxf.FXML
+  var logListView: jfxsc.ListView[String] = _
 
   import java.net.URL
   import java.util.ResourceBundle
+
   import javafx.beans.value.{ChangeListener, ObservableValue}
   override def initialize(fxmlFileLocation: URL, resources: ResourceBundle): Unit = {
+
+    menuBar.setUseSystemMenuBar(true)
     //filterCollectionChoiceBox = new jfxsc.ChoiceBox(FXCollections.observableArrayList("filter 1", "filter 2", "filter 3"))
     filterCollectionChoiceBox.getItems.addAll("Not seen", "All", "Seen", "Not available", "Not viewable")
     filterCollectionChoiceBox.getSelectionModel.selectFirst()
@@ -167,4 +173,10 @@ class TmdbPresenter extends Initializable {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.SetRunTime(this)
   }
+
+  def menuScore(event: jfxe.ActionEvent): Unit = {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.FindchangedScore(this)
+  }
+
 }

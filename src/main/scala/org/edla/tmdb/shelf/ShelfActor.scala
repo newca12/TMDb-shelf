@@ -360,6 +360,12 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
       ()
 
+    case Utils.FindchangedScore(shelf) ⇒
+      Launcher.scalaFxActor ! Utils.FindchangedScore(shelf)
+
+    case Utils.FoundNewScore(shelf, title) ⇒
+      Launcher.scalaFxActor ! Utils.FoundNewScore(shelf, title)
+
     // scalastyle:on method.length
     // scalastyle:on cyclomatic.complexity
   }

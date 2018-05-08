@@ -6,6 +6,10 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
@@ -14,7 +18,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
 <children><GridPane id="shelf" fx:id="shelfGridPane" alignment="CENTER" layoutY="71.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="720.0" prefWidth="1037.0" xmlns:fx="http://javafx.com/fxml">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -34,9 +38,9 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
 </GridPane>
-      <Button fx:id="previousButton" alignment="CENTER" layoutX="22.0" layoutY="23.0" mnemonicParsing="false" onAction="#previousPage" text="Previous" />
+      <Button id="back-button" fx:id="previousButton" alignment="CENTER" disable="true" layoutX="2.0" layoutY="3.0" mnemonicParsing="false" onAction="#previousPage" stylesheets="@css/Shelf.css" />
       <Label fx:id="pageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="98.0" layoutY="28.0" prefHeight="16.0" prefWidth="59.0" text="Page" textAlignment="CENTER" />
-      <Button fx:id="nextButton" layoutX="163.0" layoutY="23.0" mnemonicParsing="false" onAction="#nextPage" text="Next" />
+      <Button id="forward-button" fx:id="nextButton" disable="true" layoutX="149.0" layoutY="5.0" mnemonicParsing="false" onAction="#nextPage" stylesheets="@css/Shelf.css" />
       <Button fx:id="showCollectionButton" layoutX="315.0" layoutY="23.0" mnemonicParsing="false" onAction="#showCollection" text="Show collection" />
       <ChoiceBox fx:id="filterCollectionChoiceBox" layoutX="436.0" layoutY="23.0" prefHeight="26.0" prefWidth="116.0" /><Button fx:id="searchButton" layoutX="881.0" layoutY="24.0" mnemonicParsing="false" onAction="#search" prefHeight="26.0" prefWidth="152.0" text="Search for a movie" /><TextField fx:id="searchTextField" layoutX="682.0" layoutY="24.0" prefHeight="26.0" prefWidth="191.0" />
       <ChoiceBox fx:id="filterSearchChoiceBox" layoutX="556.0" layoutY="23.0" prefWidth="116.0" />
@@ -57,9 +61,19 @@
             <Label fx:id="scoreLabel" layoutX="177.0" layoutY="477.0" text="N/A" />
             <ImageView fx:id="scoreImageView" fitHeight="16.0" fitWidth="16.0" layoutX="209.0" layoutY="477.0" pickOnBounds="true" preserveRatio="true" />
             <Hyperlink fx:id="tmdbHyperLink" layoutX="15.0" layoutY="502.0" onAction="#openTmdbWebpage" prefHeight="24.0" prefWidth="202.0" text="http://www.themoviedb.org" />
-            <TextArea fx:id="commentTextArea" layoutX="16.0" layoutY="535.0" prefHeight="189.0" prefWidth="259.0" />
+            <TextArea fx:id="commentTextArea" layoutX="16.0" layoutY="535.0" prefHeight="72.0" prefWidth="259.0" />
             <CheckBox fx:id="viewableCheckBox" layoutX="23.0" layoutY="741.0" mnemonicParsing="false" selected="true" text="Viewable" />
             <Button fx:id="runTimeButton" layoutX="10.0" layoutY="409.0" mnemonicParsing="false" onAction="#findFile" text="Runtime" />
+            <ListView fx:id="logListView" layoutX="16.0" layoutY="609.0" prefHeight="119.0" prefWidth="259.0" />
          </children>
       </AnchorPane>
+      <MenuBar fx:id="menuBar">
+        <menus>
+          <Menu mnemonicParsing="false" text="Commands">
+            <items>
+              <MenuItem fx:id="menuScore" mnemonicParsing="false" onAction="#menuScore" text="Find changed score" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
 </children></AnchorPane>
