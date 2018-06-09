@@ -363,6 +363,9 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.FindchangedScore(shelf) ⇒
       Launcher.scalaFxActor ! Utils.FindchangedScore(shelf)
 
+    case Utils.FindchangedScoreTerminated(shelf) ⇒
+      Launcher.scalaFxActor ! Utils.FindchangedScoreTerminated(shelf)
+
     case Utils.FoundNewScore(shelf, title) ⇒
       Launcher.scalaFxActor ! Utils.FoundNewScore(shelf, title)
 

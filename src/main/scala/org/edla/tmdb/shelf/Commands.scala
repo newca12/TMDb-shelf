@@ -77,6 +77,7 @@ object Commands /*extends App*/ {
         if (ImdbInfo.getScoreFromId(movie.imdbId) != movie.imdbScore)
           shelfActor ! Utils.FoundNewScore(shelf, movie.title)
       }
+      shelfActor ! Utils.FindchangedScoreTerminated(shelf)
     }
   }
 

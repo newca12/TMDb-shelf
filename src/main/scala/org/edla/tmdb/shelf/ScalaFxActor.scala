@@ -149,7 +149,12 @@ class ScalaFxActor extends Actor {
       }
 
     case Utils.FindchangedScore(shelf) ⇒
+      shelf.logListView.setDisable(false)
       Commands.findChangedScore(shelf)
+      ()
+
+    case Utils.FindchangedScoreTerminated(shelf) ⇒
+      shelf.logListView.setDisable(true)
       ()
 
     case Utils.FoundNewScore(shelf, title) ⇒

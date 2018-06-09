@@ -58,6 +58,7 @@ object Utils {
   case class DisableRunTimeButton(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class FindchangedScore(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   case class FoundNewScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, title: String)
+  case class FindchangedScoreTerminated(shelf: org.edla.tmdb.shelf.TmdbPresenter)
 
   def getTmdbClient: TmdbClient = {
     val shelfActor       = Launcher.system.actorSelection("/user/shelfactor")
