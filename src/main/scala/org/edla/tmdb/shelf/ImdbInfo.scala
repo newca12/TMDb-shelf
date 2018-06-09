@@ -32,7 +32,7 @@ object ImdbInfo {
       } else {
         Some(BigDecimal(rawScore.trim.replace(",", ".")))
       }
-    val isNotTheatricalFilm = Some(List("TV Movie", "TV Short", "Video").exists {
+    val isNotTheatricalFilm = Some(List("TV Movie", "TV Short", "Video", "Episode aired").exists {
       rawIsNotTheatricalFilm contains
     })
     (score, isNotTheatricalFilm)
