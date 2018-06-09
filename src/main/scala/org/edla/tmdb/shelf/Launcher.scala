@@ -49,8 +49,9 @@ object Launcher {
   val tmpDir = System.getProperty("java.io.tmpdir")
   val system = ActorSystem("ShelfSystem")
   Files.createDirectories(Paths.get(localStore))
-  lazy val scalaFxActor = system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
-  var stage: Stage      = _
+  @volatile lazy val scalaFxActor =
+    system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
+  var stage: Stage = _
 
   def main(args: Array[String]): Unit = {
     new Launcher().launch()
