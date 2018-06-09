@@ -63,29 +63,35 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     }
   }
 
-  private def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                         movie: Movie,
-                         poster: javafx.scene.image.Image,
-                         runTime: Option[Int]): Unit = {
-    addToShelf(shelf,
-               movie.id,
-               movie.release_date.getOrElse("Unknown"),
-               movie.title,
-               movie.original_title,
-               movie.imdb_id.getOrElse(""),
-               poster,
-               runTime)
+  private def addToShelf(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      movie: Movie,
+      poster: javafx.scene.image.Image,
+      runTime: Option[Int]
+  ): Unit = {
+    addToShelf(
+      shelf,
+      movie.id,
+      movie.release_date.getOrElse("Unknown"),
+      movie.title,
+      movie.original_title,
+      movie.imdb_id.getOrElse(""),
+      poster,
+      runTime
+    )
   }
 
   // scalastyle:off method.length
-  private def addToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                         tmdbId: Int,
-                         releaseDate: String,
-                         title: String,
-                         originalTitle: String,
-                         imdbID: String,
-                         poster: javafx.scene.image.Image,
-                         runTime: Option[Int]) = {
+  private def addToShelf(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      tmdbId: Int,
+      releaseDate: String,
+      title: String,
+      originalTitle: String,
+      imdbID: String,
+      poster: javafx.scene.image.Image,
+      runTime: Option[Int]
+  ) = {
     val ds = new javafx.scene.effect.DropShadow()
     ds.setOffsetY(-5.0)
     ds.setOffsetX(5.0)
@@ -205,10 +211,12 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
                   log.error(s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
               }
             } else {
-              addToShelf(shelf,
-                         movie,
-                         new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"),
-                         None)
+              addToShelf(
+                shelf,
+                movie,
+                new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"),
+                None
+              )
             }
           } else {
             log.debug("poster already there:" + movie.id)

@@ -3,20 +3,22 @@ package org.edla.tmdb.shelf
 import slick.jdbc.H2Profile.api._
 import java.sql.Date
 
-case class MovieDB(tmdbId: Int,
-                   releaseDate: Date,
-                   title: String,
-                   originalTitle: String,
-                   director: String,
-                   addDate: Date,
-                   viewingDate: Option[Date],
-                   availability: Boolean,
-                   imdbId: String,
-                   imdbScore: Option[BigDecimal],
-                   seen: Boolean,
-                   comment: String,
-                   viewable: Boolean,
-                   runTime: Option[Int])
+case class MovieDB(
+    tmdbId: Int,
+    releaseDate: Date,
+    title: String,
+    originalTitle: String,
+    director: String,
+    addDate: Date,
+    viewingDate: Option[Date],
+    availability: Boolean,
+    imdbId: String,
+    imdbScore: Option[BigDecimal],
+    seen: Boolean,
+    comment: String,
+    viewable: Boolean,
+    runTime: Option[Int]
+)
 
 class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
 
@@ -41,19 +43,21 @@ class Movies(tag: Tag) extends Table[MovieDB](tag, "MOVIES") {
   // Every table needs a * projection with the same type as the table's type parameter
   // scalastyle:off method.name
   def * =
-    (tmdbId,
-     releaseDate,
-     title,
-     originalTitle,
-     director,
-     addDate,
-     viewingDate,
-     availability,
-     imdbId,
-     imdbScore,
-     seen,
-     comment,
-     viewable,
-     runTime) <>
+    (
+      tmdbId,
+      releaseDate,
+      title,
+      originalTitle,
+      director,
+      addDate,
+      viewingDate,
+      availability,
+      imdbId,
+      imdbScore,
+      seen,
+      comment,
+      viewable,
+      runTime
+    ) <>
       (MovieDB.tupled, MovieDB.unapply _)
 }

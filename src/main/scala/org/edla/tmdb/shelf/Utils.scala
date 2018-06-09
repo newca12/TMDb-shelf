@@ -25,16 +25,20 @@ object Utils {
   case class AddPosterXy(shelf: org.edla.tmdb.shelf.TmdbPresenter, poster: javafx.scene.image.ImageView, pos: Position)
   case class NotTheatricalFilmPoster(shelf: org.edla.tmdb.shelf.TmdbPresenter, poster: javafx.scene.image.ImageView)
   case class ShowPage(shelf: org.edla.tmdb.shelf.TmdbPresenter, page: Int, maxPage: Int)
-  case class RefreshMovieFromDb(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                                title: String,
-                                original_title: String,
-                                release_date: String,
-                                imdb_id: String)
+  case class RefreshMovieFromDb(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      title: String,
+      original_title: String,
+      release_date: String,
+      imdb_id: String
+  )
   case class RefreshMovieFromTmdb(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class RefreshCredits(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Int, crew: Credits)
-  case class RefreshScore(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                          imdbScore: Option[BigDecimal],
-                          score: Option[BigDecimal])
+  case class RefreshScore(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      imdbScore: Option[BigDecimal],
+      score: Option[BigDecimal]
+  )
   case class ChangePage(shelf: org.edla.tmdb.shelf.TmdbPresenter, change: Int)
   case class ShowCollection(shelf: org.edla.tmdb.shelf.TmdbPresenter, search: String, user: Boolean)
   case class SaveMovie(shelf: org.edla.tmdb.shelf.TmdbPresenter)
@@ -43,10 +47,12 @@ object Utils {
   case class ConfirmDeletion(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class DeletionConfirmed(shelf: org.edla.tmdb.shelf.TmdbPresenter, movie: Movie)
   case class ShowReleases(shelf: org.edla.tmdb.shelf.TmdbPresenter, releases: Releases)
-  case class ShowSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                          seenDate: Option[java.sql.Date],
-                          comment: String,
-                          viewable: Boolean)
+  case class ShowSeenDate(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      seenDate: Option[java.sql.Date],
+      comment: String,
+      viewable: Boolean
+  )
   case class SaveSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: java.sql.Date)
   case class ShowPopup(shelf: org.edla.tmdb.shelf.TmdbPresenter, popup: String)
   case class SetCollectionFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)

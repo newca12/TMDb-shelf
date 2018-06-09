@@ -86,7 +86,8 @@ object DAO extends DAOComponent {
         res_.filter(
           m ⇒
             (m.title.toLowerCase like s"%$search%") ||
-              (m.originalTitle.toLowerCase like s"%$search%"))
+              (m.originalTitle.toLowerCase like s"%$search%")
+        )
     }
 
     db.run(res.result)
