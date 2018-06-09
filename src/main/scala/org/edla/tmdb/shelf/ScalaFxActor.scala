@@ -65,7 +65,10 @@ class ScalaFxActor extends Actor {
       shelf.imdbHyperlink.setText(s"http://www.imdb.com/title/$imdb_id")
 
     case Utils.RefreshMovieFromTmdb(shelf, movie) ⇒
-      shelf.runTimeButton.setText(movie.runtime.getOrElse("Runtime").toString)
+      shelf.runTimeButton.setText(movie.runtime match {
+        case Some(runtime) ⇒ runtime.toString
+        case None          ⇒ "Runtime"
+      })
 
     case Utils.RefreshCredits(shelf, tmdbId, credits) ⇒
       val director =
@@ -98,7 +101,10 @@ class ScalaFxActor extends Actor {
       } else {
         shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
       }
-      shelf.scoreLabel.setText(score.getOrElse("N/A").toString)
+      shelf.scoreLabel.setText(score match {
+        case Some(score) ⇒ score.toString
+        case None        ⇒ "N/A"
+      })
 
     case Utils.ShowPopup(shelf, msg) ⇒
       val label = new javafx.scene.control.Label(msg)
