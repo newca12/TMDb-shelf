@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.0.6"
+version := "1.0.7"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -10,8 +10,6 @@ jdkPackagerType := "installer"
 (antPackagerTasks in JDKPackager) := (antPackagerTasks in JDKPackager).value
 
 scalaVersion in ThisBuild := "2.12.6"
-
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -64,7 +62,7 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"         % "2.5.13",
+  "com.typesafe.akka"           %% "akka-actor"         % "2.5.14",
   "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
   "org.edla"                    %% "tmdb-async-client"  % "1.2.3",
   "com.typesafe.slick"          %% "slick"              % "3.2.3",

@@ -14,7 +14,7 @@ object ImdbInfo {
     val xpath                     = XPathFactory.newInstance().newXPath()
     val rawScore = xpath
       .evaluate(
-        "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong/span[@itemprop='ratingValue']",
+        "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong",
         doc,
         XPathConstants.STRING
       )
