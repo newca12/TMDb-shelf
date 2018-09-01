@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.0.7"
+version := "1.0.8"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
@@ -62,7 +62,7 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"         % "2.5.14",
+  "com.typesafe.akka"           %% "akka-actor"         % "2.5.16",
   "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
   "org.edla"                    %% "tmdb-async-client"  % "1.2.3",
   "com.typesafe.slick"          %% "slick"              % "3.2.3",

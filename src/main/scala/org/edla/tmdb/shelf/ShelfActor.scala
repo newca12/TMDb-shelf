@@ -95,8 +95,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     val ds = new javafx.scene.effect.DropShadow()
     ds.setOffsetY(-5.0)
     ds.setOffsetX(5.0)
-    if (runTime.isDefined)
-      if (runTime.get < 90) {
+    if (runTime.isDefined) {
+      if (runTime.get < 75) {
+        ds.setColor(javafx.scene.paint.Color.PURPLE)
+      } else if (runTime.get < 90 && runTime.get >= 75) {
         ds.setColor(javafx.scene.paint.Color.RED)
       } else {
         if (runTime.get < 95 && runTime.get >= 90) {
@@ -104,7 +106,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         } else {
           ds.setColor(javafx.scene.paint.Color.BLACK)
         }
-      } else {
+      }
+    } else {
       ds.setColor(javafx.scene.paint.Color.WHITE)
     }
     val imageView_ = new ImageView()
