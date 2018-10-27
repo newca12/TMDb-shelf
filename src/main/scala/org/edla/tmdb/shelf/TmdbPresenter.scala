@@ -69,6 +69,8 @@ class TmdbPresenter extends Initializable {
   var menuBar: jfxsc.MenuBar = _
   @jfxf.FXML
   var logListView: jfxsc.ListView[String] = _
+  @jfxf.FXML
+  var progressBar: jfxsc.ProgressBar = _
 
   import java.net.URL
   import java.util.ResourceBundle

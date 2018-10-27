@@ -166,6 +166,9 @@ class ScalaFxActor extends Actor {
     case Utils.FoundNewScore(shelf, title) ⇒
       shelf.logListView.getItems().add(title)
       ()
+
+    case Utils.FoundScore(shelf, progress) ⇒
+      shelf.progressBar.setProgress(progress)
   }
   // scalastyle:on method.length
   // scalastyle:on cyclomatic.complexity

@@ -70,12 +70,15 @@ object Commands /*extends App*/ {
   }
 
   def findChangedScore(shelf: TmdbPresenter) = {
-    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    val shelfActor   = Launcher.system.actorSelection("/user/shelfactor")
+    var count: Float = 0
     async {
       for (movie ← results) {
-        println(movie.title + ":" + movie.imdbScore)
+        count = count + 1
+        //println(movie.title + ":" + movie.imdbScore)
         if (ImdbInfo.getScoreFromId(movie.imdbId) != movie.imdbScore)
           shelfActor ! Utils.FoundNewScore(shelf, movie.title)
+        shelfActor ! Utils.FoundScore(shelf, count / results.size)
       }
       shelfActor ! Utils.FindchangedScoreTerminated(shelf)
     }

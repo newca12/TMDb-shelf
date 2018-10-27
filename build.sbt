@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.1.0"
+version := "1.1.1"
 
 //sbt jdkPackager:packageBin
 mainClass in Compile := Some("org.edla.tmdb.shelf.Launcher")
