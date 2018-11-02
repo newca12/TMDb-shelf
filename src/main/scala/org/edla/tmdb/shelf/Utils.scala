@@ -71,6 +71,7 @@ object Utils {
   final case class DisableRunTimeButton(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FindchangedScore(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FoundNewScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, title: String)
+  final case class InitScoreProgress(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FoundScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, progress: Float)
   final case class FindchangedScoreTerminated(shelf: org.edla.tmdb.shelf.TmdbPresenter)
 

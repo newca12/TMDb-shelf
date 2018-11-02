@@ -45,6 +45,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   var selectedCollectionFilter: Number = 0
   var selectedSearchFilter: Number     = 0
 
+  var scoreProgressCount = 0
+
   private def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Int) = {
     val releases = tmdbClient.getReleases(tmdbId)
     releases.onComplete {
@@ -380,8 +382,12 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.FoundNewScore(shelf, title) ⇒
       Launcher.scalaFxActor ! Utils.FoundNewScore(shelf, title)
 
-    case Utils.FoundScore(shelf, progress) ⇒
-      Launcher.scalaFxActor ! Utils.FoundScore(shelf, progress)
+    case Utils.InitScoreProgress(shelf) ⇒
+      scoreProgressCount = 0
+
+    case Utils.FoundScore(shelf, resultsCount) ⇒
+      scoreProgressCount = scoreProgressCount + 1
+      Launcher.scalaFxActor ! Utils.FoundScore(shelf, scoreProgressCount / resultsCount)
 
     // scalastyle:on method.length
     // scalastyle:on cyclomatic.complexity
