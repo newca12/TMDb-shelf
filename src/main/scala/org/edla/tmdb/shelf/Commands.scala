@@ -10,6 +10,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.io.Source
 import scala.async.Async.async
+import scala.collection.parallel.ForkJoinTaskSupport
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /* SPECS
@@ -73,8 +74,10 @@ object Commands /*extends App*/ {
     val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.InitScoreProgress(shelf)
     async {
-      results.par.foreach { movie ⇒
-        //println(movie.title + ":" + movie.imdbScore)
+      val forkJoinPool = new java.util.concurrent.ForkJoinPool(4)
+      val resultsPar   = results.par
+      resultsPar.tasksupport = new ForkJoinTaskSupport(forkJoinPool)
+      resultsPar.foreach { movie ⇒
         if (ImdbInfo.getScoreFromId(movie.imdbId) != movie.imdbScore)
           shelfActor ! Utils.FoundNewScore(shelf, movie.title)
         shelfActor ! Utils.FoundScore(shelf, results.size)

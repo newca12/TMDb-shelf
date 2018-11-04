@@ -1,14 +1,16 @@
 package org.edla.tmdb.shelf
 
 import java.io.File
-import javafx.scene.control.{Alert, ButtonType}
-import javafx.scene.control.Alert.AlertType
-import javafx.scene.image.Image
-import javafx.stage.Modality
 
 import akka.actor.{Actor, actorRef2Scala}
 import akka.event.LoggingReceive
-import org.edla.tmdb.api.Protocol.{noCrew, unReleased}
+import javafx.event.EventHandler
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.{Alert, ButtonType}
+import javafx.scene.image.{Image, ImageView}
+import javafx.scene.input.MouseEvent
+import javafx.stage.Modality
+import org.edla.tmdb.api.Protocol.{Movie, noCrew, unReleased}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
@@ -18,9 +20,78 @@ import scala.sys.process._
 
 class ScalaFxActor extends Actor {
 
-  // scalastyle:off cyclomatic.complexity
-  // scalastyle:off method.length
+  val PosterSize = 108.0
+
   def receive: PartialFunction[Any, Unit] = LoggingReceive {
+
+    case Utils.AddToShelf(
+        shelf: org.edla.tmdb.shelf.TmdbPresenter,
+        movie: Movie,
+        poster: javafx.scene.image.Image,
+        runTime: Option[Int]
+        ) ⇒
+      self ! Utils.AddToShelf2(
+        shelf,
+        movie.id,
+        movie.release_date.getOrElse("Unknown"),
+        movie.title,
+        movie.original_title,
+        movie.imdb_id.getOrElse(""),
+        poster,
+        runTime
+      )
+
+    // scalastyle:off method.length
+    case Utils.AddToShelf2(
+        shelf: org.edla.tmdb.shelf.TmdbPresenter,
+        tmdbId: Int,
+        releaseDate: String,
+        title: String,
+        originalTitle: String,
+        imdbID: String,
+        poster: javafx.scene.image.Image,
+        runTime: Option[Int]
+        ) ⇒
+      val ds = new javafx.scene.effect.DropShadow()
+      ds.setOffsetY(-5.0)
+      ds.setOffsetX(5.0)
+      if (runTime.isDefined) {
+        if (runTime.get < 75) {
+          ds.setColor(javafx.scene.paint.Color.PURPLE)
+        } else if (runTime.get < 90 && runTime.get >= 75) {
+          ds.setColor(javafx.scene.paint.Color.RED)
+        } else {
+          if (runTime.get < 95 && runTime.get >= 90) {
+            ds.setColor(javafx.scene.paint.Color.YELLOW)
+          } else {
+            ds.setColor(javafx.scene.paint.Color.BLACK)
+          }
+        }
+      } else {
+        ds.setColor(javafx.scene.paint.Color.WHITE)
+      }
+      val imageView_ = new ImageView()
+      imageView_.setImage(poster)
+      imageView_.setFitHeight(PosterSize)
+      imageView_.setFitWidth(PosterSize)
+      imageView_.setPreserveRatio(true)
+      imageView_.setSmooth(true)
+      imageView_.setEffect(ds)
+      imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
+        override def handle(event: MouseEvent) = {
+          event.consume()
+          //selectedMovie = tmdbId
+          shelf.posterImageView.setImage(poster)
+          Launcher.scalaFxActor ! Utils.RefreshMovieFromDb(shelf, title, originalTitle, releaseDate, imdbID)
+          Launcher.system.actorSelection("/user/shelfactor") ! Utils.ImageViewClicked(shelf, tmdbId, imdbID, imageView_)
+
+        }
+      })
+      Launcher.system.actorSelection("/user/shelfactor") ! Utils.AddPoster(shelf, imageView_)
+
+    // scalastyle:off cyclomatic.complexity
+    // scalastyle:off method.length
+
     case Utils.NotTheatricalFilmPoster(shelf, poster) ⇒
       val effect = new javafx.scene.effect.Shadow()
       effect.setColor(javafx.scene.paint.Color.BEIGE)
@@ -156,7 +227,6 @@ class ScalaFxActor extends Actor {
 
     case Utils.FindchangedScore(shelf) ⇒
       shelf.logListView.setDisable(false)
-      Commands.findChangedScore(shelf)
       ()
 
     case Utils.FindchangedScoreTerminated(shelf) ⇒

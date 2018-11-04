@@ -1,13 +1,11 @@
 package org.edla.tmdb.shelf
 
 import java.nio.file.{Files, Paths, StandardCopyOption}
-import javafx.event.EventHandler
-import javafx.scene.image.{Image, ImageView}
-import javafx.scene.input.MouseEvent
+import javafx.scene.image.Image
 
 import akka.actor.{Actor, Props, actorRef2Scala}
 import akka.event.LoggingReceive
-import org.edla.tmdb.api.Protocol.{Movie, noCrew}
+import org.edla.tmdb.api.Protocol.noCrew
 import org.edla.tmdb.client.TmdbClient
 
 import scala.async.Async.async
@@ -15,9 +13,7 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.language.postfixOps
-import scala.util.Try
-
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success, Try}
 
 object ShelfActor {
   def props(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds): Props =
@@ -30,8 +26,7 @@ object SearchMode extends Enumeration {
 
 class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with akka.actor.ActorLogging {
 
-  val PosterSize = 108.0
-  val MaxItems   = 40
+  val MaxItems = 40
 
   val tmdbClient        = TmdbClient(apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
   @volatile var nbItems = 0
@@ -63,98 +58,6 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       case Failure(e) ⇒
         log.error(s"refreshInfo: Future getCredits($tmdbId) failed : ${e.getMessage}")
     }
-  }
-
-  private def addToShelf(
-      shelf: org.edla.tmdb.shelf.TmdbPresenter,
-      movie: Movie,
-      poster: javafx.scene.image.Image,
-      runTime: Option[Int]
-  ): Unit = {
-    addToShelf(
-      shelf,
-      movie.id,
-      movie.release_date.getOrElse("Unknown"),
-      movie.title,
-      movie.original_title,
-      movie.imdb_id.getOrElse(""),
-      poster,
-      runTime
-    )
-  }
-
-  // scalastyle:off method.length
-  private def addToShelf(
-      shelf: org.edla.tmdb.shelf.TmdbPresenter,
-      tmdbId: Int,
-      releaseDate: String,
-      title: String,
-      originalTitle: String,
-      imdbID: String,
-      poster: javafx.scene.image.Image,
-      runTime: Option[Int]
-  ) = {
-    val ds = new javafx.scene.effect.DropShadow()
-    ds.setOffsetY(-5.0)
-    ds.setOffsetX(5.0)
-    if (runTime.isDefined) {
-      if (runTime.get < 75) {
-        ds.setColor(javafx.scene.paint.Color.PURPLE)
-      } else if (runTime.get < 90 && runTime.get >= 75) {
-        ds.setColor(javafx.scene.paint.Color.RED)
-      } else {
-        if (runTime.get < 95 && runTime.get >= 90) {
-          ds.setColor(javafx.scene.paint.Color.YELLOW)
-        } else {
-          ds.setColor(javafx.scene.paint.Color.BLACK)
-        }
-      }
-    } else {
-      ds.setColor(javafx.scene.paint.Color.WHITE)
-    }
-    val imageView_ = new ImageView()
-    imageView_.setImage(poster)
-    imageView_.setFitHeight(PosterSize)
-    imageView_.setFitWidth(PosterSize)
-    imageView_.setPreserveRatio(true)
-    imageView_.setSmooth(true)
-    imageView_.setEffect(ds)
-    imageView_.setOnMouseClicked(new EventHandler[MouseEvent] {
-      override def handle(event: MouseEvent) = {
-        event.consume()
-        selectedMovie = tmdbId
-        shelf.posterImageView.setImage(poster)
-        Launcher.scalaFxActor ! Utils.RefreshMovieFromDb(shelf, title, originalTitle, releaseDate, imdbID)
-        val movie = tmdbClient.getMovie(tmdbId)
-        movie.onComplete {
-          case Success(movie) ⇒
-            Launcher.scalaFxActor ! Utils.RefreshMovieFromTmdb(shelf, movie)
-          case Failure(e) ⇒
-            log.error(s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
-        }
-
-        async {
-          val q                     = Await.result(DAO.findById(tmdbId), 5 seconds)
-          val (score, isTheatrical) = ImdbInfo.getInfoFromId(imdbID)
-          if (q.isEmpty) {
-            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "", true)
-            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
-          } else {
-            val m = q.get
-            Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, score)
-            Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment, m.viewable)
-            Launcher.scalaFxActor ! Utils.ShowRunTime(shelf, m.runTime)
-
-          }
-          if (isTheatrical.getOrElse(false)) {
-            Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
-          }
-        }
-        refreshInfo(shelf, tmdbId)
-        log.debug(s"event for movie $tmdbId $title")
-      }
-    })
-    self ! Utils.AddPoster(shelf, imageView_)
   }
 
   // scalastyle:off cyclomatic.complexity
@@ -211,12 +114,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             val f = tmdbClient.downloadPoster(movie, filename)
             if (f.isDefined) {
               f.get.onComplete {
-                case Success(io) ⇒ addToShelf(shelf, movie, new Image(s"file:///$filename"), None)
+                case Success(io) ⇒
+                  Launcher.scalaFxActor ! Utils.AddToShelf(shelf, movie, new Image(s"file:///$filename"), None)
                 case Failure(e) ⇒
                   log.error(s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
               }
             } else {
-              addToShelf(
+              Launcher.scalaFxActor ! Utils.AddToShelf(
                 shelf,
                 movie,
                 new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png"),
@@ -225,7 +129,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             }
           } else {
             log.debug("poster already there:" + movie.id)
-            addToShelf(shelf, movie, new Image(s"file:///$filename"), None)
+            Launcher.scalaFxActor ! Utils.AddToShelf(shelf, movie, new Image(s"file:///$filename"), None)
           }
         case Failure(e) ⇒
           log.error(s"ShelfActor:receive: Future getMovie(${result.id}) failed : ${e.getMessage}")
@@ -237,6 +141,38 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         items(nbItems) = imageView
       }
       nbItems = nbItems + 1
+
+    case Utils.ImageViewClicked(shelf, tmdbId, imdbID, imageView_) ⇒
+      val movie = tmdbClient.getMovie(tmdbId)
+      selectedMovie = tmdbId
+      movie.onComplete {
+        case Success(movie) ⇒
+          Launcher.scalaFxActor ! Utils.RefreshMovieFromTmdb(shelf, movie)
+        case Failure(e) ⇒
+          //log.error
+          println(s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
+      }
+
+      async {
+        val q                     = Await.result(DAO.findById(tmdbId), 5 seconds)
+        val (score, isTheatrical) = ImdbInfo.getInfoFromId(imdbID)
+        if (q.isEmpty) {
+          Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, None, "", true)
+          Launcher.scalaFxActor ! Utils.RefreshScore(shelf, None, score)
+        } else {
+          val m = q.get
+          Launcher.scalaFxActor ! Utils.RefreshScore(shelf, m.imdbScore, score)
+          Launcher.scalaFxActor ! Utils.ShowSeenDate(shelf, m.viewingDate, m.comment, m.viewable)
+          Launcher.scalaFxActor ! Utils.ShowRunTime(shelf, m.runTime)
+
+        }
+        if (isTheatrical.getOrElse(false)) {
+          Launcher.scalaFxActor ! Utils.NotTheatricalFilmPoster(shelf, imageView_)
+        }
+      }
+      refreshInfo(shelf, tmdbId)
+    //log.debug(s"event for movie $tmdbId $title")
+
     case Utils.SaveMovie(shelf) ⇒
       val filename = s"${Launcher.tmpDir}/$selectedMovie.jpg"
       if (Files.exists(Paths.get(filename))) {
@@ -316,7 +252,14 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
                 } else {
                   new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
                 }
-              addToShelf(shelf, m.tmdbId, m.releaseDate.toString, m.title, m.originalTitle, m.imdbId, image, m.runTime)
+              Launcher.scalaFxActor ! Utils.AddToShelf2(shelf,
+                                                        m.tmdbId,
+                                                        m.releaseDate.toString,
+                                                        m.title,
+                                                        m.originalTitle,
+                                                        m.imdbId,
+                                                        image,
+                                                        m.runTime)
           }
         }
         .recover {
@@ -375,6 +318,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
     case Utils.FindchangedScore(shelf) ⇒
       Launcher.scalaFxActor ! Utils.FindchangedScore(shelf)
+      Commands.findChangedScore(shelf)
+      ()
 
     case Utils.FindchangedScoreTerminated(shelf) ⇒
       Launcher.scalaFxActor ! Utils.FindchangedScoreTerminated(shelf)
