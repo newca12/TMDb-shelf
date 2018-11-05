@@ -26,7 +26,6 @@ object Commands /*extends App*/ {
 
   val movies: Future[Seq[MovieDB]] = DAO.filter(0, 0, "")
   val results: Seq[MovieDB]        = Await.result(movies, 5.seconds)
-  println(results)
 
   def check() = {
     val filesTitles: List[(String, String)] = Source
@@ -71,15 +70,18 @@ object Commands /*extends App*/ {
   }
 
   def findChangedScore(shelf: TmdbPresenter) = {
-    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    import scala.math.Integral.Implicits._
+    def position(index: Int) = { val p = index /% 40; val l = p._2 /% 8; s"${p._1 + 1}:${l._1 + 1}:${l._2 + 1}" }
+    val shelfActor           = Launcher.system.actorSelection("/user/shelfactor")
     shelfActor ! Utils.InitScoreProgress(shelf)
     async {
       val forkJoinPool = new java.util.concurrent.ForkJoinPool(4)
       val resultsPar   = results.par
       resultsPar.tasksupport = new ForkJoinTaskSupport(forkJoinPool)
       resultsPar.foreach { movie ⇒
-        if (ImdbInfo.getScoreFromId(movie.imdbId) != movie.imdbScore)
-          shelfActor ! Utils.FoundNewScore(shelf, movie.title)
+        if (ImdbInfo.getScoreFromId(movie.imdbId) != movie.imdbScore) {
+          shelfActor ! Utils.FoundNewScore(shelf, s"${movie.title} (${position(results.indexOf(movie))})")
+        }
         shelfActor ! Utils.FoundScore(shelf, results.size)
       }
       shelfActor ! Utils.FindchangedScoreTerminated(shelf)
