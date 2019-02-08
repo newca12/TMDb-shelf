@@ -4,13 +4,15 @@ import java.io.IOException
 import java.nio.file.{Files, Paths}
 import java.util.prefs.Preferences
 
+import akka.actor.{ActorSystem, Props}
+import javafx.application.Application
+import javafx.application.Application._
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Alert.AlertType
-import javafx.scene.control.{Alert, MenuBar, TextInputDialog}
+import javafx.scene.control.{Alert, TextInputDialog}
 import javafx.stage.{Modality, Stage, WindowEvent}
 import javafx.{fxml ⇒ jfxf, scene ⇒ jfxs}
-import akka.actor.{ActorSystem, Props}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
@@ -53,18 +55,19 @@ object Launcher {
     system.actorOf(Props[ScalaFxActor].withDispatcher("javafx-dispatcher"), "ScalaFxActor")
   var stage: Stage = _
 
-  def main(args: Array[String]): Unit = {
-    new Launcher().launch()
-  }
 }
 
-class Launcher extends javafx.application.Application /*with WithUncaughtExceptionHandlerDialog*/ {
+class Launcher extends Application /*with WithUncaughtExceptionHandlerDialog*/ {
 
-  val resource = Option(getClass.getResource("view/Shelf.fxml"))
+  def main(args: Array[String]): Unit = {
+    launch()
+  }
+
+  lazy val resource = Option(getClass.getResource("view/Shelf.fxml"))
   if (resource.isEmpty) {
     throw new IOException("Cannot load resource: view/Shelf.fxml")
   }
-  val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
+  lazy val root: jfxs.Parent = jfxf.FXMLLoader.load(resource.get)
 
   override def start(primaryStage: Stage): Unit = {
     Launcher.stage = primaryStage
@@ -148,5 +151,4 @@ class Launcher extends javafx.application.Application /*with WithUncaughtExcepti
     }
   }
 
-  private def launch() = javafx.application.Application.launch()
 }

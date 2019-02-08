@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
 <children><GridPane id="shelf" fx:id="shelfGridPane" alignment="CENTER" layoutY="71.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="720.0" prefWidth="1037.0" xmlns:fx="http://javafx.com/fxml">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -66,7 +66,7 @@
             <CheckBox fx:id="viewableCheckBox" layoutX="23.0" layoutY="741.0" mnemonicParsing="false" selected="true" text="Viewable" />
             <Button fx:id="runTimeButton" layoutX="10.0" layoutY="409.0" mnemonicParsing="false" onAction="#findFile" text="Runtime" />
             <ListView fx:id="logListView" disable="true" layoutX="16.0" layoutY="609.0" prefHeight="123.0" prefWidth="239.0" />
-            <ProgressBar fx:id="progressBar" layoutX="202.0" layoutY="660.0" prefHeight="8.0" prefWidth="123.0" progress="0.0" rotate="-90.0" />
+            <ProgressBar fx:id="progressBar" layoutX="202.0" layoutY="662.0" prefHeight="16.0" prefWidth="123.0" progress="0.0" rotate="-90.0" />
          </children>
       </AnchorPane>
       <MenuBar fx:id="menuBar">

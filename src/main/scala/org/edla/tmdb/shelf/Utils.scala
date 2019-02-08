@@ -74,22 +74,28 @@ object Utils {
   final case class InitScoreProgress(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FoundScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, progress: Float)
   final case class FindchangedScoreTerminated(shelf: org.edla.tmdb.shelf.TmdbPresenter)
-  final case class AddToShelf(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                              movie: Movie,
-                              poster: javafx.scene.image.Image,
-                              runTime: Option[Int])
-  final case class AddToShelf2(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                               tmdbId: Int,
-                               releaseDate: String,
-                               title: String,
-                               originalTitle: String,
-                               imdbID: String,
-                               poster: javafx.scene.image.Image,
-                               runTime: Option[Int])
-  final case class ImageViewClicked(shelf: org.edla.tmdb.shelf.TmdbPresenter,
-                                    tmdbId: Int,
-                                    imdbID: String,
-                                    imageView: ImageView)
+  final case class AddToShelf(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      movie: Movie,
+      poster: javafx.scene.image.Image,
+      runTime: Option[Int]
+  )
+  final case class AddToShelf2(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      tmdbId: Int,
+      releaseDate: String,
+      title: String,
+      originalTitle: String,
+      imdbID: String,
+      poster: javafx.scene.image.Image,
+      runTime: Option[Int]
+  )
+  final case class ImageViewClicked(
+      shelf: org.edla.tmdb.shelf.TmdbPresenter,
+      tmdbId: Int,
+      imdbID: String,
+      imageView: ImageView
+  )
 
   def getTmdbClient: TmdbClient = {
     val shelfActor       = Launcher.system.actorSelection("/user/shelfactor")

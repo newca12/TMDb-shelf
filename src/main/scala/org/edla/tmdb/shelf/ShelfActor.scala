@@ -252,14 +252,16 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
                 } else {
                   new Image("/org/edla/tmdb/shelf/view/images/200px-No_image_available.svg.png")
                 }
-              Launcher.scalaFxActor ! Utils.AddToShelf2(shelf,
-                                                        m.tmdbId,
-                                                        m.releaseDate.toString,
-                                                        m.title,
-                                                        m.originalTitle,
-                                                        m.imdbId,
-                                                        image,
-                                                        m.runTime)
+              Launcher.scalaFxActor ! Utils.AddToShelf2(
+                shelf,
+                m.tmdbId,
+                m.releaseDate.toString,
+                m.title,
+                m.originalTitle,
+                m.imdbId,
+                image,
+                m.runTime
+              )
           }
         }
         .recover {
