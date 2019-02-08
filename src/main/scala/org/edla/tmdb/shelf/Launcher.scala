@@ -12,7 +12,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.{Alert, TextInputDialog}
 import javafx.stage.{Modality, Stage, WindowEvent}
-import javafx.{fxml ⇒ jfxf, scene ⇒ jfxs}
+import javafx.{fxml => jfxf, scene => jfxs}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
@@ -118,7 +118,7 @@ class Launcher extends Application /*with WithUncaughtExceptionHandlerDialog*/ {
     val tmdbClient = Utils.getTmdbClient
     val token      = Try(Await.result(tmdbClient.getToken, 5 second).request_token)
     token match {
-      case Success(v) ⇒
+      case Success(v) =>
         //comment to clean store
         prefs.put("apiKey", apiKey)
         new TextInputDialog()
@@ -132,7 +132,7 @@ class Launcher extends Application /*with WithUncaughtExceptionHandlerDialog*/ {
           setContentText("Perfect ! Your API key is valid")
           showAndWait()
         }
-      case Failure(e) ⇒
+      case Failure(e) =>
         //if (e.isInstanceOf[InvalidApiKeyException]) {
         if (!apiKeyStored.isEmpty && apiKeyStored == apiKey) {
           prefs.remove("apiKey")

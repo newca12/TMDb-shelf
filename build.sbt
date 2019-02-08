@@ -59,15 +59,15 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.
 )
 
-val javafxModules = Seq("base", "controls", "fxml", "graphics")//, "media", "swing", "web")
+val javafxModules = Seq("base", "controls", "fxml", "graphics") //, "media", "swing", "web")
 val osName = System.getProperty("os.name") match {
-  case n if n.startsWith("Linux")   ⇒ "linux"
-  case n if n.startsWith("Mac")     ⇒ "mac"
-  case n if n.startsWith("Windows") ⇒ "win"
-  case _                            ⇒ throw new Exception("Unknown platform!")
+  case n if n.startsWith("Linux")   => "linux"
+  case n if n.startsWith("Mac")     => "mac"
+  case n if n.startsWith("Windows") => "win"
+  case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m ⇒ "org.openjfx" % s"javafx-$m" % "11.0.2" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "11.0.2" classifier osName)
 libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-actor"         % "2.5.20",
   "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
@@ -89,6 +89,5 @@ lazy val root = (project in file("."))
   )
 
 fork := true
-licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))
+licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
-

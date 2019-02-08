@@ -45,35 +45,35 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
   private def refreshInfo(shelf: org.edla.tmdb.shelf.TmdbPresenter, tmdbId: Int) = {
     val releases = tmdbClient.getReleases(tmdbId)
     releases.onComplete {
-      case Success(release) ⇒
+      case Success(release) =>
         Launcher.scalaFxActor ! Utils.ShowReleases(shelf, release)
-      case Failure(e) ⇒
+      case Failure(e) =>
         log.error(s"refreshInfo: Future getReleases($tmdbId) failed : ${e.getMessage}")
     }
     val credits = tmdbClient.getCredits(tmdbId)
     credits.onComplete {
-      case Success(credits) ⇒
+      case Success(credits) =>
         selectedMovie = tmdbId
         Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, tmdbId, credits)
-      case Failure(e) ⇒
+      case Failure(e) =>
         log.error(s"refreshInfo: Future getCredits($tmdbId) failed : ${e.getMessage}")
     }
   }
 
   // scalastyle:off cyclomatic.complexity
   def receive: PartialFunction[Any, Unit] = LoggingReceive {
-    case "instance" ⇒
+    case "instance" =>
       log.info("instance asked")
       sender ! tmdbClient
-    case Utils.ChangePage(shelf, change) ⇒
+    case Utils.ChangePage(shelf, change) =>
       page = page + change
       searchMode match {
-        case SearchMode.Search ⇒
+        case SearchMode.Search =>
           self ! Utils.Search(shelf, this.search, user = false)
-        case SearchMode.Collection ⇒
+        case SearchMode.Collection =>
           self ! Utils.ShowCollection(shelf, this.search, user = false)
       }
-    case Utils.Search(shelf, search, user) ⇒
+    case Utils.Search(shelf, search, user) =>
       if (user) page = 1
       searchMode = SearchMode.Search
       this.search = search
@@ -81,42 +81,42 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
       val results = tmdbClient.searchMovie(search, page * 2 - 1)
       results.onComplete {
-        case Success(results) ⇒
+        case Success(results) =>
           maxPage = results.total_pages
           Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, Math.ceil(maxPage / 2.0).toInt)
-          for (movie ← results.results) {
+          for (movie <- results.results) {
             self ! Utils.GetResult(shelf, movie)
           }
           if (page < maxPage) {
             val results = tmdbClient.searchMovie(search, page * 2)
             results.onComplete {
-              case Success(results) ⇒
-                for (movie ← results.results) {
+              case Success(results) =>
+                for (movie <- results.results) {
                   self ! Utils.GetResult(shelf, movie)
                 }
-              case Failure(e) ⇒
+              case Failure(e) =>
                 log.error(s"ShelfActor:receive: Future searchMovie($search,${page * 2} failed : ${e.getMessage}")
             }
           }
-        case Failure(e) ⇒
+        case Failure(e) =>
           log.error(s"ShelfActor:receive: Future searchMovie($search,${page * 2 -
             1} failed : ${e.getMessage}")
       }
-    case "token" ⇒
+    case "token" =>
       sender ! Try(Await.result(tmdbClient.getToken, 5 second).request_token)
-    case Utils.GetResult(shelf, result) ⇒
+    case Utils.GetResult(shelf, result) =>
       val movie = tmdbClient.getMovie(result.id)
       movie.onComplete {
-        case Success(movie) ⇒
+        case Success(movie) =>
           import java.nio.file.{Files, Paths}
           val filename = Paths.get(s"${Launcher.tmpDir}/${movie.id}.jpg")
           if (!Files.exists(filename)) {
             val f = tmdbClient.downloadPoster(movie, filename)
             if (f.isDefined) {
               f.get.onComplete {
-                case Success(io) ⇒
+                case Success(io) =>
                   Launcher.scalaFxActor ! Utils.AddToShelf(shelf, movie, new Image(s"file:///$filename"), None)
-                case Failure(e) ⇒
+                case Failure(e) =>
                   log.error(s"ShelfActor:receive: Future downloadPoster($movie,$filename) failed : ${e.getMessage}")
               }
             } else {
@@ -131,24 +131,24 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             log.debug("poster already there:" + movie.id)
             Launcher.scalaFxActor ! Utils.AddToShelf(shelf, movie, new Image(s"file:///$filename"), None)
           }
-        case Failure(e) ⇒
+        case Failure(e) =>
           log.error(s"ShelfActor:receive: Future getMovie(${result.id}) failed : ${e.getMessage}")
           e.printStackTrace()
       }
-    case Utils.AddPoster(shelf, imageView) ⇒
+    case Utils.AddPoster(shelf, imageView) =>
       if (nbItems < MaxItems) {
         Launcher.scalaFxActor ! Utils.AddPosterXy(shelf, imageView, Utils.Position(nbItems % 8, nbItems / 8))
         items(nbItems) = imageView
       }
       nbItems = nbItems + 1
 
-    case Utils.ImageViewClicked(shelf, tmdbId, imdbID, imageView_) ⇒
+    case Utils.ImageViewClicked(shelf, tmdbId, imdbID, imageView_) =>
       val movie = tmdbClient.getMovie(tmdbId)
       selectedMovie = tmdbId
       movie.onComplete {
-        case Success(movie) ⇒
+        case Success(movie) =>
           Launcher.scalaFxActor ! Utils.RefreshMovieFromTmdb(shelf, movie)
-        case Failure(e) ⇒
+        case Failure(e) =>
           //log.error
           println(s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
       }
@@ -173,7 +173,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       refreshInfo(shelf, tmdbId)
     //log.debug(s"event for movie $tmdbId $title")
 
-    case Utils.SaveMovie(shelf) ⇒
+    case Utils.SaveMovie(shelf) =>
       val filename = s"${Launcher.tmpDir}/$selectedMovie.jpg"
       if (Files.exists(Paths.get(filename))) {
         Files
@@ -183,7 +183,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val credits =
         Await.result(tmdbClient.getCredits(selectedMovie), 5 seconds)
       val director =
-        credits.crew.find(crew ⇒ crew.job == "Director").getOrElse(noCrew).name
+        credits.crew.find(crew => crew.job == "Director").getOrElse(noCrew).name
       val _ = async {
         try {
           val tmp = MovieDB(
@@ -208,16 +208,16 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           refreshInfo(shelf, movie.id)
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Registered")
         } catch {
-          case e: Exception ⇒
+          case e: Exception =>
             log.error(e.getMessage)
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       }
     //Launcher.scalaFxActor ! Utils.RefreshCredits(shelf, movie.id, credits)
-    case Utils.RemoveMovie(shelf) ⇒
+    case Utils.RemoveMovie(shelf) =>
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       Launcher.scalaFxActor ! Utils.ConfirmDeletion(shelf, movie)
-    case Utils.DeletionConfirmed(shelf, movie) ⇒
+    case Utils.DeletionConfirmed(shelf, movie) =>
       try {
         Await.result(DAO.delete(movie.id), 5 seconds)
         Files.deleteIfExists(Paths.get(s"$localStore/${movie.id}.jpg"))
@@ -225,11 +225,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "REMOVED")
         refreshInfo(shelf, movie.id)
       } catch {
-        case e: Exception ⇒
+        case e: Exception =>
           log.error(e.getMessage)
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
       }
-    case Utils.ShowCollection(shelf, search, user) ⇒
+    case Utils.ShowCollection(shelf, search, user) =>
       nbItems = 0
       searchMode = SearchMode.Collection
       this.search = search.toLowerCase()
@@ -238,13 +238,13 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
 
       val futureResDB = DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search)
       futureResDB
-        .map { result ⇒
+        .map { result =>
           maxPage = (result.size / MaxItems) + 1
           Launcher.scalaFxActor ! Utils.ShowPage(shelf, page, maxPage)
           val dropN: Int = (page - 1) * MaxItems
           result.slice(dropN, dropN + MaxItems) foreach {
             //TODO match seen true/false
-            case m: MovieDB ⇒
+            case m: MovieDB =>
               val filename = s"$localStore/${m.tmdbId}.jpg"
               val image =
                 if (Files.exists(Paths.get(filename))) {
@@ -265,74 +265,74 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           }
         }
         .recover {
-          case e: Exception ⇒
+          case e: Exception =>
             log.error(s"Problem found in ShowCollection filter process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
 
-    case Utils.SaveSeenDate(shelf, seenDate) ⇒
+    case Utils.SaveSeenDate(shelf, seenDate) =>
       DAO
         .updateSeenDate(selectedMovie, seenDate)
-        .map { result ⇒
+        .map { result =>
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Date updated")
         }
         .recover {
-          case e: Exception ⇒
+          case e: Exception =>
             log.error(s"Problem found in updateSeenDate process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
 
-    case Utils.RefreshMovie(shelf) ⇒
+    case Utils.RefreshMovie(shelf) =>
       DAO
         .refreshMovie(selectedMovie, shelf.commentTextArea.getText(), shelf.viewableCheckBox.isSelected)
-        .map { result ⇒
+        .map { result =>
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
         }
         .recover {
-          case e: Exception ⇒
+          case e: Exception =>
             log.error(s"Problem found in refreshMovie process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
 
-    case Utils.SetCollectionFilter(shelf, filter) ⇒
+    case Utils.SetCollectionFilter(shelf, filter) =>
       selectedCollectionFilter = filter
-    case Utils.SetSearchFilter(shelf, filter) ⇒
+    case Utils.SetSearchFilter(shelf, filter) =>
       selectedSearchFilter = filter
 
-    case Utils.SetRunTime(shelf) ⇒
+    case Utils.SetRunTime(shelf) =>
       Launcher.scalaFxActor ! Utils.SetRunTime(shelf)
 
-    case Utils.CheckedRunTime(shelf, runTime: Int) ⇒
+    case Utils.CheckedRunTime(shelf, runTime: Int) =>
       DAO
         .saveRunTime(selectedMovie, runTime)
-        .map { result ⇒
+        .map { result =>
           Launcher.scalaFxActor ! Utils.ShowRunTime(shelf, Some(runTime))
         }
         .recover {
-          case e: Exception ⇒
+          case e: Exception =>
             log.error(s"Problem found in CheckedRunTime process: $e")
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
 
-    case Utils.FindchangedScore(shelf) ⇒
+    case Utils.FindchangedScore(shelf) =>
       Launcher.scalaFxActor ! Utils.FindchangedScore(shelf)
       Commands.findChangedScore(shelf)
       ()
 
-    case Utils.FindchangedScoreTerminated(shelf) ⇒
+    case Utils.FindchangedScoreTerminated(shelf) =>
       Launcher.scalaFxActor ! Utils.FindchangedScoreTerminated(shelf)
 
-    case Utils.FoundNewScore(shelf, title) ⇒
+    case Utils.FoundNewScore(shelf, title) =>
       Launcher.scalaFxActor ! Utils.FoundNewScore(shelf, title)
 
-    case Utils.InitScoreProgress(shelf) ⇒
+    case Utils.InitScoreProgress(shelf) =>
       scoreProgressCount = 0
 
-    case Utils.FoundScore(shelf, resultsCount) ⇒
+    case Utils.FoundScore(shelf, resultsCount) =>
       scoreProgressCount = scoreProgressCount + 1
       Launcher.scalaFxActor ! Utils.FoundScore(shelf, scoreProgressCount / resultsCount)
 

@@ -110,14 +110,14 @@ object Utils {
 //https://gist.github.com/rladstaetter/5570916
 trait JfxUtils {
 
-  def mkChangeListener[T](onChangeAction: (ObservableValue[_ <: T], T, T) ⇒ Unit): ChangeListener[T] = {
+  def mkChangeListener[T](onChangeAction: (ObservableValue[_ <: T], T, T) => Unit): ChangeListener[T] = {
     new ChangeListener[T]() {
       override def changed(observable: ObservableValue[_ <: T], oldValue: T, newValue: T) = {
         onChangeAction(observable, oldValue, newValue)
       }
     }
   }
-  def mkListChangeListener[E](onChangedAction: ListChangeListener.Change[_ <: E] ⇒ Unit): ListChangeListener[E] = {
+  def mkListChangeListener[E](onChangedAction: ListChangeListener.Change[_ <: E] => Unit): ListChangeListener[E] = {
     new ListChangeListener[E] {
       def onChanged(changeItem: ListChangeListener.Change[_ <: E]): Unit = {
         onChangedAction(changeItem)
@@ -125,14 +125,14 @@ trait JfxUtils {
     }
   }
 
-  def mkCellFactoryCallback[T](listCellGenerator: ListView[T] ⇒ ListCell[T]): Callback[ListView[T], ListCell[T]] = {
+  def mkCellFactoryCallback[T](listCellGenerator: ListView[T] => ListCell[T]): Callback[ListView[T], ListCell[T]] = {
     new Callback[ListView[T], ListCell[T]]() {
       override def call(list: ListView[T]): ListCell[T] =
         listCellGenerator(list)
     }
   }
 
-  def mkEventHandler[E <: Event](f: E ⇒ Unit): EventHandler[E] = {
+  def mkEventHandler[E <: Event](f: E => Unit): EventHandler[E] = {
     new EventHandler[E] {
       def handle(e: E) = f(e)
     }

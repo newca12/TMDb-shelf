@@ -2,8 +2,8 @@ package org.edla.tmdb.shelf
 
 import akka.actor.ActorSelection.toScala
 import javafx.fxml.Initializable
-import javafx.scene.{control ⇒ jfxsc, image ⇒ jfxsi, layout ⇒ jfxsl}
-import javafx.{event ⇒ jfxe, fxml ⇒ jfxf}
+import javafx.scene.{control => jfxsc, image => jfxsi, layout => jfxsl}
+import javafx.{event => jfxe, fxml => jfxf}
 
 class TmdbPresenter extends Initializable {
   //variable name are case sensitive but mistake will be detected only at runtime

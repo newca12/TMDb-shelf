@@ -32,7 +32,7 @@ object Commands /*extends App*/ {
       .fromFile("FQDN_PATH")
       .getLines
       .toList
-      .map(fileTitle ⇒ (fileTitle, fileTitle.split("20")(0).toLowerCase())) //getListOfFiles("FQDN_PATH").map(_.getName)
+      .map(fileTitle => (fileTitle, fileTitle.split("20")(0).toLowerCase())) //getListOfFiles("FQDN_PATH").map(_.getName)
 
     println(filesTitles)
 
@@ -46,10 +46,10 @@ object Commands /*extends App*/ {
     }
 
     def fuzz(title: String): ExtractedResult = {
-      FuzzySearch.extractOne(title.toLowerCase(), filesTitles.map(t ⇒ t._2).asJava)
+      FuzzySearch.extractOne(title.toLowerCase(), filesTitles.map(t => t._2).asJava)
     }
 
-    for (movie ← results) {
+    for (movie <- results) {
       val r1 = fuzz(movie.title)
       val r2 = fuzz(movie.originalTitle)
       val r3 = fuzz(movie.comment)
@@ -58,8 +58,8 @@ object Commands /*extends App*/ {
         else if (r2.getScore >= r1.getScore && r2.getScore >= r3.getScore) Some(r2)
         else if (r3.getScore >= r1.getScore && r3.getScore >= r2.getScore) Some(r3)
         else None
-      println(FuzzySearch.extractTop(movie.title, filesTitles.map(t ⇒ t._2).asJava, 5))
-      val fullFileName: Unit = for (fileTitle ← filesTitles) {
+      println(FuzzySearch.extractTop(movie.title, filesTitles.map(t => t._2).asJava, 5))
+      val fullFileName: Unit = for (fileTitle <- filesTitles) {
         if (fileTitle._2 == r.get.getString) println(fileTitle._1)
       }
       println(r.get.getScore + " : " + movie.title + " ==> " + r.get.getString)
@@ -78,7 +78,7 @@ object Commands /*extends App*/ {
       val forkJoinPool = new java.util.concurrent.ForkJoinPool(4)
       val resultsPar   = results.par
       resultsPar.tasksupport = new ForkJoinTaskSupport(forkJoinPool)
-      resultsPar.foreach { movie ⇒
+      resultsPar.foreach { movie =>
         if (ImdbInfo.getScoreFromId(movie.imdbId) != movie.imdbScore) {
           shelfActor ! Utils.FoundNewScore(shelf, s"${movie.title} (${position(results.indexOf(movie))})")
         }
