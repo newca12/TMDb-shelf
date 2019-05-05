@@ -60,10 +60,10 @@ object Launcher {
 class Launcher extends Application /*with WithUncaughtExceptionHandlerDialog*/ {
 
   def main(args: Array[String]): Unit = {
-    launch()
+    launch(args: _*)
   }
 
-  lazy val resource = Option(getClass.getResource("view/Shelf.fxml"))
+  val resource = Option(getClass.getResource("view/Shelf.fxml"))
   if (resource.isEmpty) {
     throw new IOException("Cannot load resource: view/Shelf.fxml")
   }

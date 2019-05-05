@@ -2,10 +2,12 @@ enablePlugins(JavaFxPlugin)
 
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.1.5"
+version := "1.1.6"
 
 //sbt javaFxPackage
+//for macOS used only to produce the jar, jpackage produce more compact App
 javaFxMainClass := "org.edla.tmdb.shelf.Main"
+javaFxVerbose := true
 
 scalaVersion in ThisBuild := "2.12.8"
 
@@ -67,17 +69,17 @@ val osName = System.getProperty("os.name") match {
   case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "11.0.2" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "12.0.1" classifier osName)
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"         % "2.5.20",
-  "org.scala-lang.modules"      %% "scala-async"        % "0.9.7",
+  "com.typesafe.akka"           %% "akka-actor"         % "2.5.22",
+  "org.scala-lang.modules"      %% "scala-async"        % "0.10.0",
   "org.edla"                    %% "tmdb-async-client"  % "2.0.2",
   "com.typesafe.slick"          %% "slick"              % "3.3.0",
-  "com.h2database"              % "h2"                  % "1.4.197",
+  "com.h2database"              % "h2"                  % "1.4.197", //1.4.199 crash
   "net.sourceforge.htmlcleaner" % "htmlcleaner"         % "2.22",
   "org.scala-lang.modules"      %% "scala-java8-compat" % "0.9.0",
   "me.xdrop"                    % "fuzzywuzzy"          % "1.2.0",
-  "org.scalatest"               %% "scalatest"          % "3.0.5" % "test"
+  "org.scalatest"               %% "scalatest"          % "3.0.7" % "test"
 )
 
 lazy val root = (project in file("."))
