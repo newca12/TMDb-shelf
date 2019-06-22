@@ -156,8 +156,8 @@ class ScalaFxActor extends Actor {
 
     case Utils.RefreshScore(shelf, imdbScore, score) =>
       if (imdbScore.isDefined && score.isDefined) {
-        val diff = ((score.get - imdbScore.get) * 10).intValue()
-        diff match {
+        val diff: BigDecimal = (score.get - imdbScore.get) * 10
+        diff.intValue match {
           case 0 =>
             shelf.scoreImageView.setImage(new Image("/org/edla/tmdb/shelf/view/images/equal-sign-2-16.png"))
           case 1 =>

@@ -58,9 +58,9 @@ object DAO extends DAOComponent {
   }
 
   override def saveRunTime(tmdbId: Int, runTime: Int): Future[Int] = {
-    val q = for { movie <- movies if movie.tmdbId === tmdbId } yield (movie.runTime)
+    val q = for { movie <- movies if movie.tmdbId === tmdbId } yield movie.runTime
     db.run(filterQuery(tmdbId).result.headOption).flatMap { movie =>
-      db.run(q.update((Some(runTime))))
+      db.run(q.update(Some(runTime)))
     }
   }
 

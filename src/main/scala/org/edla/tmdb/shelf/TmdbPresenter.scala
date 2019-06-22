@@ -86,7 +86,7 @@ class TmdbPresenter extends Initializable {
       .selectedIndexProperty()
       .addListener(
         new ChangeListener[Number]() {
-          def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
+          def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number): Unit = {
             val shelfActor =
               Launcher.system.actorSelection("/user/shelfactor")
             shelfActor ! Utils.SetCollectionFilter(TmdbPresenter.this, newValue)
@@ -100,7 +100,7 @@ class TmdbPresenter extends Initializable {
       .selectedIndexProperty()
       .addListener(
         new ChangeListener[Number]() {
-          def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number) = {
+          def changed(ov: ObservableValue[_ <: Number], value: Number, newValue: Number): Unit = {
             val shelfActor =
               Launcher.system.actorSelection("/user/shelfactor")
             shelfActor ! Utils.SetSearchFilter(TmdbPresenter.this, newValue)
