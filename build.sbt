@@ -2,7 +2,7 @@ enablePlugins(JavaFxPlugin)
 
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.2.0"
+version := "1.2.1"
 
 //sbt javaFxPackage
 //for macOS used only to produce the jar, jpackage produce more compact App
@@ -59,9 +59,9 @@ val osName = System.getProperty("os.name") match {
   case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "12.0.1" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "12.0.2" classifier osName)
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"                 % "2.5.23",
+  "com.typesafe.akka"           %% "akka-actor"                 % "2.5.24",
   "org.scala-lang.modules"      %% "scala-async"                % "0.10.0",
   "org.scala-lang.modules"      %% "scala-parallel-collections" % "0.2.0",
   "org.edla"                    %% "tmdb-async-client"          % "2.1.0",
