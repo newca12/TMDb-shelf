@@ -2,14 +2,14 @@ enablePlugins(JavaFxPlugin)
 
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.2.1"
+version := "1.2.2"
 
 //sbt javaFxPackage
 //for macOS used only to produce the jar, jpackage produce more compact App
 javaFxMainClass := "org.edla.tmdb.shelf.Main"
 javaFxVerbose := true
 
-scalaVersion in ThisBuild := "2.13.0"
+scalaVersion in ThisBuild := "2.13.1"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -59,15 +59,15 @@ val osName = System.getProperty("os.name") match {
   case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "12.0.2" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "13" classifier osName)
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"                 % "2.5.24",
+  "com.typesafe.akka"           %% "akka-actor"                 % "2.5.25",
   "org.scala-lang.modules"      %% "scala-async"                % "0.10.0",
   "org.scala-lang.modules"      %% "scala-parallel-collections" % "0.2.0",
   "org.edla"                    %% "tmdb-async-client"          % "2.1.0",
   "com.typesafe.slick"          %% "slick"                      % "3.3.2",
   "com.h2database"              % "h2"                          % "1.4.197", //1.4.199 crash
-  "net.sourceforge.htmlcleaner" % "htmlcleaner"                 % "2.22",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner"                 % "2.23",
   "org.scala-lang.modules"      %% "scala-java8-compat"         % "0.9.0",
   "me.xdrop"                    % "fuzzywuzzy"                  % "1.2.0",
   "org.scalatest"               %% "scalatest"                  % "3.0.8" % "test"
@@ -84,3 +84,10 @@ lazy val root = (project in file("."))
 fork := true
 licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
+
+assemblyMergeStrategy in assembly := {
+  case "module-info.class" => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
