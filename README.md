@@ -25,7 +25,7 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 4. Click on the link to generate a new API key and follow the instructions.
 
 ### License ###
-© 2014-2019 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2020 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
 [2]: https://github.com/newca12/TMDb-async-client
