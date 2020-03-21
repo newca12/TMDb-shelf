@@ -1,13 +1,6 @@
-enablePlugins(JavaFxPlugin)
-
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.2.4"
-
-//sbt javaFxPackage
-//for macOS used only to produce the jar, jpackage produce more compact App
-javaFxMainClass := "org.edla.tmdb.shelf.Main"
-javaFxVerbose := true
+version := "1.2.5"
 
 scalaVersion in ThisBuild := "2.13.1"
 
@@ -59,7 +52,7 @@ val osName = System.getProperty("os.name") match {
   case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "13.0.1" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "14" classifier osName)
 libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-actor"                 % "2.6.1",
   "org.scala-lang.modules"      %% "scala-async"                % "0.10.0",
@@ -68,9 +61,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick"          %% "slick"                      % "3.3.2",
   "com.h2database"              % "h2"                          % "1.4.197", //1.4.199 & 1.4.200 crash
   "net.sourceforge.htmlcleaner" % "htmlcleaner"                 % "2.23",
-  "org.scala-lang.modules"      %% "scala-java8-compat"         % "0.9.0",
+  "org.scala-lang.modules"      %% "scala-java8-compat"         % "0.9.1",
   "me.xdrop"                    % "fuzzywuzzy"                  % "1.2.0",
-  "org.scalatest"               %% "scalatest"                  % "3.1.0" % "test"
+  "org.scalatest"               %% "scalatest"                  % "3.1.1" % "test"
 )
 
 lazy val root = (project in file("."))

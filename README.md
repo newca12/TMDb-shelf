@@ -14,7 +14,7 @@ TMDb-shelf is an EDLA project.
 The purpose of [edla.org](http://www.edla.org) is to promote the state of the art in various domains.
 
 ### Requirements ###
-Java 13 or later
+Java 14 or later
 
 ### API Key ###
 You will need an API key to The Movie Database to access the API.  To obtain a key, follow these steps:
@@ -23,6 +23,13 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 2. [Log](https://www.themoviedb.org/login) into your account
 3. Select the API section on left side of your account page.
 4. Click on the link to generate a new API key and follow the instructions.
+
+### Build ###
+Use jpackage.
+
+Example for macOS:
+1. sbt assembly
+2. jpackage --type dmg  --name TMDb-shelf --input  ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon ./movie.icns
 
 ### License ###
 © 2014-2020 Olivier ROLAND. Distributed under the GPLv3 License.
