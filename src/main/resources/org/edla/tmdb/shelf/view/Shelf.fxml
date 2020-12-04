@@ -40,8 +40,8 @@
   </rowConstraints>
 </GridPane>
       <Button id="back-button" fx:id="previousButton" alignment="CENTER" disable="true" layoutX="2.0" layoutY="3.0" mnemonicParsing="false" onAction="#previousPage" stylesheets="@css/Shelf.css" />
-      <Label fx:id="pageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="98.0" layoutY="28.0" prefHeight="16.0" prefWidth="59.0" text="Page" textAlignment="CENTER" />
-      <Button id="forward-button" fx:id="nextButton" disable="true" layoutX="149.0" layoutY="5.0" mnemonicParsing="false" onAction="#nextPage" stylesheets="@css/Shelf.css" />
+      <Label fx:id="pageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="106.0" layoutY="28.0" prefHeight="16.0" prefWidth="59.0" text="Page" textAlignment="CENTER" />
+      <Button id="forward-button" fx:id="nextButton" disable="true" layoutX="163.0" layoutY="5.0" mnemonicParsing="false" onAction="#nextPage" stylesheets="@css/Shelf.css" />
       <Button fx:id="showCollectionButton" layoutX="315.0" layoutY="23.0" mnemonicParsing="false" onAction="#showCollection" text="Show collection" />
       <ChoiceBox fx:id="filterCollectionChoiceBox" layoutX="436.0" layoutY="23.0" prefHeight="26.0" prefWidth="116.0" /><Button fx:id="searchButton" layoutX="881.0" layoutY="24.0" mnemonicParsing="false" onAction="#search" prefHeight="26.0" prefWidth="152.0" text="Search for a movie" /><TextField fx:id="searchTextField" layoutX="682.0" layoutY="24.0" prefHeight="26.0" prefWidth="191.0" />
       <ChoiceBox fx:id="filterSearchChoiceBox" layoutX="556.0" layoutY="23.0" prefWidth="116.0" />
@@ -56,8 +56,8 @@
             <Label fx:id="directorLabel" layoutX="14.0" layoutY="337.0" prefHeight="26.0" prefWidth="301.0" text="Director" />
             <Label fx:id="releaseLabel" layoutX="14.0" layoutY="362.0" prefHeight="26.0" prefWidth="301.0" text="Release" />
             <Label fx:id="localizedReleaseLabel" layoutX="14.0" layoutY="392.0" text="Localized release" />
-            <DatePicker fx:id="seenDatePicker" layoutX="14.0" layoutY="441.0" onAction="#updateSeenDate" />
-            <Button fx:id="saveSeenDateButton" layoutX="203.0" layoutY="441.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
+            <DatePicker fx:id="seenDatePicker" layoutX="10.0" layoutY="441.0" onAction="#updateSeenDate" />
+            <Button fx:id="saveSeenDateButton" layoutX="205.0" layoutY="441.0" mnemonicParsing="false" onAction="#saveSeenDate" text="Save date" />
             <Hyperlink fx:id="imdbHyperLink" layoutX="16.0" layoutY="474.0" onAction="#openImdbWebpage" text="http://www.imdb.com" />
             <Label fx:id="scoreLabel" layoutX="177.0" layoutY="477.0" text="N/A" />
             <ImageView fx:id="scoreImageView" fitHeight="16.0" fitWidth="16.0" layoutX="209.0" layoutY="477.0" pickOnBounds="true" preserveRatio="true" />
