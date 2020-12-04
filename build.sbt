@@ -1,8 +1,8 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.2.5"
+version := "1.2.6"
 
-scalaVersion in ThisBuild := "2.13.1"
+scalaVersion in ThisBuild := "2.13.4"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -23,7 +23,6 @@ scalacOptions ++= Seq(
   "-Xlint:inaccessible",           // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any",              // Warn when a type argument is inferred to be `Any`.
   "-Xlint:missing-interpolator",   // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Xlint:nullary-unit",           // Warn when nullary methods return Unit.
   "-Xlint:option-implicit",        // Option.apply used implicit view.
   "-Xlint:package-object-classes", // Class or object defined in package object.
@@ -52,18 +51,21 @@ val osName = System.getProperty("os.name") match {
   case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "14" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "15.0.1" classifier osName)
 libraryDependencies ++= Seq(
-  "com.typesafe.akka"           %% "akka-actor"                 % "2.6.1",
+  "com.typesafe.akka"           %% "akka-actor"                 % "2.6.10",
+  "com.typesafe.akka"           %% "akka-protobuf-v3"           % "2.6.10",
+  "com.typesafe.akka"           %% "akka-stream"                % "2.6.10",
   "org.scala-lang.modules"      %% "scala-async"                % "0.10.0",
-  "org.scala-lang.modules"      %% "scala-parallel-collections" % "0.2.0",
+  "org.scala-lang.modules"      %% "scala-parallel-collections" % "1.0.0",
   "org.edla"                    %% "tmdb-async-client"          % "2.2.0",
-  "com.typesafe.slick"          %% "slick"                      % "3.3.2",
+  "com.typesafe.slick"          %% "slick"                      % "3.3.3",
   "com.h2database"              % "h2"                          % "1.4.197", //1.4.199 & 1.4.200 crash
-  "net.sourceforge.htmlcleaner" % "htmlcleaner"                 % "2.23",
+  "net.sourceforge.htmlcleaner" % "htmlcleaner"                 % "2.24",
   "org.scala-lang.modules"      %% "scala-java8-compat"         % "0.9.1",
-  "me.xdrop"                    % "fuzzywuzzy"                  % "1.2.0",
-  "org.scalatest"               %% "scalatest"                  % "3.1.1" % "test"
+  "me.xdrop"                    % "fuzzywuzzy"                  % "1.3.1",
+  "org.scalatest"               %% "scalatest-propspec"         % "3.2.3" % "test",
+  "org.scalatest"               %% "scalatest-shouldmatchers"   % "3.2.3" % "test"
 )
 
 lazy val root = (project in file("."))
