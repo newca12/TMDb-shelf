@@ -32,7 +32,7 @@ Example for macOS:
 2. jpackage --type dmg  --name TMDb-shelf --input  ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon ./movie.icns
 
 ### License ###
-© 2014-2020 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2021 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
 [2]: https://github.com/newca12/TMDb-async-client

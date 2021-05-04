@@ -2,12 +2,17 @@ package org.edla.tmdb.shelf
 
 import java.nio.file.{Files, Paths, StandardCopyOption}
 import javafx.scene.image.Image
-
 import akka.actor.{Actor, Props, actorRef2Scala}
 import akka.event.LoggingReceive
+import net.schmizz.sshj.SSHClient
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier
 import org.edla.tmdb.api.Protocol.noCrew
 import org.edla.tmdb.client.TmdbClient
+import org.edla.tmdb.client.Usage.apiKey
+import org.edla.tmdb.shelf.Launcher.Config
 
+import java.io.File
+import java.util.prefs.Preferences
 import scala.async.Async.async
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,19 +21,19 @@ import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 object ShelfActor {
-  def props(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds): Props =
-    Props(new ShelfActor(apiKey, tmdbTimeOut))
+  def props(config: Config, tmdbTimeOut: FiniteDuration = 5 seconds): Props =
+    Props(new ShelfActor(config, tmdbTimeOut))
 }
 
 object SearchMode extends Enumeration {
   val Search, Collection = Value
 }
 
-class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with akka.actor.ActorLogging {
+class ShelfActor(config: Config, tmdbTimeOut: FiniteDuration) extends Actor with akka.actor.ActorLogging {
 
   val MaxItems = 40
 
-  val tmdbClient        = TmdbClient(apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
+  val tmdbClient        = TmdbClient(config.apiKey, java.util.Locale.getDefault().getLanguage, tmdbTimeOut)
   @volatile var nbItems = 0
   var page: Int         = 1
   var maxPage: Int      = 1
@@ -149,8 +154,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         case Success(movie) =>
           Launcher.scalaFxActor ! Utils.RefreshMovieFromTmdb(shelf, movie)
         case Failure(e) =>
-          //log.error
-          println(s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
+          log.error(s"addToShelf: Future getMovie($tmdbId) failed : ${e.getMessage}")
       }
 
       async {
@@ -177,7 +181,11 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       val filename = s"${Launcher.tmpDir}/$selectedMovie.jpg"
       if (Files.exists(Paths.get(filename))) {
         Files
-          .copy(Paths.get(filename), Paths.get(s"$localStore/$selectedMovie.jpg"), StandardCopyOption.REPLACE_EXISTING)
+          .copy(
+            Paths.get(filename),
+            Paths.get(s"${Launcher.localStore}${File.separator}$selectedMovie.jpg"),
+            StandardCopyOption.REPLACE_EXISTING
+          )
       }
       val movie = Await.result(tmdbClient.getMovie(selectedMovie), 5 seconds)
       val credits =
@@ -220,7 +228,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
     case Utils.DeletionConfirmed(shelf, movie) =>
       try {
         Await.result(DAO.delete(movie.id), 5 seconds)
-        Files.deleteIfExists(Paths.get(s"$localStore/${movie.id}.jpg"))
+        Files.deleteIfExists(Paths.get(s"${Launcher.localStore}${File.separator}${movie.id}.jpg"))
         log.warning(s"Movie ${movie.id} ${movie.title} removed")
         Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "REMOVED")
         refreshInfo(shelf, movie.id)
@@ -236,7 +244,8 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
       if (user) page = 1
       Launcher.scalaFxActor ! Utils.Reset(shelf, items.clone)
 
-      val futureResDB = DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search)
+      val futureResDB =
+        DAO.filter(selectedCollectionFilter.intValue(), selectedSearchFilter.intValue(), search, config.remoteMode)
       futureResDB
         .map { result =>
           maxPage = (result.size / MaxItems) + 1
@@ -245,7 +254,7 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
           result.slice(dropN, dropN + MaxItems) foreach {
             //TODO match seen true/false
             case m: MovieDB =>
-              val filename = s"$localStore/${m.tmdbId}.jpg"
+              val filename = s"${Launcher.localStore}${File.separator}${m.tmdbId}.jpg"
               val image =
                 if (Files.exists(Paths.get(filename))) {
                   new Image(s"file:///$filename")
@@ -271,11 +280,31 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
         }
       ()
 
+    case Utils.SaveLastSeen(shelf) =>
+      if (!config.remoteMode) {
+        DAO
+          .lastSeen()
+          .map { lastSeenMovies =>
+            val client: SSHClient = new SSHClient()
+            client.addHostKeyVerifier(new PromiscuousVerifier())
+            client.connect(config.host)
+            client.authPassword(config.login, config.password)
+            Sync.upload(lastSeenMovies, client)
+            Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Date updated")
+          }
+          .recover {
+            case e: Exception =>
+              log.error(s"Problem found in saveLastSeen process: $e")
+              Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
+          }
+      }
+      ()
+
     case Utils.SaveSeenDate(shelf, seenDate) =>
       DAO
         .updateSeenDate(selectedMovie, seenDate)
         .map { result =>
-          Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Date updated")
+          self ! Utils.SaveLastSeen(shelf)
         }
         .recover {
           case e: Exception =>
@@ -317,6 +346,10 @@ class ShelfActor(apiKey: String, tmdbTimeOut: FiniteDuration) extends Actor with
             Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "ERROR")
         }
       ()
+
+    case Utils.UnlockConfig(shelf) =>
+      val prefs = Preferences.userRoot().node("org.edla.tmdb.shelf.Launcher")
+      prefs.remove("locked")
 
     case Utils.FindchangedScore(shelf) =>
       Launcher.scalaFxActor ! Utils.FindchangedScore(shelf)

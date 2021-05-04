@@ -2,6 +2,7 @@ package org.edla.tmdb.shelf
 
 import slick.jdbc.H2Profile.api._
 
+import java.io.File
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
@@ -12,17 +13,24 @@ trait DAOComponent {
   def update(tmdbId: Int, movie: MovieDB): Future[Int]
   def delete(tmdbId: Int): Future[Int]
   def findById(tmdbId: Int): Future[Option[MovieDB]]
-  def filter(selectedCollectionFilter: Int, selectedSearchFilter: Int, search: String): Future[Seq[MovieDB]]
+  def filter(
+      selectedCollectionFilter: Int,
+      selectedSearchFilter: Int,
+      search: String,
+      remoteMode: Boolean
+  ): Future[Seq[MovieDB]]
   def updateSeenDate(tmdbId: Int, date: java.sql.Date): Future[Int]
   def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean): Future[Int]
   def saveRunTime(tmdbId: Int, runTime: Int): Future[Int]
+  def lastSeen(): Future[Seq[MovieDB]]
 }
 
 object DAO extends DAOComponent {
 
   private val movies: TableQuery[Movies] = TableQuery[Movies]
 
-  private val db = Database.forURL(s"jdbc:h2:file:$localStore/tmdb-shelf", driver = "org.h2.Driver")
+  private val db =
+    Database.forURL(s"jdbc:h2:file:${Launcher.localStore}${File.separator}${Launcher.dbName}", driver = "org.h2.Driver")
 
   try {
     Await.result(db.run(movies.schema.create), Duration.Inf)
@@ -64,12 +72,23 @@ object DAO extends DAOComponent {
     }
   }
 
-  def filter(selectedCollectionFilter: Int, selectedSearchFilter: Int, search: String): Future[Seq[MovieDB]] = {
+  def filter(
+      selectedCollectionFilter: Int,
+      selectedSearchFilter: Int,
+      search: String,
+      remoteMode: Boolean
+  ): Future[Seq[MovieDB]] = {
 
     val res_ = selectedCollectionFilter match {
-      case 0 =>
+      case 0 if (remoteMode) =>
         movies
-          .filter(_.seen === false)
+          .filter(_.seen === remoteMode)
+          .filter(_.availability === true)
+          .filter(_.viewable === true)
+          .sortBy(m => m.viewingDate.asc)
+      case 0 if (!remoteMode) =>
+        movies
+          .filter(_.seen === remoteMode)
           .filter(_.availability === true)
           .filter(_.viewable === true)
           .sortBy(m => (m.imdbScore.desc, m.releaseDate))
@@ -92,4 +111,10 @@ object DAO extends DAOComponent {
 
     db.run(res.result)
   }
+
+  def lastSeen(): Future[Seq[MovieDB]] = {
+    val res = movies.filter(_.seen === true).sortBy(m => (m.viewingDate.desc)).take(14)
+    db.run(res.result)
+  }
+
 }

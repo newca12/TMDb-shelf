@@ -3,6 +3,7 @@ package org.edla.tmdb.shelf
 import slick.jdbc.H2Profile.api._
 import java.sql.Date
 
+@SerialVersionUID(1L)
 final case class MovieDB(
     tmdbId: Int,
     releaseDate: Date,

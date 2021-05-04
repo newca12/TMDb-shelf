@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.TmdbPresenter">
-<children><TextField fx:id="apikey" layoutX="159.0" layoutY="37.0" prefHeight="25.0" prefWidth="252.0" promptText="Enter your API key" /><Button layoutX="458.0" layoutY="37.0" mnemonicParsing="false" onAction="#check" text="Check" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="211.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.TmdbPresenter">
+<children><TextField fx:id="apikey" layoutX="159.0" layoutY="23.0" prefHeight="25.0" prefWidth="252.0" promptText="Enter your API key" /><Button layoutX="458.0" layoutY="23.0" mnemonicParsing="false" onAction="#check" text="Check" />
+      <TextField fx:id="login" layoutX="161.0" layoutY="61.0" promptText="Enter your login" />
+      <TextField fx:id="password" layoutX="161.0" layoutY="97.0" promptText="Enter your passwrod" />
+      <TextField fx:id="host" layoutX="161.0" layoutY="132.0" promptText="Enter the host" />
+      <CheckBox layoutX="161.0" layoutY="168.0" mnemonicParsing="false" selected="true" text="Remote" />
 </children></AnchorPane>

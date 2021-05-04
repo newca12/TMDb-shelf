@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
 <children><GridPane id="shelf" fx:id="shelfGridPane" alignment="CENTER" layoutY="71.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="720.0" prefWidth="1037.0" xmlns:fx="http://javafx.com/fxml">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -74,6 +74,7 @@
           <Menu mnemonicParsing="false" text="Commands">
             <items>
               <MenuItem fx:id="menuScore" mnemonicParsing="false" onAction="#menuScore" text="Find changed score" />
+                  <MenuItem fx:id="unlockConf" mnemonicParsing="false" onAction="#unlockConf" text="Unlock configuration" />
             </items>
           </Menu>
         </menus>

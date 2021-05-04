@@ -25,7 +25,7 @@ import scala.io.Source
 
 object Commands /*extends App*/ {
 
-  val movies: Future[Seq[MovieDB]] = DAO.filter(0, 0, "")
+  val movies: Future[Seq[MovieDB]] = DAO.filter(0, 0, "", false)
   val results: Seq[MovieDB]        = Await.result(movies, 5.seconds)
 
   def check() = {

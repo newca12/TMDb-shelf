@@ -181,4 +181,9 @@ class TmdbPresenter extends Initializable {
     shelfActor ! Utils.FindchangedScore(this)
   }
 
+  def unlockConf(event: jfxe.ActionEvent): Unit = {
+    val shelfActor = Launcher.system.actorSelection("/user/shelfactor")
+    shelfActor ! Utils.UnlockConfig(this)
+  }
+
 }

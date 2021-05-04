@@ -60,6 +60,7 @@ object Utils {
       comment: String,
       viewable: Boolean
   )
+  final case class SaveLastSeen(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class SaveSeenDate(shelf: org.edla.tmdb.shelf.TmdbPresenter, seenDate: java.sql.Date)
   final case class ShowPopup(shelf: org.edla.tmdb.shelf.TmdbPresenter, popup: String)
   final case class SetCollectionFilter(shelf: org.edla.tmdb.shelf.TmdbPresenter, filter: Number)
@@ -70,6 +71,7 @@ object Utils {
   final case class CheckedRunTime(shelf: org.edla.tmdb.shelf.TmdbPresenter, runTime: Int)
   final case class DisableRunTimeButton(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FindchangedScore(shelf: org.edla.tmdb.shelf.TmdbPresenter)
+  final case class UnlockConfig(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FoundNewScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, title: String)
   final case class InitScoreProgress(shelf: org.edla.tmdb.shelf.TmdbPresenter)
   final case class FoundScore(shelf: org.edla.tmdb.shelf.TmdbPresenter, progress: Float)
