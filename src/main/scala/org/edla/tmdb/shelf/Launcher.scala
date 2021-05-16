@@ -231,6 +231,7 @@ class Launcher extends Application /*with WithUncaughtExceptionHandlerDialog*/ {
         prefs.put("login", config.login)
         prefs.put("password", config.password)
         prefs.put("host", config.host)
+        prefs.put("remote", config.remoteMode.toString)
         prefs.put("locked", "true")
         new TextInputDialog()
         new Alert(AlertType.INFORMATION) {

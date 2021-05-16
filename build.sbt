@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.3.0"
+version := "1.3.1"
 
 scalaVersion in ThisBuild := "2.13.5"
 
@@ -81,7 +81,7 @@ licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
 
 assemblyMergeStrategy in assembly := {
-  case "module-info.class" => MergeStrategy.discard
+  case x if x.endsWith("module-info.class") => MergeStrategy.discard
   case x =>
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
