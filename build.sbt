@@ -1,8 +1,8 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.3.1"
+version := "1.3.2"
 
-scalaVersion in ThisBuild := "2.13.5"
+ThisBuild / scalaVersion := "2.13.6"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -57,7 +57,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-protobuf-v3"           % "2.6.14",
   "com.typesafe.akka"           %% "akka-stream"                % "2.6.14",
   "org.scala-lang.modules"      %% "scala-async"                % "0.10.0",
-  "org.scala-lang.modules"      %% "scala-parallel-collections" % "1.0.2",
+  "org.scala-lang.modules"      %% "scala-parallel-collections" % "1.0.3",
   "org.edla"                    %% "tmdb-async-client"          % "2.2.0",
   "com.typesafe.slick"          %% "slick"                      % "3.3.3",
   "com.h2database"              % "h2"                          % "1.4.197", //1.4.199 & 1.4.200 crash
@@ -65,8 +65,8 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules"      %% "scala-java8-compat"         % "0.9.1",
   "me.xdrop"                    % "fuzzywuzzy"                  % "1.3.1",
   "com.hierynomus"              % "sshj"                        % "0.31.0",
-  "org.scalatest"               %% "scalatest-propspec"         % "3.2.8" % "test",
-  "org.scalatest"               %% "scalatest-shouldmatchers"   % "3.2.8" % "test"
+  "org.scalatest"               %% "scalatest-propspec"         % "3.2.9" % "test",
+  "org.scalatest"               %% "scalatest-shouldmatchers"   % "3.2.9" % "test"
 )
 
 lazy val root = (project in file("."))

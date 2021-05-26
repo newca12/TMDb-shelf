@@ -14,14 +14,14 @@ object ImdbInfo {
     val xpath                     = XPathFactory.newInstance().newXPath()
     val rawScore = xpath
       .evaluate(
-        "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong",
+        "//div[@class='AggregateRatingButton__ContentWrap-sc-1il8omz-0 cMcGnJ']",
         doc,
         XPathConstants.STRING
       )
       .toString
     val rawIsNotTheatricalFilm = xpath
       .evaluate(
-        "//div[@id='main_top']//div[@class='subtext']",
+        "//div[@class='TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-4 cgfrOx']",
         doc,
         XPathConstants.STRING
       )
@@ -30,7 +30,7 @@ object ImdbInfo {
       if (rawScore.isEmpty) {
         None
       } else {
-        Some(BigDecimal(rawScore.trim.replace(",", ".")))
+        Some(BigDecimal(rawScore.split("/").head))
       }
     val isNotTheatricalFilm = Some(
       List("TV Movie", "TV Short", "Video", "Episode aired", "TV Series", "TV Special").exists {
