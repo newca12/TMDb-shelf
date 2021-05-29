@@ -31,10 +31,15 @@ Example for macOS:
 1. sbt assembly
 2. jpackage --type dmg  --name TMDb-shelf --input  ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon ./movie.icns
 
+Example for Windows:
+1. sbt assembly
+2. export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
+3. jpackage.exe --type msi --name TMDb-shelf --input ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon movie.ico
+
 ### License ###
 © 2014-2021 Olivier ROLAND. Distributed under the GPLv3 License.
 
-[1]: http://www.themoviedb.org/
+[1]: https://www.themoviedb.org/
 [2]: https://github.com/newca12/TMDb-async-client
-[3]: http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html
-[4]: http://akka.io/
+[3]: https://openjfx.io/
+[4]: https://akka.io/
