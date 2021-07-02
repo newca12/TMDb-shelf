@@ -39,13 +39,13 @@ object ImdbInfo {
     (
       xpath
         .evaluate(
-          "//div[@class='AggregateRatingButton__ContentWrap-sc-1il8omz-0 cMcGnJ']",
+          "//span[@class='AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV']",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
-        .evaluate("//div[@class='TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-4 cgfrOx']", doc, XPathConstants.STRING)
+        .evaluate("//li[@class='ipc-inline-list__item']", doc, XPathConstants.STRING)
         .toString
     )
   }
