@@ -5,6 +5,8 @@ import javafx.fxml.Initializable
 import javafx.scene.{control => jfxsc, image => jfxsi, layout => jfxsl}
 import javafx.{event => jfxe, fxml => jfxf}
 
+import java.awt.Desktop
+
 class TmdbPresenter extends Initializable {
   //variable name are case sensitive but mistake will be detected only at runtime
   @jfxf.FXML
@@ -71,6 +73,11 @@ class TmdbPresenter extends Initializable {
   var logListView: jfxsc.ListView[String] = _
   @jfxf.FXML
   var progressBar: jfxsc.ProgressBar = _
+
+  val OS = System.getProperty("os.name").toLowerCase()
+  val isUnix = (OS.indexOf("nix") >= 0
+    || OS.indexOf("nux") >= 0
+    || OS.indexOf("aix") > 0)
 
   import java.net.URL
   import java.util.ResourceBundle
@@ -150,13 +157,23 @@ class TmdbPresenter extends Initializable {
   }
 
   def openImdbWebpage(event: jfxe.ActionEvent): Unit = {
-    java.awt.Desktop.getDesktop
-      .browse(new java.net.URL(imdbHyperlink.getText).toURI)
+    if (isUnix) {
+      val runtime = Runtime.getRuntime()
+      runtime.exec("xdg-open " + imdbHyperlink.getText)
+    } else
+      java.awt.Desktop.getDesktop
+        .browse(new java.net.URL(imdbHyperlink.getText).toURI)
   }
 
   def openTmdbWebpage(event: jfxe.ActionEvent): Unit = {
-    java.awt.Desktop.getDesktop
-      .browse(new java.net.URL(tmdbHyperlink.getText).toURI)
+    //val desktop = Desktop.getDesktop()
+    //desktop.browse(new java.net.URL(tmdbHyperlink.getText).toURI)
+    if (isUnix) {
+      val runtime = Runtime.getRuntime()
+      runtime.exec("xdg-open " + tmdbHyperlink.getText)
+    } else
+      java.awt.Desktop.getDesktop
+        .browse(new java.net.URL(tmdbHyperlink.getText).toURI)
   }
 
   def updateSeenDate(event: jfxe.ActionEvent): Unit = {

@@ -14,7 +14,8 @@ TMDb-shelf is an EDLA project.
 The purpose of [edla.org](http://www.edla.org) is to promote the state of the art in various domains.
 
 ### Requirements ###
-Java 11 or later
+1. Java 11 for compilation
+2. optional : mediainfo (in /usr/bin)
 
 ### API Key ###
 You will need an API key to The Movie Database to access the API.  To obtain a key, follow these steps:
@@ -25,16 +26,19 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 4. Click on the link to generate a new API key and follow the instructions.
 
 ### Build ###
-Use jpackage.
+Use jpackage at least version openjdk-17-ea+32
 
-Example for macOS:
+Example for linux:
 1. sbt assembly
-2. jpackage --type dmg  --name TMDb-shelf --input  ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon ./movie.icns
+2. export JAVA_HOME=/FULL_PATH/openjdk-17-ea+32_linux-x64_bin/jdk-17
+3. $JAVA_HOME/bin/jpackage --type deb --name TMDb-shelf --input ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon ./movie.png
 
-Example for Windows:
-1. sbt assembly
-2. export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
-3. jpackage.exe --type msi --name TMDb-shelf --input ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon movie.ico
+for macOS:
+3. jpackage --type dmg  --name TMDb-shelf --input  ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon ./movie.icns
+
+for Windows:
+3. export PATH=$PATH:"/c/Program Files (x86)/WiX Toolset v3.11/bin"
+4. jpackage.exe --type msi --name TMDb-shelf --input ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon movie.ico
 
 ### License ###
 © 2014-2021 Olivier ROLAND. Distributed under the GPLv3 License.

@@ -209,7 +209,7 @@ class ScalaFxActor extends Actor {
       if (selectedFile != null) {
         // scalastyle:on null
         // ffmpeg could also be used conveniently: ffprobe -i <file> -show_entries format=duration -v quiet -of csv="p=0"
-        val cmd      = Seq("/usr/local/bin/mediainfo", "--Inform=General;%Duration%", selectedFile.getCanonicalPath)
+        val cmd      = Seq("/usr/bin/mediainfo", "--Inform=General;%Duration%", selectedFile.getCanonicalPath)
         val duration = cmd.!!.trim
         if (!duration.isEmpty) sender ! Utils.CheckedRunTime(shelf, duration.toInt.millis.toMinutes.toInt)
       }
