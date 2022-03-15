@@ -39,13 +39,13 @@ object ImdbInfo {
     (
       xpath
         .evaluate(
-          "//span[@class='AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV']",
+          "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
-        .evaluate("//li[@class='ipc-inline-list__item']", doc, XPathConstants.STRING)
+        .evaluate("//div[@id='main_top']//div[@class='subtext']", doc, XPathConstants.STRING)
         .toString
     )
   }
@@ -54,12 +54,12 @@ object ImdbInfo {
     (
       xpath
         .evaluate(
-          "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong",
+          "//span[@class='sc-7ab21ed2-1 jGRxWM']",
           doc,
           XPathConstants.STRING
         )
         .toString,
-      xpath.evaluate("//div[@id='main_top']//div[@class='subtext']", doc, XPathConstants.STRING).toString
+      xpath.evaluate("//li[@class='ipc-inline-list__item']", doc, XPathConstants.STRING).toString
     )
   }
 
