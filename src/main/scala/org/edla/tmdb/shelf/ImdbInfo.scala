@@ -28,7 +28,7 @@ object ImdbInfo {
         Some(BigDecimal(rawScore.split("/").head))
       }
     val isNotTheatricalFilm = Some(
-      List("TV Movie", "TV Short", "Video", "Episode aired", "TV Series", "TV Special").exists {
+      List("TV Movie", "TV Short", "Video", "Episode aired", "TV Series", "TV Special", "Téléfilm").exists {
         rawIsNotTheatricalFilm.contains
       }
     )
@@ -39,13 +39,13 @@ object ImdbInfo {
     (
       xpath
         .evaluate(
-          "//div[@id='main_top']//div[@class='imdbRating']/div[@class='ratingValue']/strong",
+          "//span[@class='sc-7ab21ed2-1 jGRxWM']",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
-        .evaluate("//div[@id='main_top']//div[@class='subtext']", doc, XPathConstants.STRING)
+        .evaluate("//li[@class='ipc-inline-list__item']", doc, XPathConstants.STRING)
         .toString
     )
   }
@@ -59,7 +59,13 @@ object ImdbInfo {
           XPathConstants.STRING
         )
         .toString,
-      xpath.evaluate("//li[@class='ipc-inline-list__item']", doc, XPathConstants.STRING).toString
+      xpath
+        .evaluate(
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 kqWovI baseAlt']",
+          doc,
+          XPathConstants.STRING
+        )
+        .toString
     )
   }
 
