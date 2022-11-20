@@ -4,13 +4,23 @@ import org.htmlcleaner.{CleanerProperties, DomSerializer, HtmlCleaner, TagNode}
 
 import java.net.URL
 import javax.xml.xpath.{XPath, XPathConstants, XPathFactory}
+import io.{BufferedSource, Source}
+import java.net.URL
 
-object ImdbInfo {
-
+object ImdbInfo extends {
   def getInfo(imdbId: String): (Option[BigDecimal], Option[Boolean]) = {
     val url              = new URL(s"https://www.imdb.com/title/$imdbId/")
+    val requestProperties = Map(
+      "User-Agent" -> "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0"
+    )
+    val connection = new URL(s"https://www.imdb.com/title/$imdbId/").openConnection
+    requestProperties.foreach({
+      case (name, value) => connection.setRequestProperty(name, value)
+    })
+
+    val is = Source.fromInputStream(connection.getInputStream).reader() //.getLines.mkString("\n"))
     val cleaner          = new HtmlCleaner()
-    val tagNode: TagNode = cleaner.clean(url)
+    val tagNode: TagNode = cleaner.clean(is)
     //println("<" + tagNode.getName + ">" + cleaner.getInnerHtml(tagNode) + "</" + tagNode.getName + ">")
     val doc: org.w3c.dom.Document = new DomSerializer(new CleanerProperties()).createDOM(tagNode)
     val xpath: XPath              = XPathFactory.newInstance().newXPath()
@@ -20,7 +30,7 @@ object ImdbInfo {
         case (a, b)                             => (a, b)
       }
     }
-
+    //println(rawIsNotTheatricalFilm)
     val score =
       if (rawScore.isEmpty) {
         None
@@ -28,7 +38,7 @@ object ImdbInfo {
         Some(BigDecimal(rawScore.split("/").head))
       }
     val isNotTheatricalFilm = Some(
-      List("TV Movie", "TV Short", "Video", "Episode aired", "TV Series", "TV Special", "Téléfilm").exists {
+      List("TV Movie", "TV Short", "Video", "Episode aired", "TV Series", "TV Special").exists {
         rawIsNotTheatricalFilm.contains
       }
     )
