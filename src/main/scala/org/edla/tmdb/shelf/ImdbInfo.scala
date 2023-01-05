@@ -9,7 +9,7 @@ import java.net.URL
 
 object ImdbInfo extends {
   def getInfo(imdbId: String): (Option[BigDecimal], Option[Boolean]) = {
-    val url              = new URL(s"https://www.imdb.com/title/$imdbId/")
+    val url = new URL(s"https://www.imdb.com/title/$imdbId/")
     val requestProperties = Map(
       "User-Agent" -> "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0"
     )
@@ -18,7 +18,7 @@ object ImdbInfo extends {
       case (name, value) => connection.setRequestProperty(name, value)
     })
 
-    val is = Source.fromInputStream(connection.getInputStream).reader() //.getLines.mkString("\n"))
+    val is               = Source.fromInputStream(connection.getInputStream).reader() //.getLines.mkString("\n"))
     val cleaner          = new HtmlCleaner()
     val tagNode: TagNode = cleaner.clean(is)
     //println("<" + tagNode.getName + ">" + cleaner.getInnerHtml(tagNode) + "</" + tagNode.getName + ">")
@@ -55,7 +55,11 @@ object ImdbInfo extends {
         )
         .toString,
       xpath
-        .evaluate("//li[@class='ipc-inline-list__item']", doc, XPathConstants.STRING)
+        .evaluate(
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 kqWovI baseAlt']",
+          doc,
+          XPathConstants.STRING
+        )
         .toString
     )
   }
@@ -64,14 +68,14 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-7ab21ed2-1 jGRxWM']",
+          "//span[@class='sc-7ab21ed2-1 eUYAaq']",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 kqWovI baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 bwvZbJ baseAlt']",
           doc,
           XPathConstants.STRING
         )
