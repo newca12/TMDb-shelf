@@ -56,7 +56,7 @@ object ImdbInfo extends {
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 kqWovI baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 bwvZbJ baseAlt']",
           doc,
           XPathConstants.STRING
         )
@@ -75,7 +75,7 @@ object ImdbInfo extends {
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 bwvZbJ baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-f26752fb-0 iQHuAC baseAlt']",
           doc,
           XPathConstants.STRING
         )
