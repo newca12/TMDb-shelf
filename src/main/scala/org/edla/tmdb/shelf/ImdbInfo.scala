@@ -49,14 +49,14 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-7ab21ed2-1 eUYAaq']",
+          "//span[@class='sc-e457ee34-1 gvYTvP']",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-8c396aa2-0 bwvZbJ baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-f26752fb-0 iQHuAC baseAlt']",
           doc,
           XPathConstants.STRING
         )
@@ -68,14 +68,14 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-e457ee34-1 gvYTvP']",
+          "//span[@class='sc-e457ee34-1 squoh']",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-f26752fb-0 iQHuAC baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-afe43def-4 kdXikI baseAlt']",
           doc,
           XPathConstants.STRING
         )
