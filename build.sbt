@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.3.13"
+version := "1.3.14"
 
 ThisBuild / scalaVersion := "2.13.6"
 
@@ -58,7 +58,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-stream"                % "2.6.15",
   "org.scala-lang.modules"      %% "scala-async"                % "0.10.0",
   "org.scala-lang.modules"      %% "scala-parallel-collections" % "1.0.3",
-  "org.edla"                    %% "tmdb-async-client"          % "2.2.1",
+  "org.edla"                    %% "tmdb-async-client"          % "2.2.2",
   "com.typesafe.slick"          %% "slick"                      % "3.3.3",
   "com.h2database"              % "h2"                          % "1.4.197", //1.4.199 & 1.4.200 crash
   "net.sourceforge.htmlcleaner" % "htmlcleaner"                 % "2.24",
