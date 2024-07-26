@@ -49,25 +49,6 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-bde20123-1 cMEQkK']",
-          doc,
-          XPathConstants.STRING
-        )
-        .toString,
-      xpath
-        .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-7f1a92f5-4 kIoyyw baseAlt']",
-          doc,
-          XPathConstants.STRING
-        )
-        .toString
-    )
-  }
-
-  def newSite(xpath: XPath, doc: org.w3c.dom.Document): (String, String) = {
-    (
-      xpath
-        .evaluate(
           "//span[@class='sc-eb51e184-1 cxhhrI']",
           doc,
           XPathConstants.STRING
@@ -76,6 +57,26 @@ object ImdbInfo extends {
       xpath
         .evaluate(
           "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 cdJsTz baseAlt']",
+          doc,
+          XPathConstants.STRING
+        )
+        .toString
+    )
+  }
+ //<span class="sc-eb51e184-1 ljxVSS">8,6</span>
+ //<ul class="ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 kRgWEf baseAlt" role="presentation"><li role="presentation" class="ipc-inline-list__item">Série télévisée</li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" role="button" tabindex="0" aria-disabled="false" href="/title/tt4049416/releaseinfo?ref_=tt_ov_rdat">2013–2017</a></li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" role="button" tabindex="0" aria-disabled="false" href="/title/tt4049416/parentalguide/certificates?ref_=tt_ov_pg">TV-G</a></li><li role="presentation" class="ipc-inline-list__item">4min</li></ul>
+  def newSite(xpath: XPath, doc: org.w3c.dom.Document): (String, String) = {
+    (
+      xpath
+        .evaluate(
+          "//span[@class='sc-eb51e184-1 ljxVSS']",
+          doc,
+          XPathConstants.STRING
+        )
+        .toString,
+      xpath
+        .evaluate(
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 kRgWEf baseAlt']",
           doc,
           XPathConstants.STRING
         )
