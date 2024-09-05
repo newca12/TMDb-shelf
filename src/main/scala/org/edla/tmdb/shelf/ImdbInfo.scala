@@ -56,15 +56,15 @@ object ImdbInfo extends {
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 cdJsTz baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 kRgWEf baseAlt']",
           doc,
           XPathConstants.STRING
         )
         .toString
     )
   }
- //<span class="sc-eb51e184-1 ljxVSS">8,6</span>
- //<ul class="ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 kRgWEf baseAlt" role="presentation"><li role="presentation" class="ipc-inline-list__item">Série télévisée</li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" role="button" tabindex="0" aria-disabled="false" href="/title/tt4049416/releaseinfo?ref_=tt_ov_rdat">2013–2017</a></li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" role="button" tabindex="0" aria-disabled="false" href="/title/tt4049416/parentalguide/certificates?ref_=tt_ov_pg">TV-G</a></li><li role="presentation" class="ipc-inline-list__item">4min</li></ul>
+  //<span class="sc-eb51e184-1 ljxVSS">8,6</span>
+  //<ul class="ipc-inline-list ipc-inline-list--show-dividers sc-ec65ba05-2 joVhBE baseAlt" role="presentation"><li role="presentation" class="ipc-inline-list__item">TV Movie</li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" tabindex="0" aria-disabled="false" href="/title/tt27195082/releaseinfo?ref_=tt_ov_rdat">2023</a></li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" tabindex="0" aria-disabled="false" href="/title/tt27195082/parentalguide/certificates?ref_=tt_ov_pg">TV-14</a></li></ul>
   def newSite(xpath: XPath, doc: org.w3c.dom.Document): (String, String) = {
     (
       xpath
@@ -76,7 +76,7 @@ object ImdbInfo extends {
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 kRgWEf baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-ec65ba05-2 joVhBE baseAlt']",
           doc,
           XPathConstants.STRING
         )
