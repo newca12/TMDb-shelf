@@ -49,7 +49,7 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-eb51e184-1 cxhhrI']",
+          "//span[@class='sc-eb51e184-1 ljxVSS']",
           doc,
           XPathConstants.STRING
         )
@@ -63,13 +63,12 @@ object ImdbInfo extends {
         .toString
     )
   }
-  //<span class="sc-eb51e184-1 ljxVSS">8,6</span>
-  //<ul class="ipc-inline-list ipc-inline-list--show-dividers sc-ec65ba05-2 joVhBE baseAlt" role="presentation"><li role="presentation" class="ipc-inline-list__item">TV Movie</li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" tabindex="0" aria-disabled="false" href="/title/tt27195082/releaseinfo?ref_=tt_ov_rdat">2023</a></li><li role="presentation" class="ipc-inline-list__item"><a class="ipc-link ipc-link--baseAlt ipc-link--inherit-color" tabindex="0" aria-disabled="false" href="/title/tt27195082/parentalguide/certificates?ref_=tt_ov_pg">TV-14</a></li></ul>
+
   def newSite(xpath: XPath, doc: org.w3c.dom.Document): (String, String) = {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-eb51e184-1 ljxVSS']",
+          "//span[@class='sc-c4ffe080-1 iQZtLP']",
           doc,
           XPathConstants.STRING
         )
