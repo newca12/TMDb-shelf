@@ -49,7 +49,7 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-eb51e184-1 ljxVSS']",
+          "//span[@class='sc-c4ffe080-1 iQZtLP']",
           doc,
           XPathConstants.STRING
         )
@@ -68,7 +68,7 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-c4ffe080-1 iQZtLP']",
+          "//span[@class='sc-d541859f-1 imUuxf']",
           doc,
           XPathConstants.STRING
         )
