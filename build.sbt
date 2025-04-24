@@ -1,8 +1,8 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.3.22"
+version := "1.3.23"
 
-ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / scalaVersion := "2.13.16"
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.

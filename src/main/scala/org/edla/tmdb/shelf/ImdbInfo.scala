@@ -30,7 +30,7 @@ object ImdbInfo extends {
         case (a, b)                             => (a, b)
       }
     }
-    //println(rawIsNotTheatricalFilm)
+    //println(rawScore+":"+rawIsNotTheatricalFilm)
     val score =
       if (rawScore.isEmpty) {
         None
@@ -49,14 +49,14 @@ object ImdbInfo extends {
     (
       xpath
         .evaluate(
-          "//span[@class='sc-c4ffe080-1 iQZtLP']",
+          "//span[@class='sc-d541859f-1 imUuxf']",
           doc,
           XPathConstants.STRING
         )
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-d8941411-2 kRgWEf baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-ec65ba05-2 joVhBE baseAlt']",
           doc,
           XPathConstants.STRING
         )
@@ -75,7 +75,7 @@ object ImdbInfo extends {
         .toString,
       xpath
         .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-ec65ba05-2 joVhBE baseAlt']",
+          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-103e4e3c-2 cMcwpt baseAlt baseAlt']",
           doc,
           XPathConstants.STRING
         )

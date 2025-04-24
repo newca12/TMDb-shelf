@@ -41,7 +41,7 @@ for Windows:
 4. jpackage.exe --type msi --name TMDb-shelf --input ./target/scala-2.13 --main-jar TMDb-shelf-assembly-x.y.z.jar --icon movie.ico
 
 ### License ###
-© 2014-2024 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2025 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: https://www.themoviedb.org/
 [2]: https://github.com/newca12/TMDb-async-client
