@@ -1,4 +1,5 @@
-# TMDb-shelf [![Actions Status](https://github.com/newca12/TMDb-shelf/workflows/Scala%20CI/badge.svg?branch=master)](https://github.com/newca12/TMDb-shelf/actions) [![codecov.io](https://codecov.io/github/newca12/TMDb-shelf/coverage.svg?branch=master)](https://codecov.io/github/newca12/TMDb-shelf?branch=master) [![Ohloh](http://www.openhub.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.openhub.net/p/TMDb-shelf)
+# TMDb-shelf  
+[![Actions Status](https://github.com/newca12/TMDb-shelf/actions/workflows/scala.yml/badge.svg)](https://github.com/newca12/TMDb-shelf/actions) [![codecov.io](https://codecov.io/github/newca12/TMDb-shelf/coverage.svg?branch=master)](https://codecov.io/github/newca12/TMDb-shelf?branch=master) [![Ohloh](http://www.openhub.net/p/TMDb-shelf/widgets/project_thin_badge.gif)](https://www.openhub.net/p/TMDb-shelf)
 
 ![Image](./screenshot.png?raw=true)
 
