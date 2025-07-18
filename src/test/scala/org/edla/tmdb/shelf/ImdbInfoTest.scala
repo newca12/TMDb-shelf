@@ -10,7 +10,7 @@ class ImdbInfoTest extends AnyPropSpec with Matchers {
     ImdbInfo.getInfo("tt0827521") shouldBe ((Some(5.5), Some(true)))
     ImdbInfo.getInfo("tt21993128") shouldBe ((Some(6.3), Some(false)))
     ImdbInfo.getInfo("tt5031232") shouldBe ((Some(8.6), Some(true)))
-    ImdbInfo.getInfo("tt4049416") shouldBe ((Some(5.1), Some(true)))
+    ImdbInfo.getInfo("tt4049416") shouldBe ((Some(5.2), Some(true)))
     //TODO: manage redirection
     //ImdbInfo.getInfo("tt17061910") shouldBe ((Some(8.0), Some(true)))
   }
