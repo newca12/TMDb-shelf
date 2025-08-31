@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.3.25"
+version := "1.3.26"
 
 ThisBuild / scalaVersion := "2.13.16"
 
@@ -51,7 +51,7 @@ val osName = System.getProperty("os.name") match {
   case _                            => throw new Exception("Unknown platform!")
 }
 
-libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
+libraryDependencies ++= javafxModules.map(m => "org.openjfx" % s"javafx-$m" % "24" classifier osName)
 libraryDependencies ++= Seq(
   "com.typesafe.akka"           %% "akka-actor"                 % "2.6.15",
   "com.typesafe.akka"           %% "akka-protobuf-v3"           % "2.6.15",
@@ -81,6 +81,11 @@ homepage := Some(url("http://github.com/newca12/TMDb-shelf"))
 
 assemblyMergeStrategy in assembly := {
   case x if x.endsWith("module-info.class") => MergeStrategy.discard
+  case x if x.endsWith("resourcebundles") => MergeStrategy.discard
+  case x if x.endsWith("reflectionconfig.json") => MergeStrategy.discard
+  case x if x.endsWith("reflectionconfig-x86_64-ios.json") => MergeStrategy.discard
+  case x if x.endsWith("reflectionconfig-aarch64-android.json") => MergeStrategy.discard
+  case x if x.endsWith("reflectionconfig-arm64-ios.json") => MergeStrategy.discard
   case x =>
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
