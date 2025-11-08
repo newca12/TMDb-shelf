@@ -1,6 +1,6 @@
 name := "TMDb-shelf"
 organization := "org.edla"
-version := "1.3.26"
+version := "1.3.27"
 
 ThisBuild / scalaVersion := "2.13.16"
 

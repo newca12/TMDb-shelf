@@ -315,7 +315,7 @@ class ShelfActor(config: Config, tmdbTimeOut: FiniteDuration) extends Actor with
 
     case Utils.RefreshMovie(shelf) =>
       DAO
-        .refreshMovie(selectedMovie, shelf.commentTextArea.getText(), shelf.viewableCheckBox.isSelected)
+        .refreshMovie(selectedMovie, shelf.commentTextArea.getText(), shelf.viewableCheckBox.isSelected, shelf.availableCheckBox.isSelected)
         .map { result =>
           Launcher.scalaFxActor ! Utils.ShowPopup(shelf, "Movie updated")
         }

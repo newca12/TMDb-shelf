@@ -182,8 +182,8 @@ class ScalaFxActor extends Actor {
       new javafx.stage.Popup() {
         getContent.add(label)
         setAutoHide(true)
-        setX(Launcher.stage.getX + Launcher.stage.getWidth - 110)
-        setY(Launcher.stage.getY + Launcher.stage.getHeight - 40)
+        setX(Launcher.stage.getX + Launcher.stage.getWidth - 97)
+        setY(Launcher.stage.getY + Launcher.stage.getHeight - 22)
       }.show(Launcher.stage)
 
     case Utils.ConfirmDeletion(shelf, movie) =>

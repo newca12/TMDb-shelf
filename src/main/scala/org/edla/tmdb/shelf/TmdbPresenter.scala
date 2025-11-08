@@ -68,6 +68,8 @@ class TmdbPresenter extends Initializable {
   @jfxf.FXML
   var viewableCheckBox: jfxsc.CheckBox = _
   @jfxf.FXML
+  var availableCheckBox: jfxsc.CheckBox = _
+  @jfxf.FXML
   var menuBar: jfxsc.MenuBar = _
   @jfxf.FXML
   var logListView: jfxsc.ListView[String] = _

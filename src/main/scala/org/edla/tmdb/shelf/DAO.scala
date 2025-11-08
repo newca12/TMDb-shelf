@@ -20,7 +20,7 @@ trait DAOComponent {
       remoteMode: Boolean
   ): Future[Seq[MovieDB]]
   def updateSeenDate(tmdbId: Int, date: java.sql.Date): Future[Int]
-  def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean): Future[Int]
+  def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean, available: Boolean): Future[Int]
   def saveRunTime(tmdbId: Int, runTime: Int): Future[Int]
   def lastSeen(): Future[Seq[MovieDB]]
 }
@@ -58,10 +58,10 @@ object DAO extends DAOComponent {
     db.run(q.update((Some(seenDate), true)))
   }
 
-  override def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean): Future[Int] = {
-    val q = for { movie <- movies if movie.tmdbId === tmdbId } yield (movie.imdbScore, movie.comment, movie.viewable)
+  override def refreshMovie(tmdbId: Int, comment: String, viewable: Boolean, availability: Boolean): Future[Int] = {
+    val q = for { movie <- movies if movie.tmdbId === tmdbId } yield (movie.imdbScore, movie.comment, movie.viewable, movie.availability)
     db.run(filterQuery(tmdbId).result.headOption).flatMap { movie =>
-      db.run(q.update((ImdbInfo.getScoreFromId(movie.get.imdbId), comment, viewable)))
+      db.run(q.update((ImdbInfo.getScoreFromId(movie.get.imdbId), comment, viewable, availability)))
     }
   }
 

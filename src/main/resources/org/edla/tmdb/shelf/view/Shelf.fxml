@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1326.0" stylesheets="@css/Shelf.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.edla.tmdb.shelf.TmdbPresenter">
 <children><GridPane id="shelf" fx:id="shelfGridPane" alignment="CENTER" layoutY="71.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="720.0" prefWidth="1037.0" xmlns:fx="http://javafx.com/fxml">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -62,11 +62,12 @@
             <Label fx:id="scoreLabel" layoutX="177.0" layoutY="477.0" text="N/A" />
             <ImageView fx:id="scoreImageView" fitHeight="16.0" fitWidth="16.0" layoutX="209.0" layoutY="477.0" pickOnBounds="true" preserveRatio="true" />
             <Hyperlink fx:id="tmdbHyperLink" layoutX="15.0" layoutY="502.0" onAction="#openTmdbWebpage" prefHeight="24.0" prefWidth="202.0" text="http://www.themoviedb.org" />
-            <TextArea fx:id="commentTextArea" layoutX="16.0" layoutY="535.0" prefHeight="72.0" prefWidth="259.0" />
+            <TextArea fx:id="commentTextArea" layoutX="14.0" layoutY="525.0" prefHeight="51.0" prefWidth="259.0" />
             <CheckBox fx:id="viewableCheckBox" layoutX="23.0" layoutY="741.0" mnemonicParsing="false" selected="true" text="Viewable" />
             <Button fx:id="runTimeButton" layoutX="10.0" layoutY="409.0" mnemonicParsing="false" onAction="#findFile" text="Runtime" />
-            <ListView fx:id="logListView" disable="true" layoutX="16.0" layoutY="609.0" prefHeight="123.0" prefWidth="239.0" />
-            <ProgressBar fx:id="progressBar" layoutX="202.0" layoutY="662.0" prefHeight="16.0" prefWidth="123.0" progress="0.0" rotate="-90.0" />
+            <ListView fx:id="logListView" disable="true" layoutX="18.0" layoutY="580.0" prefHeight="152.0" prefWidth="253.0" />
+            <ProgressBar fx:id="progressBar" layoutX="204.0" layoutY="648.0" prefHeight="16.0" prefWidth="152.0" progress="0.0" rotate="-90.0" />
+            <CheckBox fx:id="availableCheckBox" layoutX="109.0" layoutY="741.0" mnemonicParsing="false" selected="true" text="Available" />
          </children>
       </AnchorPane>
       <MenuBar fx:id="menuBar">
