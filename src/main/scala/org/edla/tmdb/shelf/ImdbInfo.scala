@@ -1,86 +1,91 @@
 package org.edla.tmdb.shelf
 
-import org.htmlcleaner.{CleanerProperties, DomSerializer, HtmlCleaner, TagNode}
+import java.io.{BufferedReader, InputStreamReader, OutputStreamWriter}
+import java.net.{HttpURLConnection, URL}
+import scala.util.matching.Regex
 
-import java.net.URL
-import javax.xml.xpath.{XPath, XPathConstants, XPathFactory}
-import io.{BufferedSource, Source}
-import java.net.URL
+object ImdbInfo {
 
-object ImdbInfo extends {
+  private val graphqlEndpoint = "https://caching.graphql.imdb.com/"
+
+  private val query =
+    """query TitleInfo($id: ID!) {
+      |  title(id: $id) {
+      |    ratingsSummary {
+      |      aggregateRating
+      |    }
+      |    titleType {
+      |      id
+      |      text
+      |    }
+      |  }
+      |}""".stripMargin
+
+  // Title types that are NOT theatrical films
+  private val nonTheatricalTypes = Set(
+    "tvMovie",
+    "tvShort",
+    "video",
+    "tvEpisode",
+    "tvSeries",
+    "tvMiniSeries",
+    "tvSpecial"
+  )
+
   def getInfo(imdbId: String): (Option[BigDecimal], Option[Boolean]) = {
-    val url = new URL(s"https://www.imdb.com/title/$imdbId/")
-    val requestProperties = Map(
-      "User-Agent" -> "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0"
-    )
-    val connection = new URL(s"https://www.imdb.com/title/$imdbId/").openConnection
-    requestProperties.foreach({
-      case (name, value) => connection.setRequestProperty(name, value)
-    })
+    val requestBody = buildGraphQLRequest(imdbId)
+    val responseJson = executeGraphQLRequest(requestBody)
+    parseResponse(responseJson)
+  }
 
-    val is               = Source.fromInputStream(connection.getInputStream).reader() //.getLines.mkString("\n"))
-    val cleaner          = new HtmlCleaner()
-    val tagNode: TagNode = cleaner.clean(is)
-    //println("<" + tagNode.getName + ">" + cleaner.getInnerHtml(tagNode) + "</" + tagNode.getName + ">")
-    val doc: org.w3c.dom.Document = new DomSerializer(new CleanerProperties()).createDOM(tagNode)
-    val xpath: XPath              = XPathFactory.newInstance().newXPath()
-    val (rawScore, rawIsNotTheatricalFilm) = {
-      newSite(xpath, doc) match {
-        case (a, b) if (a.isEmpty && b.isEmpty) => oldSite(xpath, doc)
-        case (a, b)                             => (a, b)
+  private def buildGraphQLRequest(imdbId: String): String = {
+    val escapedQuery = query.replace("\n", "\\n").replace("\"", "\\\"")
+    s"""{"query":"$escapedQuery","variables":{"id":"$imdbId"}}"""
+  }
+
+  private def executeGraphQLRequest(requestBody: String): String = {
+    val url = new URL(graphqlEndpoint)
+    val connection = url.openConnection().asInstanceOf[HttpURLConnection]
+
+    try {
+      connection.setRequestMethod("POST")
+      connection.setRequestProperty("Content-Type", "application/json")
+      connection.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0")
+      connection.setDoOutput(true)
+
+      val writer = new OutputStreamWriter(connection.getOutputStream, "UTF-8")
+      writer.write(requestBody)
+      writer.flush()
+      writer.close()
+
+      val reader = new BufferedReader(new InputStreamReader(connection.getInputStream, "UTF-8"))
+      val response = new StringBuilder
+      var line: String = reader.readLine()
+      while (line != null) {
+        response.append(line)
+        line = reader.readLine()
       }
+      reader.close()
+
+      response.toString
+    } finally {
+      connection.disconnect()
     }
-    //println(rawScore+":"+rawIsNotTheatricalFilm)
-    val score =
-      if (rawScore.isEmpty) {
-        None
-      } else {
-        Some(BigDecimal(rawScore.split("/").head))
-      }
-    val isNotTheatricalFilm = Some(
-      List("TV Movie", "TV Short", "Video", "Episode aired", "TV Series", "TV Special").exists {
-        rawIsNotTheatricalFilm.contains
-      }
-    )
-    (score, isNotTheatricalFilm)
   }
 
-  def oldSite(xpath: XPath, doc: org.w3c.dom.Document): (String, String) = {
-    (
-      xpath
-        .evaluate(
-          "//span[@class='sc-d541859f-1 imUuxf']",
-          doc,
-          XPathConstants.STRING
-        )
-        .toString,
-      xpath
-        .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-16bda17f-3 hWEpYq baseAlt baseAlt']",
-          doc,
-          XPathConstants.STRING
-        )
-        .toString
-    )
-  }
+  private def parseResponse(json: String): (Option[BigDecimal], Option[Boolean]) = {
+    // Simple JSON parsing without external library
+    val ratingPattern: Regex = """"aggregateRating"\s*:\s*([0-9.]+)""".r
+    val titleTypePattern: Regex = """"titleType"\s*:\s*\{[^}]*"id"\s*:\s*"([^"]+)"""".r
 
-  def newSite(xpath: XPath, doc: org.w3c.dom.Document): (String, String) = {
-    (
-      xpath
-        .evaluate(
-          "//span[@class='sc-4dc495c1-1 lbQcRY']",
-          doc,
-          XPathConstants.STRING
-        )
-        .toString,
-      xpath
-        .evaluate(
-          "//ul[@class='ipc-inline-list ipc-inline-list--show-dividers sc-b41e510f-3 ggypaO baseAlt baseAlt']",
-          doc,
-          XPathConstants.STRING
-        )
-        .toString
-    )
+    val rating = ratingPattern.findFirstMatchIn(json).map { m =>
+      BigDecimal(m.group(1))
+    }
+
+    val titleType = titleTypePattern.findFirstMatchIn(json).map(_.group(1))
+    val isNotTheatricalFilm = titleType.map(t => nonTheatricalTypes.contains(t))
+
+    (rating, isNotTheatricalFilm)
   }
 
   def getScoreFromId(imdbId: String): Option[BigDecimal] = {
