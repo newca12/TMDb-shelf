@@ -1,8 +1,7 @@
 use iced::widget::{button, checkbox, column, container, image, row, scrollable, text, text_input};
-use iced::{Element, Length};
+use iced::{Color, Element, Length};
 use iced_aw::date_picker::Date;
 use iced_aw::helpers::date_picker;
-use iced_aw::style::colors::BLACK;
 
 use crate::app::Message;
 use crate::models::ScoreChange;
@@ -37,7 +36,7 @@ pub fn view<'a>(state: &DetailState<'a>) -> Element<'a, Message> {
     // Large poster
     if let Some(handle) = state.poster_handle {
         content = content.push(
-            container(image(handle.clone()).width(Length::Fixed(LARGE_POSTER_WIDTH)))
+            container(image(handle).width(Length::Fixed(LARGE_POSTER_WIDTH)))
                 .center_x(Length::Fill),
         );
     } else {
@@ -102,9 +101,9 @@ pub fn view<'a>(state: &DetailState<'a>) -> Element<'a, Message> {
         state.runtime_label
     };
     let runtime_btn = button(text(runtime_text).size(13).color(if state.is_in_db {
-        BLACK
+        Color::BLACK
     } else {
-        iced::Color::from_rgb(0.5, 0.5, 0.5)
+        Color::from_rgb(0.5, 0.5, 0.5)
     }))
     .on_press_maybe(
         if state.has_selection && state.is_in_db && !state.has_runtime {

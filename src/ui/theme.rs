@@ -8,13 +8,9 @@ pub const BACKGROUND_COLOR: Color = Color {
     a: 1.0,
 };
 
-/// Returns a border color based on movie runtime in minutes.
+/// Returns a shadow color based on movie runtime in minutes.
 /// Purple: < 75min, Red: 75-89, Yellow: 90-94, Black: >= 95, White: unknown
-///
-/// Uses a border instead of a shadow because iced's damage tracking only covers
-/// `quad.bounds.expand(1.0)`, which doesn't account for shadow extent. Shadows
-/// render outside the damage-tracked area and persist as artifacts across frames.
-pub fn runtime_border_color(runtime: Option<i32>) -> Color {
+pub fn runtime_shadow_color(runtime: Option<i32>) -> Color {
     match runtime {
         None => Color::WHITE,
         Some(r) if r < 75 => Color::from_rgb(0.58, 0.0, 0.83), // purple

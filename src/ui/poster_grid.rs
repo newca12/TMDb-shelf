@@ -1,7 +1,7 @@
 use std::sync::LazyLock;
 
 use iced::widget::{button, column, container, image, row, stack, text};
-use iced::{Border, ContentFit, Element, Length, Padding, alignment};
+use iced::{ContentFit, Element, Length, Padding, Shadow, Vector, alignment};
 
 use crate::app::Message;
 use crate::models::PosterEntry;
@@ -50,7 +50,7 @@ pub fn view<'a>(
             if let Some(entry) = entries.get(flat_idx) {
                 let poster_widget: Element<'a, Message> =
                     if let Some(handle) = poster_handles.get(&entry.tmdb_id) {
-                        image(handle.clone())
+                        image(handle)
                             .width(Length::Fixed(POSTER_WIDTH))
                             .height(Length::Fixed(POSTER_HEIGHT))
                             .content_fit(ContentFit::Contain)
@@ -64,12 +64,7 @@ pub fn view<'a>(
                             .into()
                     };
 
-                // Use a colored border instead of a shadow for runtime indication.
-                // iced's damage tracking computes dirty regions from quad.bounds.expand(1.0),
-                // which doesn't cover the shadow's blur/offset extent. This causes shadow
-                // pixels to persist across page changes. Borders stay within quad bounds
-                // and are properly tracked by the damage system.
-                let border_color = theme::runtime_border_color(entry.run_time);
+                let shadow_color = theme::runtime_shadow_color(entry.run_time);
 
                 let tmdb_id = entry.tmdb_id;
                 let imdb_id = entry.imdb_id.clone();
@@ -96,10 +91,10 @@ pub fn view<'a>(
                     .on_press(Message::PosterClicked(tmdb_id, imdb_id))
                     .padding(0)
                     .style(move |_theme: &iced::Theme, _status| button::Style {
-                        border: Border {
-                            color: border_color,
-                            width: 2.0,
-                            radius: 0.into(),
+                        shadow: Shadow {
+                            color: shadow_color,
+                            offset: Vector::ZERO,
+                            blur_radius: 8.0,
                         },
                         ..button::Style::default()
                     });
@@ -145,7 +140,7 @@ pub fn view<'a>(
     });
 
     // Reuse the pre-computed shelf handle (never recreated, so no async-decode flicker)
-    let shelf_bg = image(SHELF_HANDLE.clone())
+    let shelf_bg = image(&*SHELF_HANDLE)
         .width(Length::Fill)
         .height(Length::Fill)
         .content_fit(ContentFit::Fill);
