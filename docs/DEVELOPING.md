@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- **Rust nightly toolchain** (edition 2024 requires nightly)
+- **Rust** (edition 2024)
 - **System libraries** for Iced GUI rendering (varies by platform)
 - **TMDb API key** (see [README](../README.md#api-key))
 
