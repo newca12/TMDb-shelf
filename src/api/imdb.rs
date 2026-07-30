@@ -66,6 +66,10 @@ impl ImdbClient {
     pub fn new() -> Self {
         let mut headers = HeaderMap::new();
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+        headers.insert(
+            "x-imdb-client-name",
+            HeaderValue::from_static("imdb-web-next"),
+        );
 
         let client = Client::builder()
             .user_agent("Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0")
