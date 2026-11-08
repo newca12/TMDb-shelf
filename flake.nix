@@ -48,6 +48,11 @@
           vulkan-loader
         ];
 
+        runtimeTools = with pkgs; [
+          mediainfo
+          ffmpeg
+        ];
+
         tmdb-shelf = rustPlatform.buildRustPackage {
           pname = cargoToml.package.name;
           version = cargoToml.package.version;
@@ -87,6 +92,7 @@
             install -Dm644 assets/Shelf.png $out/share/pixmaps/tmdb-shelf.png
 
             wrapProgram $out/bin/tmdb-shelf \
+              --prefix PATH : ${pkgs.lib.makeBinPath runtimeTools} \
               --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath runtimeLibs}
           '';
 
@@ -118,7 +124,7 @@
           nativeBuildInputs = with pkgs; [
             devRustToolchain
             pkg-config
-          ];
+          ] ++ runtimeTools;
 
           buildInputs = with pkgs; [
             openssl
