@@ -31,8 +31,42 @@ You will need an API key to The Movie Database to access the API. To obtain a ke
 
 ### Installation
 
-```
+#### Using Cargo
+
+```bash
 cargo install --locked tmdb-shelf
+```
+
+#### Using Nix
+
+Run directly without installing:
+```bash
+nix run github:newca12/TMDb-shelf
+```
+
+Install to your user profile:
+```bash
+nix profile install github:newca12/TMDb-shelf
+```
+
+Or run/install from a local clone:
+```bash
+nix run .
+nix profile install .
+```
+
+Add to your NixOS or Home Manager configuration via Flake:
+```nix
+# flake.nix
+{
+  inputs.tmdb-shelf.url = "github:newca12/TMDb-shelf";
+
+  outputs = { self, nixpkgs, tmdb-shelf, ... }: {
+    # NixOS: environment.systemPackages
+    # Home Manager: home.packages
+    # tmdb-shelf.packages.${pkgs.system}.default
+  };
+}
 ```
 
 On first launch, a configuration file is created at `~/.tmdb-shelf/config.toml`. Edit it to set your TMDb API key, then relaunch.
