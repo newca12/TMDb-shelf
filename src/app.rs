@@ -764,11 +764,11 @@ impl TmdbShelf {
 
             // === Links ===
             Message::OpenImdbLink => {
-                let _ = open::that(&self.detail_imdb_url);
+                crate::browser::open_url(&self.detail_imdb_url);
                 Task::none()
             }
             Message::OpenTmdbLink => {
-                let _ = open::that(&self.detail_tmdb_url);
+                crate::browser::open_url(&self.detail_tmdb_url);
                 Task::none()
             }
 

@@ -51,6 +51,7 @@
         runtimeTools = with pkgs; [
           mediainfo
           ffmpeg
+          xdg-utils
         ];
 
         tmdb-shelf = rustPlatform.buildRustPackage {
