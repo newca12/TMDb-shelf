@@ -52,7 +52,6 @@
           mediainfo
           ffmpeg
           xdg-utils
-          zenity
         ];
 
         tmdb-shelf = rustPlatform.buildRustPackage {
