@@ -783,6 +783,14 @@ impl TmdbShelf {
                     async move {
                         let file = rfd::AsyncFileDialog::new()
                             .set_title("Select video file")
+                            .add_filter(
+                                "Video files",
+                                &[
+                                    "mkv", "mp4", "avi", "mov", "m4v", "wmv", "flv", "webm",
+                                    "ts", "m2ts", "iso", "vob",
+                                ],
+                            )
+                            .add_filter("All files", &["*"])
                             .pick_file()
                             .await;
 
