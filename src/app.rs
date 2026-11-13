@@ -794,7 +794,13 @@ impl TmdbShelf {
                             .pick_file()
                             .await;
 
-                        let file = file.ok_or_else(|| "No file selected".to_string())?;
+                        let file = match file {
+                            Some(f) => f,
+                            None => {
+                                eprintln!("File selection dialog returned no file (canceled or failed to open)");
+                                return Err("No file selected".to_string());
+                            }
+                        };
                         let path = file.path().to_path_buf();
 
                         let runtime = crate::runtime_detect::detect_runtime(
