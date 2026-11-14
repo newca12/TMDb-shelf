@@ -46,6 +46,7 @@
           libxi
           fontconfig
           vulkan-loader
+          dbus
         ];
 
         runtimeTools = with pkgs; [
